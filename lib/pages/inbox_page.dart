@@ -48,6 +48,7 @@ class _InboxState extends State<Inbox> {
           notchSmoothness: NotchSmoothness.softEdge,
           iconSize: 28,
           activeColor: Color.fromARGB(255, 0, 73, 133),
+          inactiveColor: Colors.grey,
           shadow: BoxShadow(
               color: Colors.black.withOpacity(0.2),
               spreadRadius: 1,
