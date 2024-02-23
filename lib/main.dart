@@ -27,8 +27,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    // _handleIncomingLinks();
-    // final value = context.watch<AuthAPI>().status;
     return MaterialApp.router(
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,

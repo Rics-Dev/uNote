@@ -50,29 +50,15 @@ class _LandingPageState extends State<LandingPage> {
 
   //not so well
   void signInWithEmail() async {
-    // showDialog(
-    //     context: context,
-    //     barrierDismissible: false,
-    //     builder: (BuildContext context) {
-    //       return const Dialog(
-    //         backgroundColor: Colors.transparent,
-    //         child: Row(
-    //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //             children: [
-    //               CircularProgressIndicator(),
-    //             ]),
-    //       );
-    //     });
-
     try {
       final AuthAPI appwrite = context.read<AuthAPI>();
       await appwrite.signInWithEmail(
         email: emailTextController.text,
       );
       emailTextController.clear();
+      //on peut rediriger vers une autre page ici
     } on AppwriteException catch (e) {
       setState(() {});
-      // if (context.mounted) Navigator.pop(context);
       showAlert(title: 'Login failed', text: e.message.toString());
     }
   }
@@ -94,11 +80,9 @@ class _LandingPageState extends State<LandingPage> {
     try {
       final AuthAPI appwrite = context.read<AuthAPI>();
       await appwrite.signInWithProvider(provider: provider);
-      // if (context.mounted) context.pop();
       setState(() {});
     } on AppwriteException catch (e) {
       setState(() {});
-      // if (context.mounted) Navigator.pop(context);
       showAlert(title: 'Login failed', text: e.message.toString());
     }
   }
@@ -275,20 +259,3 @@ class _LandingPageState extends State<LandingPage> {
         });
   }
 }
-
-
-  // void _verifyMagicURLSession() async {
-  //   final AuthAPI appwrite = context.read<AuthAPI>();
-  //   try {
-  //     await appwrite.verifyMagicURLSession(
-  //       userId: widget.userId,
-  //       secret: widget.secret,
-  //     );
-
-  //     // if (context.mounted) context.pop();
-  //     setState(() {});
-  //   } on AppwriteException catch (e) {
-  //     setState(() {});
-  //     showAlert(title: 'Login failed', text: e.message.toString());
-  //   }
-  // }
