@@ -42,6 +42,8 @@ dependencies:
   provider: ^6.1.1
   google_fonts: ^6.1.0
   uni_links: ^0.5.1
+  animated_bottom_navigation_bar: ^1.3.3
+  font_awesome_flutter: ^10.7.0
 
 dev_dependencies:
   flutter_test:
