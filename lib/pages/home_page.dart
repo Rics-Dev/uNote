@@ -6,10 +6,11 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:utask/services/task.dart';
-
+import 'package:top_modal_sheet/top_modal_sheet.dart';
 import '../models/tasks.dart';
 import '../services/auth.dart';
-import '../widgets/build_addtask_box.dart';
+import '../widgets/add_task_view.dart';
+import '../widgets/calendar_view.dart';
 import '../widgets/build_body.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,6 +21,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String _topModalData = "";
   late AuthAPI auth;
   final task = TasksAPI();
   TextEditingController taskController = TextEditingController();
@@ -75,10 +77,13 @@ class _HomePageState extends State<HomePage> {
     // Implement your add task logic here
     try {
       final auth = context.read<AuthAPI>();
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
       final response = await task.createTask(task: newTask, auth: auth);
       setState(() {
         tasks.add(response);
       });
+      prefs.setStringList(
+          'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
     } on AppwriteException catch (e) {
       showAlert(title: 'Error', text: e.message.toString());
     }
@@ -88,7 +93,7 @@ class _HomePageState extends State<HomePage> {
     final result = await showModalBottomSheet(
       context: context,
       builder: (context) =>
-          buildAddTaskSheet(context, addTaskDialogOpened, taskController),
+          addTaskView(context, addTaskDialogOpened, taskController),
       isScrollControlled: true,
     ).whenComplete(() => setState(() {
           addTaskDialogOpened = !addTaskDialogOpened;
@@ -101,6 +106,19 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _showCalendarView() async {
+    final value = await showTopModalSheet<String?>(
+      context,
+      const CalendarView(),
+      backgroundColor: Colors.white,
+      borderRadius: const BorderRadius.vertical(
+        bottom: Radius.circular(25),
+      ),
+    );
+
+    if (value != null) setState(() => _topModalData = value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,9 +127,7 @@ class _HomePageState extends State<HomePage> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.calendar_month_rounded),
-            onPressed: () {
-              // Add your search functionality here
-            },
+            onPressed: () {_showCalendarView();},
           ),
         ],
       ),
@@ -211,7 +227,6 @@ class _HomePageState extends State<HomePage> {
         });
   }
 }
-
 
 
 

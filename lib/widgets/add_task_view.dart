@@ -1,6 +1,6 @@
  import 'package:flutter/material.dart';
 
-Widget buildAddTaskSheet(context, addTaskDialogOpened, taskController) {
+Widget addTaskView(context, addTaskDialogOpened, taskController) {
     return AnimatedOpacity(
           opacity: addTaskDialogOpened ? 1.0 : 0.0,
           duration: const Duration(milliseconds: 5000),
