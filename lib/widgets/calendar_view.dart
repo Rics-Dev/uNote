@@ -90,7 +90,7 @@ class _CalendarViewState extends State<CalendarView> {
                       today.month == DateTime.now().month &&
                       today.day == DateTime.now().day
                   ? "Today"
-                  : "${getWeekDay(today.weekday)} ${today.day}/${today.month}/${today.year} ",
+                  : "${today.day}/${today.month}/${today.year} ",
               textAlign: TextAlign.start,
               style: const TextStyle(
                 fontSize: 20.0,
