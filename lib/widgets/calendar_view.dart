@@ -52,6 +52,16 @@ class _CalendarViewState extends State<CalendarView> {
             // rangeEndDay: endRange,
             calendarFormat: calendarFormat,
             startingDayOfWeek: StartingDayOfWeek.sunday,
+            calendarStyle: const CalendarStyle(
+              selectedDecoration: BoxDecoration(
+                color: Color.fromARGB(255, 0, 73, 133),
+                shape: BoxShape.circle,
+              ),
+              todayDecoration: BoxDecoration(
+                color: Color.fromARGB(150, 0, 73, 133),
+                shape: BoxShape.circle,
+              ),
+            ),
             onFormatChanged: (format) {
               setState(() {
                 calendarFormat = format;
@@ -91,8 +101,6 @@ class _CalendarViewState extends State<CalendarView> {
       ),
     );
   }
-
-
 
   String getWeekDay(int weekday) {
     switch (weekday) {

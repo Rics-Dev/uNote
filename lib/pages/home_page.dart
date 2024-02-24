@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> {
           rightCornerRadius: 32,
           notchSmoothness: NotchSmoothness.softEdge,
           iconSize: 28,
-          activeColor: Color.fromARGB(255, 0, 73, 133),
+          activeColor: const Color.fromARGB(255, 0, 73, 133),
           inactiveColor: Colors.grey,
           shadow: BoxShadow(
               color: Colors.black.withOpacity(0.2),
