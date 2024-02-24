@@ -68,6 +68,14 @@ flutter:
 
   assets:
     - assets/
+    - assets/fonts/
+
+  # fonts:
+  #   - family: Onest
+  #     fonts:
+  #       - asset: assets/fonts/Onest-Regular.ttf
+  #       - asset: assets/fonts/Onest-Bold.ttf
+  #         weight: 700
 
   # To add assets to your application, add an assets section, like this:
   # assets:

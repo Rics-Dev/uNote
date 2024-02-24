@@ -14,8 +14,6 @@ void main() {
   ));
 }
 
-
-
 class MyApp extends StatefulWidget {
   final GoRouter router;
   const MyApp({super.key, required this.router});
@@ -33,14 +31,9 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
           useMaterial3: true,
-          textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+          // textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+          fontFamily: 'Onest',
         ),
         routerConfig: widget.router);
   }
 }
-
-
-
-
-
-

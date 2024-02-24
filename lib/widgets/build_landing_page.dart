@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../pages/inbox_page.dart';
+import '../pages/home_page.dart';
 import '../pages/landing_page.dart';
 import '../services/auth.dart';
 
@@ -17,7 +17,7 @@ Widget buildLandingPage(AuthStatus authStatus, Map<String, String> queryParamete
         body: Center(child: CircularProgressIndicator()),
       );
     case AuthStatus.authenticated:
-      return const Inbox();
+      return const HomePage();
     default:
       return const LandingPage(userId: '', secret: '');
   }
