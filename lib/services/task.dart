@@ -1,6 +1,4 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
-import 'package:flutter/widgets.dart';
 import '../constants.dart' as constants;
 import '../models/tasks.dart';
 import 'auth.dart';
