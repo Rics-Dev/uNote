@@ -4,6 +4,7 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:provider/provider.dart';
 import 'package:utask/services/task.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
+import '../providers/drag_provider.dart';
 import '../widgets/add_task_view.dart';
 import '../widgets/calendar_view.dart';
 import '../widgets/build_body.dart';
@@ -16,6 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool deleteFloatingActionButton = false;
   String _topModalData = "";
   TextEditingController taskController = TextEditingController();
   bool addTaskDialogOpened = false;
@@ -34,6 +36,20 @@ class _HomePageState extends State<HomePage> {
       await context.read<TasksAPI>().createTask(task: newTask);
     } on AppwriteException catch (e) {
       showAlert(title: 'Error', text: e.message.toString());
+    }
+  }
+
+  void removeTask(Object? data) async {
+    final removedTaskId = data as String?;
+    if (removedTaskId != null) {
+      try {
+        await context.read<TasksAPI>().deleteTask(taskId: removedTaskId);
+        showSuccessDelete();
+      } on AppwriteException catch (e) {
+        showAlert(title: 'Error', text: e.message.toString());
+      }
+    } else {
+      showAlert(title: 'Error', text: 'An error occured');
     }
   }
 
@@ -66,37 +82,41 @@ class _HomePageState extends State<HomePage> {
     if (value != null) setState(() => _topModalData = value);
   }
 
+  void showSuccessDelete() {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: const Text('Task deleted successfully'),
+      elevation: 10.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      showCloseIcon: true,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final tasks = context.watch<TasksAPI>().tasks;
     return Scaffold(
       appBar: AppBar(
         title: Text(appBarTitles[_bottomNavIndex]),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.calendar_month_rounded),
-            onPressed: () {_showCalendarView();},
+            onPressed: () {
+              _showCalendarView();
+            },
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        shape: const CircleBorder(),
-        tooltip: 'add task',
-        child: const Icon(Icons.add_rounded, color: Colors.white, size: 38),
-        // addTaskDialogOpened
-        //     ? const Icon(Icons.close_rounded, color: Colors.white, size: 38)
-        //     : const Icon(Icons.add_rounded, color: Colors.white, size: 38),
-        onPressed: () {
-          setState(() {
-            addTaskDialogOpened = !addTaskDialogOpened;
-          });
-          if (addTaskDialogOpened) {
-            taskController.text = ''; // Clear previous input
-            // _showModalBottomSheet();
-            _showAddTaskDialog();
-          }
-        },
-        //params
-      ),
+      floatingActionButton: DragTarget(
+          builder: (context, incoming, rejected) {
+            return floatingActionButton(context, incoming.isNotEmpty);
+          },
+          onWillAccept: (data) => true,
+          onAccept: (data) {
+            removeTask(data);
+            // tasks.remove(data);
+          }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: AnimatedBottomNavigationBar(
           height: 65.0,
@@ -156,6 +176,73 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  FloatingActionButton floatingActionButton(
+      BuildContext context, bool isNotEmpty) {
+    final isDragging = Provider.of<DragStateProvider>(context).isDragging;
+    return isDragging
+        ? isNotEmpty
+            ? FloatingActionButton.large(
+                shape: const CircleBorder(),
+                tooltip: 'add task',
+                backgroundColor: Colors.red,
+                child: const Icon(Icons.delete_outline_rounded,
+                    color: Colors.white, size: 50),
+                // addTaskDialogOpened
+                //     ? const Icon(Icons.close_rounded, color: Colors.white, size: 38)
+                //     : const Icon(Icons.add_rounded, color: Colors.white, size: 38),
+                onPressed: () {
+                  setState(() {
+                    addTaskDialogOpened = !addTaskDialogOpened;
+                  });
+                  if (addTaskDialogOpened) {
+                    taskController.text = ''; // Clear previous input
+                    // _showModalBottomSheet();
+                    _showAddTaskDialog();
+                  }
+                }, //params
+              )
+            : FloatingActionButton(
+                shape: const CircleBorder(),
+                tooltip: 'add task',
+                backgroundColor: Colors.red,
+                child: const Icon(Icons.delete_outline_rounded,
+                    color: Colors.white, size: 38),
+                // addTaskDialogOpened
+                //     ? const Icon(Icons.close_rounded, color: Colors.white, size: 38)
+                //     : const Icon(Icons.add_rounded, color: Colors.white, size: 38),
+                onPressed: () {
+                  setState(() {
+                    addTaskDialogOpened = !addTaskDialogOpened;
+                  });
+                  if (addTaskDialogOpened) {
+                    taskController.text = ''; // Clear previous input
+                    // _showModalBottomSheet();
+                    _showAddTaskDialog();
+                  }
+                }, //params
+              )
+        : FloatingActionButton(
+            shape: const CircleBorder(),
+            tooltip: 'add task',
+            backgroundColor: const Color.fromARGB(255, 0, 73, 133),
+            child: const Icon(Icons.add_rounded, color: Colors.white, size: 38),
+            // addTaskDialogOpened
+            //     ? const Icon(Icons.close_rounded, color: Colors.white, size: 38)
+            //     : const Icon(Icons.add_rounded, color: Colors.white, size: 38),
+            onPressed: () {
+              setState(() {
+                addTaskDialogOpened = !addTaskDialogOpened;
+              });
+              if (addTaskDialogOpened) {
+                taskController.text = ''; // Clear previous input
+                // _showModalBottomSheet();
+                _showAddTaskDialog();
+              }
+            },
+            //params
+          );
+  }
+
   showAlert({required String title, required String text}) {
     showDialog(
         context: context,
@@ -175,120 +262,115 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-
-
-      // if (task.auth.status == AuthStatus.uninitialized) {
-      //   await task.auth.loadUser();
-      // }
-
-
-
+// if (task.auth.status == AuthStatus.uninitialized) {
+//   await task.auth.loadUser();
+// }
 
 //old version
 // void _showModalBottomSheet() {
-  //   addTaskBox().whenComplete(() => setState(() {
-  //         addTaskDialogOpened = !addTaskDialogOpened;
-  //       }));
-  // }
+//   addTaskBox().whenComplete(() => setState(() {
+//         addTaskDialogOpened = !addTaskDialogOpened;
+//       }));
+// }
 
-  // Future<dynamic> addTaskBox() {
-    // return showModalBottomSheet(
-    //   context: context,
-    //   builder: (context) {
-        // return AnimatedOpacity(
-        //   opacity: addTaskDialogOpened ? 1.0 : 0.0,
-        //   duration: const Duration(milliseconds: 5000),
-        //   child: AnimatedContainer(
-        //     duration: const Duration(milliseconds: 5000),
-        //     height: addTaskDialogOpened
-        //         ? MediaQuery.of(context).size.height * 0.62
-        //         : 0.0,
-        //     child: Wrap(
-        //       // Use Wrap widget to center the content vertically
-        //       children: [
-        //         Center(
-        //           // Center the content vertically
-        //           child: Padding(
-        //             padding: MediaQuery.of(context)
-        //                 .viewInsets, // Adjust for keyboard
-        //             child: Container(
-        //               padding: const EdgeInsets.all(20.0),
-        //               height: MediaQuery.of(context).size.height *
-        //                   0.21, // 30% of screen height
-        //               child: Column(
-        //                 children: [
-        //                   TextField(
-        //                     controller: taskController,
-        //                     autofocus:
-        //                         true, // Automatically focus the input field
-        //                     decoration: const InputDecoration(
-        //                       labelText: 'Enter Task',
-        //                       border: OutlineInputBorder(),
-        //                     ),
-        //                     keyboardType: TextInputType
-        //                         .text, // Set appropriate keyboard type
-        //                     textInputAction: TextInputAction
-        //                         .done, // Dismiss keyboard on Done
-        //                     onSubmitted: (_) {
-        //                       setState(() {
-        //                         addTaskDialogOpened = !addTaskDialogOpened;
-        //                       });
-        //                       // Handle task submission, e.g.,
-        //                       _addTask(taskController.text);
-        //                       Navigator.pop(context); // Close bottom sheet
-        //                     },
-        //                   ),
-        //                   const SizedBox(height: 10.0),
-        //                   // Row(
-        //                   //   mainAxisAlignment: MainAxisAlignment.end,
-        //                   //   children: [
-        //                   //     TextButton(
-        //                   //       onPressed: () {
-        //                   //         Navigator.pop(context); // Close bottom sheet
-        //                   //       },
-        //                   //       child: const Text('Cancel'),
-        //                   //     ),
-        //                   //     const SizedBox(width: 10.0),
-        //                   //     ElevatedButton(
-        //                   //       onPressed: () {
-        //                   //         // Handle task submission, e.g.,
-        //                   //         _addTask(taskController.text);
-        //                   //         Navigator.pop(context); // Close bottom sheet
-        //                   //       },
-        //                   //       child: const Text('Submit'),
-        //                   //     ),
-        //                   //   ],
-        //                   // ),
-        //                   Center(
-        //                     child: ElevatedButton(
-        //                       onPressed: () {
-        //                         setState(() {
-        //                           addTaskDialogOpened = !addTaskDialogOpened;
-        //                         });
-        //                         // Handle task submission, e.g.,
-        //                         _addTask(taskController.text);
-        //                         Navigator.pop(context); // Close bottom sheet
-        //                       },
-        //                       style: ElevatedButton.styleFrom(
-        //                         backgroundColor:
-        //                             const Color.fromARGB(255, 0, 73, 133),
-        //                         shape: const CircleBorder(),
-        //                         padding: const EdgeInsets.all(10),
-        //                       ),
-        //                       child: const Icon(Icons.check_rounded,
-        //                           color: Colors.white, size: 38),
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // );
-    //   },
-    //   isScrollControlled: true, // Ensure content stays above keyboard
-    // );
-  // }
+// Future<dynamic> addTaskBox() {
+// return showModalBottomSheet(
+//   context: context,
+//   builder: (context) {
+// return AnimatedOpacity(
+//   opacity: addTaskDialogOpened ? 1.0 : 0.0,
+//   duration: const Duration(milliseconds: 5000),
+//   child: AnimatedContainer(
+//     duration: const Duration(milliseconds: 5000),
+//     height: addTaskDialogOpened
+//         ? MediaQuery.of(context).size.height * 0.62
+//         : 0.0,
+//     child: Wrap(
+//       // Use Wrap widget to center the content vertically
+//       children: [
+//         Center(
+//           // Center the content vertically
+//           child: Padding(
+//             padding: MediaQuery.of(context)
+//                 .viewInsets, // Adjust for keyboard
+//             child: Container(
+//               padding: const EdgeInsets.all(20.0),
+//               height: MediaQuery.of(context).size.height *
+//                   0.21, // 30% of screen height
+//               child: Column(
+//                 children: [
+//                   TextField(
+//                     controller: taskController,
+//                     autofocus:
+//                         true, // Automatically focus the input field
+//                     decoration: const InputDecoration(
+//                       labelText: 'Enter Task',
+//                       border: OutlineInputBorder(),
+//                     ),
+//                     keyboardType: TextInputType
+//                         .text, // Set appropriate keyboard type
+//                     textInputAction: TextInputAction
+//                         .done, // Dismiss keyboard on Done
+//                     onSubmitted: (_) {
+//                       setState(() {
+//                         addTaskDialogOpened = !addTaskDialogOpened;
+//                       });
+//                       // Handle task submission, e.g.,
+//                       _addTask(taskController.text);
+//                       Navigator.pop(context); // Close bottom sheet
+//                     },
+//                   ),
+//                   const SizedBox(height: 10.0),
+//                   // Row(
+//                   //   mainAxisAlignment: MainAxisAlignment.end,
+//                   //   children: [
+//                   //     TextButton(
+//                   //       onPressed: () {
+//                   //         Navigator.pop(context); // Close bottom sheet
+//                   //       },
+//                   //       child: const Text('Cancel'),
+//                   //     ),
+//                   //     const SizedBox(width: 10.0),
+//                   //     ElevatedButton(
+//                   //       onPressed: () {
+//                   //         // Handle task submission, e.g.,
+//                   //         _addTask(taskController.text);
+//                   //         Navigator.pop(context); // Close bottom sheet
+//                   //       },
+//                   //       child: const Text('Submit'),
+//                   //     ),
+//                   //   ],
+//                   // ),
+//                   Center(
+//                     child: ElevatedButton(
+//                       onPressed: () {
+//                         setState(() {
+//                           addTaskDialogOpened = !addTaskDialogOpened;
+//                         });
+//                         // Handle task submission, e.g.,
+//                         _addTask(taskController.text);
+//                         Navigator.pop(context); // Close bottom sheet
+//                       },
+//                       style: ElevatedButton.styleFrom(
+//                         backgroundColor:
+//                             const Color.fromARGB(255, 0, 73, 133),
+//                         shape: const CircleBorder(),
+//                         padding: const EdgeInsets.all(10),
+//                       ),
+//                       child: const Icon(Icons.check_rounded,
+//                           color: Colors.white, size: 38),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ),
+//       ],
+//     ),
+//   ),
+// );
+//   },
+//   isScrollControlled: true, // Ensure content stays above keyboard
+// );
+// }

@@ -81,6 +81,24 @@ class TasksAPI extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> deleteTask({required String taskId}) async {
+    try {
+      await databases.deleteDocument(
+          databaseId: constants.appwriteDatabaseId,
+          collectionId: constants.appwriteTasksCollectionId,
+          documentId: taskId);
+      _tasks.removeWhere((task) => task.id == taskId);
+      notifyListeners();
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setStringList(
+          'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
+    } finally {
+      notifyListeners();
+    }
+  }
+
+
 }
 
 

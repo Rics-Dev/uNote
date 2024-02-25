@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'providers/drag_provider.dart';
 import 'router/router.dart';
 import 'services/auth.dart';
 import 'services/task.dart';
@@ -16,6 +17,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider<AuthAPI>(create: (context) => AuthAPI()),
       ChangeNotifierProvider<TasksAPI>(create: (context) => TasksAPI()),
+      ChangeNotifierProvider<DragStateProvider>(create: (context) => DragStateProvider()),
     ],
     child: MyApp(router: router),
   ));
