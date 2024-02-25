@@ -1,6 +1,7 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart' as constants;
 
 enum AuthStatus {
@@ -44,6 +45,8 @@ class AuthAPI extends ChangeNotifier {
       final user = await account.get();
       _status = AuthStatus.authenticated;
       _currentUser = user;
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('userID', _currentUser.$id);
     } catch (e) {
       _status = AuthStatus.unauthenticated;
     } finally {
@@ -51,6 +54,7 @@ class AuthAPI extends ChangeNotifier {
     }
   }
 
+  //not currently used
   Future<User> signUp({required String email, required String password}) async {
     notifyListeners();
 
@@ -65,7 +69,7 @@ class AuthAPI extends ChangeNotifier {
       notifyListeners();
     }
   }
-
+  //not currently used
   Future<Session> signIn(
       {required String email, required String password}) async {
     notifyListeners();
@@ -107,6 +111,8 @@ class AuthAPI extends ChangeNotifier {
       );
       _currentUser = await account.get();
       _status = AuthStatus.authenticated;
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('userID', _currentUser.$id);
       return session;
     } finally {
       notifyListeners();
@@ -119,6 +125,8 @@ class AuthAPI extends ChangeNotifier {
       final session = await account.createOAuth2Session(provider: provider);
       _currentUser = await account.get();
       _status = AuthStatus.authenticated;
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('userID', _currentUser.$id);
       return session;
     } finally {
       notifyListeners();

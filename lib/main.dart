@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'router/router.dart';
 import 'services/auth.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final GoRouter router = buildRouter();
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final userID = prefs.getString('userID');
+  final GoRouter router = buildRouter(userID);
   runApp(ChangeNotifierProvider(
     create: (context) => AuthAPI(),
     child: MyApp(router: router),

@@ -41,7 +41,11 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     getInitialTasks();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final auth = context.read<AuthAPI>().status;
+      if (auth == AuthStatus.uninitialized){
+        await context.read<AuthAPI>().loadUser();
+      }
       fetchTasks();
     });
   }

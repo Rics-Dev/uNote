@@ -5,14 +5,14 @@ import 'package:provider/provider.dart';
 import '../services/auth.dart';
 import '../widgets/build_landing_page.dart';
 
-GoRouter buildRouter() {
+GoRouter buildRouter([String? userID]) {
   return GoRouter(
     routes: [
       GoRoute(
         path: '/',
         builder: (BuildContext context, GoRouterState state) {
           final value = context.watch<AuthAPI>().status;
-          return buildLandingPage(value, state.uri.queryParameters);
+          return buildLandingPage(value, state.uri.queryParameters, userID);
         },
       ),
       GoRoute(
@@ -21,6 +21,7 @@ GoRouter buildRouter() {
           return buildLandingPage(
             AuthStatus.uninitialized,
             state.uri.queryParameters,
+            userID,
           );
         },
       ),

@@ -3,9 +3,13 @@ import '../pages/home_page.dart';
 import '../pages/landing_page.dart';
 import '../services/auth.dart';
 
-Widget buildLandingPage(AuthStatus authStatus, Map<String, String> queryParameters) {
+Widget buildLandingPage(AuthStatus authStatus, Map<String, String> queryParameters, [String? userID]) {
   final userId = queryParameters['userId'] ?? '';
   final secret = queryParameters['secret'] ?? '';
+
+  if (userID != null) {
+    return const HomePage();
+  } 
 
   if (userId.isNotEmpty && secret.isNotEmpty) {
     return LandingPage(userId: userId, secret: secret);
@@ -22,3 +26,13 @@ Widget buildLandingPage(AuthStatus authStatus, Map<String, String> queryParamete
       return const LandingPage(userId: '', secret: '');
   }
 }
+
+
+
+
+
+  // final SharedPreferences prefs = await SharedPreferences.getInstance();
+  // final userID = prefs.getString('userID');
+  // if (userID != null) {
+  //   return HomePage();
+  // }
