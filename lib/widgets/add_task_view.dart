@@ -60,7 +60,9 @@ Widget addTaskView(context, addTaskDialogOpened, taskController) {
                           // ),
                           Center(
                             child: ElevatedButton(
-                              onPressed: () {Navigator.pop(context, true);}, // Close bottom sheet
+                              onPressed: () {
+                                Navigator.pop(context, true);
+                                }, // Close bottom sheet
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
                                     const Color.fromARGB(255, 0, 73, 133),

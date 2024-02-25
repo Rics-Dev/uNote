@@ -4,13 +4,14 @@ import '../models/tasks.dart';
 import '../pages/inbox_page.dart';
 import '../pages/list_page.dart';
 
-Widget buildBody(int _bottomNavIndex, List<Task> tasks) {
+Widget buildBody(int _bottomNavIndex) {
   switch (_bottomNavIndex) {
     case 0:
-      return InboxPage(tasks: tasks);
+      return InboxPage();
     case 1:
       return ListPage();
     default:
-      return InboxPage(tasks: tasks);
+      return InboxPage();
   }
 }
+// , List<Task> tasks

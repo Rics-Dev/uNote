@@ -5,14 +5,18 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'router/router.dart';
 import 'services/auth.dart';
+import 'services/task.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final userID = prefs.getString('userID');
   final GoRouter router = buildRouter(userID);
-  runApp(ChangeNotifierProvider(
-    create: (context) => AuthAPI(),
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider<AuthAPI>(create: (context) => AuthAPI()),
+      ChangeNotifierProvider<TasksAPI>(create: (context) => TasksAPI()),
+    ],
     child: MyApp(router: router),
   ));
 }

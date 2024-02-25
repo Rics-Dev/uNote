@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../models/tasks.dart';
+import '../services/task.dart';
 
 class InboxPage extends StatefulWidget {
-  final List<Task> tasks;
-  const InboxPage({super.key, required this.tasks});
+  // final List<Task> tasks;
+  const InboxPage({super.key});
 
   @override
   State<InboxPage> createState() => _InboxPageState();
 }
 
 class _InboxPageState extends State<InboxPage> {
-  List<Task> get tasks => widget.tasks;
+  // List<Task> get tasks => widget.tasks;
 
   @override
   Widget build(BuildContext context) {
+    final tasks = context.watch<TasksAPI>().tasks;
+    // final tasksProvider = Provider.of<TasksAPI>(context);
+
     return Column(
       children: [
         SizedBox(height: 20),

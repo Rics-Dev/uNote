@@ -1,14 +1,9 @@
-import 'dart:convert';
-
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:utask/services/task.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
-import '../models/tasks.dart';
-import '../services/auth.dart';
 import '../widgets/add_task_view.dart';
 import '../widgets/calendar_view.dart';
 import '../widgets/build_body.dart';
@@ -22,8 +17,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _topModalData = "";
-  late AuthAPI auth;
-  final task = TasksAPI();
   TextEditingController taskController = TextEditingController();
   bool addTaskDialogOpened = false;
   int _bottomNavIndex = 0;
@@ -35,59 +28,10 @@ class _HomePageState extends State<HomePage> {
     'Your inbox',
     'Your lists',
   ];
-  List<Task> tasks = [];
-
-  @override
-  void initState() {
-    super.initState();
-    getInitialTasks();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final auth = context.read<AuthAPI>().status;
-      if (auth == AuthStatus.uninitialized){
-        await context.read<AuthAPI>().loadUser();
-      }
-      fetchTasks();
-    });
-  }
-
-  void getInitialTasks() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final cachedTasks = prefs.getStringList('tasks');
-    if (cachedTasks != null) {
-      setState(() {
-        tasks = cachedTasks
-            .map((jsonString) => Task.fromJson(json.decode(jsonString)))
-            .toList();
-      });
-    }
-  }
-
-  void fetchTasks() async {
-    try {
-      final auth = context.read<AuthAPI>();
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      final response = await task.getTasks(auth: auth);
-      setState(() {
-        tasks = response;
-      });
-      prefs.setStringList(
-          'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
-    } on AppwriteException catch (e) {
-      showAlert(title: 'Error', text: e.message.toString());
-    }
-  }
 
   void addTask(String newTask) async {
-    // Implement your add task logic here
     try {
-      final auth = context.read<AuthAPI>();
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      final response = await task.createTask(task: newTask, auth: auth);
-      setState(() {
-        tasks.add(response);
-      });
-      prefs.setStringList(
-          'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
+      await context.read<TasksAPI>().createTask(task: newTask);
     } on AppwriteException catch (e) {
       showAlert(title: 'Error', text: e.message.toString());
     }
@@ -104,7 +48,6 @@ class _HomePageState extends State<HomePage> {
         }));
 
     if (result == true) {
-      // If task was added successfully
       addTask(taskController.text);
       taskController.clear();
     }
@@ -209,7 +152,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: buildBody(_bottomNavIndex, tasks),
+      body: buildBody(_bottomNavIndex),
     );
   }
 
