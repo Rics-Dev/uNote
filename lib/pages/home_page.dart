@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool deleteFloatingActionButton = false;
   String _topModalData = "";
-  TextEditingController taskController = TextEditingController();
+
   bool addTaskDialogOpened = false;
   int _bottomNavIndex = 0;
   List<IconData> iconList = [
@@ -30,14 +30,6 @@ class _HomePageState extends State<HomePage> {
     'Your inbox',
     'Your lists',
   ];
-
-  void addTask(String newTask) async {
-    try {
-      await context.read<TasksAPI>().createTask(task: newTask);
-    } on AppwriteException catch (e) {
-      showAlert(title: 'Error', text: e.message.toString());
-    }
-  }
 
   void removeTask(Object? data) async {
     final removedTaskId = data as String?;
@@ -53,20 +45,14 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _showAddTaskDialog() async {
-    final result = await showModalBottomSheet(
+  void _showAddTaskDialog() {
+    showModalBottomSheet(
       context: context,
-      builder: (context) =>
-          addTaskView(context, addTaskDialogOpened, taskController),
+      builder: (context) => const AddTaskView(),
       isScrollControlled: true,
     ).whenComplete(() => setState(() {
           addTaskDialogOpened = !addTaskDialogOpened;
         }));
-
-    if (result == true) {
-      addTask(taskController.text);
-      taskController.clear();
-    }
   }
 
   Future<void> _showCalendarView() async {
@@ -194,8 +180,6 @@ class _HomePageState extends State<HomePage> {
                     addTaskDialogOpened = !addTaskDialogOpened;
                   });
                   if (addTaskDialogOpened) {
-                    taskController.text = ''; // Clear previous input
-                    // _showModalBottomSheet();
                     _showAddTaskDialog();
                   }
                 }, //params
@@ -214,8 +198,6 @@ class _HomePageState extends State<HomePage> {
                     addTaskDialogOpened = !addTaskDialogOpened;
                   });
                   if (addTaskDialogOpened) {
-                    taskController.text = ''; // Clear previous input
-                    // _showModalBottomSheet();
                     _showAddTaskDialog();
                   }
                 }, //params
@@ -233,8 +215,6 @@ class _HomePageState extends State<HomePage> {
                 addTaskDialogOpened = !addTaskDialogOpened;
               });
               if (addTaskDialogOpened) {
-                taskController.text = ''; // Clear previous input
-                // _showModalBottomSheet();
                 _showAddTaskDialog();
               }
             },

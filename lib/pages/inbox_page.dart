@@ -19,18 +19,12 @@ class InboxPage extends StatelessWidget {
         const SizedBox(height: 20),
         Expanded(
           child: ListView.builder(
-            // onReorder: (oldIndex, newIndex) {
-            //   if (oldIndex < newIndex) {
-            //     newIndex -= 1;
-            //   }
-            //   final task = tasks.removeAt(oldIndex);
-            //   tasks.insert(newIndex, task);
-            // },
             itemCount: tasks.length,
             itemBuilder: (context, index) {
               return LongPressDraggable(
-                dragAnchorStrategy: (Draggable<Object> _, BuildContext __, Offset ___) =>
-                  const Offset(70,70),
+                dragAnchorStrategy:
+                    (Draggable<Object> _, BuildContext __, Offset ___) =>
+                        const Offset(70, 70),
                 // delay: const Duration(milliseconds: 100),
                 onDragStarted: () {
                   context.read<DragStateProvider>().startDrag();
@@ -41,6 +35,7 @@ class InboxPage extends StatelessWidget {
                 key: ValueKey(tasks[index]),
                 data: tasks[index].id,
                 feedback: Card(
+                  color: Colors.blue[100],
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     child: Text(tasks[index].content),
@@ -70,3 +65,13 @@ class InboxPage extends StatelessWidget {
     );
   }
 }
+
+
+
+// onReorder: (oldIndex, newIndex) {
+            //   if (oldIndex < newIndex) {
+            //     newIndex -= 1;
+            //   }
+            //   final task = tasks.removeAt(oldIndex);
+            //   tasks.insert(newIndex, task);
+            // },

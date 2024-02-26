@@ -7,6 +7,8 @@ class Task {
     this.tags = const [],
     this.favorite = false,
     this.isDone = false,
+    this.createdAt,
+    this.updatedAt,
   });
 
   String content;
@@ -14,6 +16,8 @@ class Task {
   List<String> tags;
   bool favorite;
   bool isDone;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
 
   factory Task.fromJson(String str) => Task.fromMap(json.decode(str));
@@ -26,15 +30,20 @@ class Task {
         tags: List<String>.from(json["tags"].map((x) => x)),
         favorite: json["favorite"],
         isDone: json["isDone"],
+        createdAt: DateTime.parse(json["\u0024createdAt"]) ?? null,
+        updatedAt: DateTime.parse(json["\u0024updatedAt"]) ?? null,
       );
 
   Map<String, dynamic> toMap() {
     final map = {
       "content": content,
-      "id": id,
+      // "id": id,
+      "\u0024id": id,
       "tags": tags,
       "favorite": favorite,
       "isDone": isDone,
+      "\u0024createdAt": createdAt?.toIso8601String(),
+      "\u0024updatedAt": updatedAt?.toIso8601String(),
     };
 
     return map;

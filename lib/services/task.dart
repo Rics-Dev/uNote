@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart' as constants;
 import '../models/tasks.dart';
 import 'auth.dart';
+import 'package:intl/intl.dart';
 
 class TasksAPI extends ChangeNotifier {
   Client client = Client();
@@ -34,13 +35,13 @@ class TasksAPI extends ChangeNotifier {
   void fetchTasks() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
+      // await prefs.remove('tasks');
       final cachedTasks = prefs.getStringList('tasks');
       if (cachedTasks != null) {
         _tasks = cachedTasks
             .map((jsonString) => Task.fromJson(json.decode(jsonString)))
             .toList();
         notifyListeners();
-        // return;
       }
 
       if (auth.status == AuthStatus.uninitialized) {
@@ -71,6 +72,8 @@ class TasksAPI extends ChangeNotifier {
       'tags': [],
       'favorite': false,
       'isDone': false,
+      '\u0024createdAt': DateTime.now().toIso8601String(),
+      '\u0024updatedAt': DateTime.now().toIso8601String(),
     });
     _tasks.add(newTask);
     notifyListeners();
