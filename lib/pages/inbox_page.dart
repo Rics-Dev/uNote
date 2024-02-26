@@ -28,7 +28,10 @@ class InboxPage extends StatelessWidget {
             },
             itemCount: tasks.length,
             itemBuilder: (context, index) {
-              return Draggable(
+              return LongPressDraggable(
+                dragAnchorStrategy: (Draggable<Object> _, BuildContext __, Offset ___) =>
+                  const Offset(60,60),
+                delay: const Duration(milliseconds: 100),
                 onDragStarted: () {
                   context.read<DragStateProvider>().startDrag();
                 },
@@ -37,7 +40,7 @@ class InboxPage extends StatelessWidget {
                 },
                 key: ValueKey(tasks[index]),
                 data: tasks[index].id,
-                feedback: Material(
+                feedback: Card(
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     child: Text(tasks[index].content),
