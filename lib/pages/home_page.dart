@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
     if (removedTaskId != null) {
       try {
         await context.read<TasksAPI>().deleteTask(taskId: removedTaskId);
-        showSuccessDelete();
+        // showSuccessDelete();
       } on AppwriteException catch (e) {
         showAlert(title: 'Error', text: e.message.toString());
       }
@@ -95,7 +95,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final tasks = context.watch<TasksAPI>().tasks;
     return Scaffold(
       appBar: AppBar(
         title: Text(appBarTitles[_bottomNavIndex]),

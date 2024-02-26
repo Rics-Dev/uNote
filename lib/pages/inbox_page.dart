@@ -18,20 +18,20 @@ class InboxPage extends StatelessWidget {
       children: [
         const SizedBox(height: 20),
         Expanded(
-          child: ReorderableListView.builder(
-            onReorder: (oldIndex, newIndex) {
-              if (oldIndex < newIndex) {
-                newIndex -= 1;
-              }
-              final task = tasks.removeAt(oldIndex);
-              tasks.insert(newIndex, task);
-            },
+          child: ListView.builder(
+            // onReorder: (oldIndex, newIndex) {
+            //   if (oldIndex < newIndex) {
+            //     newIndex -= 1;
+            //   }
+            //   final task = tasks.removeAt(oldIndex);
+            //   tasks.insert(newIndex, task);
+            // },
             itemCount: tasks.length,
             itemBuilder: (context, index) {
               return LongPressDraggable(
                 dragAnchorStrategy: (Draggable<Object> _, BuildContext __, Offset ___) =>
-                  const Offset(60,60),
-                delay: const Duration(milliseconds: 100),
+                  const Offset(70,70),
+                // delay: const Duration(milliseconds: 100),
                 onDragStarted: () {
                   context.read<DragStateProvider>().startDrag();
                 },

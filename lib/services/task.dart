@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:appwrite/appwrite.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart' as constants;
 import '../models/tasks.dart';
@@ -40,6 +40,7 @@ class TasksAPI extends ChangeNotifier {
             .map((jsonString) => Task.fromJson(json.decode(jsonString)))
             .toList();
         notifyListeners();
+        // return;
       }
 
       if (auth.status == AuthStatus.uninitialized) {
@@ -64,6 +65,15 @@ class TasksAPI extends ChangeNotifier {
   }
 
   Future<void> createTask({required String task}) async {
+    final newTask = Task.fromMap({
+      'content': task,
+      'userID': auth.userid,
+      'tags': [],
+      'favorite': false,
+      'isDone': false,
+    });
+    _tasks.add(newTask);
+    notifyListeners();
     try {
       final document = await databases.createDocument(
           databaseId: constants.appwriteDatabaseId,
@@ -71,34 +81,53 @@ class TasksAPI extends ChangeNotifier {
           documentId: ID.unique(),
           data: {'content': task, 'userID': auth.userid});
 
-      final newtask = Task.fromMap(document.data);
-      _tasks.add(newtask);
+      final serverTask = Task.fromMap(document.data);
+      _tasks.removeLast();
+      _tasks.add(serverTask);
       notifyListeners();
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setStringList(
           'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error creating task: $e');
+      }
+      _tasks.removeLast();
+      notifyListeners();
+      rethrow;
     } finally {
       notifyListeners();
     }
   }
 
   Future<void> deleteTask({required String taskId}) async {
+    Task? removedTask;
+    _tasks.removeWhere((task) {
+      if (task.id == taskId) {
+        removedTask = task;
+        return true;
+      }
+      return false;
+    });
+    notifyListeners();
     try {
       await databases.deleteDocument(
           databaseId: constants.appwriteDatabaseId,
           collectionId: constants.appwriteTasksCollectionId,
           documentId: taskId);
-      _tasks.removeWhere((task) => task.id == taskId);
       notifyListeners();
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setStringList(
           'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
+    } catch (e) {
+      if (removedTask != null) {
+        _tasks.add(removedTask!);
+        notifyListeners();
+      }
     } finally {
       notifyListeners();
     }
   }
-
-
 }
 
 

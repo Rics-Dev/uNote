@@ -7,11 +7,11 @@ import '../pages/list_page.dart';
 Widget buildBody(int _bottomNavIndex) {
   switch (_bottomNavIndex) {
     case 0:
-      return InboxPage();
+      return const InboxPage();
     case 1:
       return ListPage();
     default:
-      return InboxPage();
+      return const InboxPage();
   }
 }
 // , List<Task> tasks
