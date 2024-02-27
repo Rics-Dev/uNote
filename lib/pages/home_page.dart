@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:utask/services/task.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
 import '../providers/drag_provider.dart';
+import '../services/auth.dart';
 import '../widgets/add_task_view.dart';
 import '../widgets/calendar_view.dart';
 import '../widgets/build_body.dart';
@@ -81,6 +82,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.read<AuthAPI>().username;
     return Scaffold(
       appBar: AppBar(
         title: Text(appBarTitles[_bottomNavIndex]),
@@ -129,15 +131,14 @@ class _HomePageState extends State<HomePage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
+             DrawerHeader(
+              decoration:const  BoxDecoration(
                 color: Colors.blue,
               ),
-              child: Text(
-                'Drawer Header',
-                style: TextStyle(
+                child: Text(user ?? '',
+                style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 24,
+                  fontSize: 18,
                 ),
               ),
             ),
