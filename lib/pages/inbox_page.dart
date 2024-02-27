@@ -42,47 +42,50 @@ class InboxPage extends StatelessWidget {
                   ),
                 ),
                 childWhenDragging: const SizedBox(),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 2),
-                  child: DragTarget(
-                    builder: (context, incoming, rejected) {
-                      // final isDragging =
-                      //     Provider.of<DragStateProvider>(context).isDragging;
-                      return Column(
-                        children: [
-                          Card(
-                            color: incoming.isNotEmpty
-                                ? Colors.blue[100]
-                                : Colors.blue[50],
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(10),
-                              child: Text(tasks[index].content),
-                              // child: ListTile(
-                              //   title: Text(tasks[index].content),
-                              //   // Add more details as needed
-                              // ),
+                child: DragTarget(
+                  builder: (context, incoming, rejected) {
+                    // final isDragging =
+                    //     Provider.of<DragStateProvider>(context).isDragging;
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(18,12,18,0),
+                          child: AnimatedContainer(
+                            width: double.infinity,
+                            duration: const Duration(milliseconds: 300),
+                            decoration: BoxDecoration(
+                              color: incoming.isNotEmpty
+                                  ? Colors.blue[100]
+                                  : Colors.blue[50],
+                              borderRadius: BorderRadius.circular(12),
                             ),
+                            padding: const EdgeInsets.all(16),
+                            child: Text(tasks[index].content),
                           ),
-                          incoming.isNotEmpty ? const Divider(
-                            color: Color.fromARGB(255, 0, 73, 133),
-                            indent: 20,
-                            endIndent: 20,
-                            thickness: 2,
-                          ): const SizedBox(),
-                        ],
-                      );
-                    },
-                    onWillAccept: (data) => true,
-                    onAccept: (data) {
-                      final oldIndex =
-                          context.read<DragStateProvider>().originalIndex;
-                      final newIndex = index;
-                      context
-                          .read<TasksAPI>()
-                          .updateTasksOrder(oldIndex, newIndex);
-                    },
-                  ),
+                        ),
+                        // incoming.isNotEmpty
+                        //     ? AnimatedContainer(
+                        //       duration: const Duration(milliseconds: 300),
+                        //       child: const Divider(
+                        //           color: Color.fromARGB(255, 0, 73, 133),
+                        //           indent: 20,
+                        //           endIndent: 20,
+                        //           thickness: 2,
+                        //         ),
+                        //     )
+                        //     : AnimatedContainer(duration: const Duration(milliseconds: 300),child: const SizedBox()),
+                      ],
+                    );
+                  },
+                  onWillAccept: (data) => true,
+                  onAccept: (data) {
+                    final oldIndex =
+                        context.read<DragStateProvider>().originalIndex;
+                    final newIndex = index;
+                    context
+                        .read<TasksAPI>()
+                        .updateTasksOrder(oldIndex, newIndex);
+                  },
                 ),
               );
             },
