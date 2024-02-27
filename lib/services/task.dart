@@ -14,9 +14,11 @@ class TasksAPI extends ChangeNotifier {
   final AuthAPI auth = AuthAPI();
   List<Task> _tasks = [];
   List<String> _tags = [];
+  List<String> _filteredTags = [];
 
   List<Task> get tasks => _tasks;
   List<String> get tags => _tags;
+  List<String> get filteredTags => _filteredTags;
 
   TasksAPI(
       {String endpoint = constants.appwriteEndpoint,
@@ -68,6 +70,7 @@ class TasksAPI extends ChangeNotifier {
       final results2 =
           response2.documents.map((e) => e.data['tagname'].toString()).toList();
       _tags = results2;
+      _filteredTags = _tags;
       notifyListeners();
     } finally {
       notifyListeners();
@@ -102,7 +105,8 @@ class TasksAPI extends ChangeNotifier {
           ],
         );
         if (existingTagDocument.total != 0) {
-          tagIds.addAll(existingTagDocument.documents.map((doc) => doc.data['\u0024id']));
+          tagIds.addAll(
+              existingTagDocument.documents.map((doc) => doc.data['\u0024id']));
         } else {
           // Create the tag if it doesn't exist
           final tagDocument = await databases.createDocument(
@@ -176,6 +180,11 @@ class TasksAPI extends ChangeNotifier {
     final task = tasks.removeAt(oldIndex);
     tasks.insert(newIndex, task);
     notifyListeners(); // Notify listeners for rebuild
+  }
+
+  void setFilteredTags(List<String> suggestions) {
+    _filteredTags = suggestions;
+    notifyListeners();
   }
 }
 
