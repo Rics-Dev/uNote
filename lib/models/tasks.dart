@@ -27,7 +27,7 @@ class Task {
   factory Task.fromMap(Map<String, dynamic> json) => Task(
         content: json["content"],
         id: json["\u0024id"] ?? "",
-        tags: List<String>.from(json["tags"].map((x) => x)),
+        tags: List<String>.from(json["tags"].map((x) => x is Map ? x["tagname"] : x)),
         favorite: json["favorite"],
         isDone: json["isDone"],
         createdAt: DateTime.parse(json["\u0024createdAt"]),

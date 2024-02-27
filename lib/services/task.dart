@@ -13,8 +13,10 @@ class TasksAPI extends ChangeNotifier {
   late final Databases databases;
   final AuthAPI auth = AuthAPI();
   List<Task> _tasks = [];
+  List<String> _tags = [];
 
   List<Task> get tasks => _tasks;
+  List<String> get tags => _tags;
 
   TasksAPI(
       {String endpoint = constants.appwriteEndpoint,
@@ -59,16 +61,28 @@ class TasksAPI extends ChangeNotifier {
       prefs.setStringList(
           'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
       notifyListeners();
+      final response2 = await databases.listDocuments(
+        databaseId: constants.appwriteDatabaseId,
+        collectionId: constants.appwriteTagsCollectionId,
+      );
+      final results2 =
+          response2.documents.map((e) => e.data['tagname'].toString()).toList();
+      _tags = results2;
+      notifyListeners();
     } finally {
       notifyListeners();
     }
   }
 
-  Future<void> createTask({required String task}) async {
+  Future<void> createTask(
+      {required String task, required List<String> tags}) async {
+    final List<Map<String, dynamic>> tagList =
+        tags.map((tag) => {'tagname': tag}).toList();
+    List<String> tagIds = [];
     final newTask = Task.fromMap({
       'content': task,
       'userID': auth.userid,
-      'tags': [],
+      'tags': tagList,
       'favorite': false,
       'isDone': false,
       '\u0024createdAt': DateTime.now().toIso8601String(),
@@ -77,11 +91,34 @@ class TasksAPI extends ChangeNotifier {
     _tasks.add(newTask);
     notifyListeners();
     try {
+      //creating tags when creating a task
+      for (var tag in tags) {
+        // Check if the tag already exists
+        final existingTagDocument = await databases.listDocuments(
+          databaseId: constants.appwriteDatabaseId,
+          collectionId: constants.appwriteTagsCollectionId,
+          queries: [
+            Query.equal("tagname", [tag])
+          ],
+        );
+        if (existingTagDocument.total != 0) {
+          tagIds.addAll(existingTagDocument.documents.map((doc) => doc.data['\u0024id']));
+        } else {
+          // Create the tag if it doesn't exist
+          final tagDocument = await databases.createDocument(
+            databaseId: constants.appwriteDatabaseId,
+            collectionId: constants.appwriteTagsCollectionId,
+            documentId: tag,
+            data: {'tagname': tag},
+          );
+          tagIds.add(tagDocument.data['\u0024id']);
+        }
+      }
       final document = await databases.createDocument(
           databaseId: constants.appwriteDatabaseId,
           collectionId: constants.appwriteTasksCollectionId,
           documentId: ID.unique(),
-          data: {'content': task, 'userID': auth.userid});
+          data: {'content': task, 'userID': auth.userid, 'tags': tagIds});
 
       final serverTask = Task.fromMap(document.data);
       _tasks.removeLast();
@@ -130,8 +167,6 @@ class TasksAPI extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-
 
   void updateTasksOrder(int oldIndex, int newIndex) {
     // Perform reordering logic here
