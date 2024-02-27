@@ -27,7 +27,7 @@ class InboxPage extends StatelessWidget {
                         const Offset(70, 70),
                 // delay: const Duration(milliseconds: 100),
                 onDragStarted: () {
-                  context.read<DragStateProvider>().startDrag();
+                  context.read<DragStateProvider>().startDrag(index);
                 },
                 onDragEnd: (data) {
                   context.read<DragStateProvider>().endDrag();
@@ -44,17 +44,42 @@ class InboxPage extends StatelessWidget {
                 childWhenDragging: const SizedBox(),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 2),
-                  child: Card(
-                    color: Colors.blue[50],
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(10),
-                      child: Text(tasks[index].content),
-                      // child: ListTile(
-                      //   title: Text(tasks[index].content),
-                      //   // Add more details as needed
-                      // ),
-                    ),
+                  child: DragTarget(
+                    builder: (context, incoming, rejected) {
+                      // final isDragging =
+                      //     Provider.of<DragStateProvider>(context).isDragging;
+                      return Column(
+                        children: [
+                          Card(
+                            color: incoming.isNotEmpty
+                                ? Colors.blue[100]
+                                : Colors.blue[50],
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(10),
+                              child: Text(tasks[index].content),
+                              // child: ListTile(
+                              //   title: Text(tasks[index].content),
+                              //   // Add more details as needed
+                              // ),
+                            ),
+                          ),
+                          incoming.isNotEmpty ? const Divider(
+                            color: Color.fromARGB(255, 0, 73, 133),
+                            thickness: 2,
+                          ): const SizedBox(),
+                        ],
+                      );
+                    },
+                    onWillAccept: (data) => true,
+                    onAccept: (data) {
+                      final oldIndex =
+                          context.read<DragStateProvider>().originalIndex;
+                      final newIndex = index;
+                      context
+                          .read<TasksAPI>()
+                          .updateTasksOrder(oldIndex, newIndex);
+                    },
                   ),
                 ),
               );

@@ -130,6 +130,18 @@ class TasksAPI extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+
+
+  void updateTasksOrder(int oldIndex, int newIndex) {
+    // Perform reordering logic here
+    // if (oldIndex < newIndex) {
+    //     newIndex -= 1;
+    //   }
+    final task = tasks.removeAt(oldIndex);
+    tasks.insert(newIndex, task);
+    notifyListeners(); // Notify listeners for rebuild
+  }
 }
 
 
