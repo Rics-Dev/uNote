@@ -66,6 +66,8 @@ class InboxPage extends StatelessWidget {
                           ),
                           incoming.isNotEmpty ? const Divider(
                             color: Color.fromARGB(255, 0, 73, 133),
+                            indent: 20,
+                            endIndent: 20,
                             thickness: 2,
                           ): const SizedBox(),
                         ],
