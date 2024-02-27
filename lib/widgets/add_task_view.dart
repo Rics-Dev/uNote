@@ -41,11 +41,28 @@ class _AddTaskViewState extends State<AddTaskView> {
           child: Padding(
             padding: MediaQuery.of(context).viewInsets, // Adjust for keyboard
             child: Container(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
               height: MediaQuery.of(context).size.height *
                   0.30, // 30% of screen height
               child: Column(
                 children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(42, 30),
+                          ),
+                          icon: const Icon(Icons.add_rounded, size: 18),
+                          onPressed: () {},
+                          label: const Text('Tags', style: TextStyle(fontSize: 12),),
+                        ),
+                        
+                      ],
+                    ),
+                  ),
                   TextField(
                     controller: taskController,
                     autofocus: true, // Automatically focus the input field
@@ -100,6 +117,16 @@ class _AddTaskViewState extends State<AddTaskView> {
       ],
     );
   }
+
+
+// OutlinedButton.icon(
+//                           style: OutlinedButton.styleFrom(
+//                             minimumSize: const Size(42, 30),
+//                           ),
+//                           icon: const Icon(Icons.add_rounded, size: 18),
+//                           onPressed: () {},
+//                           label: const Text('Tags', style: TextStyle(fontSize: 12),),
+//                         ),
 
   showAlert({required String title, required String text}) {
     showDialog(

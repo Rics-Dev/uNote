@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart' as constants;
 import '../models/tasks.dart';
 import 'auth.dart';
-import 'package:intl/intl.dart';
 
 class TasksAPI extends ChangeNotifier {
   Client client = Client();

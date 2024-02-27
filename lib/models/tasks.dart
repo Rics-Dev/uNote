@@ -30,8 +30,8 @@ class Task {
         tags: List<String>.from(json["tags"].map((x) => x)),
         favorite: json["favorite"],
         isDone: json["isDone"],
-        createdAt: DateTime.parse(json["\u0024createdAt"]) ?? null,
-        updatedAt: DateTime.parse(json["\u0024updatedAt"]) ?? null,
+        createdAt: DateTime.parse(json["\u0024createdAt"]),
+        updatedAt: DateTime.parse(json["\u0024updatedAt"]),
       );
 
   Map<String, dynamic> toMap() {

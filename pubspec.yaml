@@ -47,7 +47,7 @@ dependencies:
   shared_preferences: ^2.2.2
   top_modal_sheet: ^2.1.0
   table_calendar: ^3.1.0
-  flutter_launcher_icons: "^0.13.1"
+  # flutter_launcher_icons: "^0.13.1"
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +74,10 @@ flutter:
     - assets/
     - assets/fonts/
 
+# flutter_launcher_icons:
+#   android: "launcher_icon"
+#   ios: true
+#   image_path: "assets/ic_launcher.png"
   # fonts:
   #   - family: Onest
   #     fonts:
