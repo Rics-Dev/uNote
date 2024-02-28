@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:utask/services/task.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
 import '../providers/drag_provider.dart';
-import '../services/auth.dart';
 import '../widgets/add_task_view.dart';
 import '../widgets/calendar_view.dart';
 import '../widgets/build_body.dart';
@@ -21,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   bool deleteFloatingActionButton = false;
   String _topModalData = "";
 
-  // bool addTaskDialogOpened = false;
+  bool addTaskDialogOpened = false;
   int _bottomNavIndex = 0;
   List<IconData> iconList = [
     Icons.inbox_rounded,
@@ -197,12 +196,12 @@ class _HomePageState extends State<HomePage> {
                 //     ? const Icon(Icons.close_rounded, color: Colors.white, size: 38)
                 //     : const Icon(Icons.add_rounded, color: Colors.white, size: 38),
                 onPressed: () {
-                  // setState(() {
-                  //   addTaskDialogOpened = !addTaskDialogOpened;
-                  // });
-                  // if (addTaskDialogOpened) {
+                  setState(() {
+                    addTaskDialogOpened = !addTaskDialogOpened;
+                  });
+                  if (addTaskDialogOpened) {
                     _showAddTaskDialog();
-                  // }
+                  }
                 }, //params
               )
         : FloatingActionButton(
@@ -214,12 +213,12 @@ class _HomePageState extends State<HomePage> {
             //     ? const Icon(Icons.close_rounded, color: Colors.white, size: 38)
             //     : const Icon(Icons.add_rounded, color: Colors.white, size: 38),
             onPressed: () {
-              // setState(() {
-              //   addTaskDialogOpened = !addTaskDialogOpened;
-              // });
-              // if (addTaskDialogOpened) {
+              setState(() {
+                addTaskDialogOpened = !addTaskDialogOpened;
+              });
+              if (addTaskDialogOpened) {
                 _showAddTaskDialog();
-              // }
+              }
             },
             //params
           );

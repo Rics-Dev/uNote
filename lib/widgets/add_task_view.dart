@@ -65,7 +65,7 @@ class _AddTaskViewState extends State<AddTaskView> {
             child: Container(
               padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
               height: MediaQuery.of(context).size.height *
-                  0.30, // 30% of screen height
+                  0.40, // 30% of screen height
               child: Column(
                 children: [
                   Row(
@@ -266,34 +266,37 @@ class _AddTagViewState extends State<AddTagView> {
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
-                        children: tags.isEmpty 
-                        ? [const Text('Add a new tag')] 
-                        : tags.map((tag) {
-                          return Container(
-                            padding: const EdgeInsets.symmetric(vertical: 4.0),
-                            
-                            child: CheckboxListTile(
-                              contentPadding: EdgeInsets.all(0),
-                              title: Text("#$tag"),
-                              checkboxShape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15)),
-                              value: selectedTags.contains(tag),
-                              onChanged: (bool? newValue) {
-                                setState(() {
-                                  if (newValue != null) {
-                                    if (newValue) {
-                                      selectedTags.add(tag);
-                                    } else {
-                                      selectedTags.remove(tag);
-                                    }
-                                  }
-                                });
-                              },
-                              activeColor: const Color.fromARGB(255, 0, 73, 133),
-                              controlAffinity: ListTileControlAffinity.leading,
-                            ),
-                          );
-                        }).toList(),
+                        children: tags.isEmpty
+                            ? [const Text('Add a new tag')]
+                            : tags.map((tag) {
+                                return Container(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4.0),
+                                  child: CheckboxListTile(
+                                    contentPadding: EdgeInsets.all(0),
+                                    title: Text("#$tag"),
+                                    checkboxShape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    value: selectedTags.contains(tag),
+                                    onChanged: (bool? newValue) {
+                                      setState(() {
+                                        if (newValue != null) {
+                                          if (newValue) {
+                                            selectedTags.add(tag);
+                                          } else {
+                                            selectedTags.remove(tag);
+                                          }
+                                        }
+                                      });
+                                    },
+                                    activeColor:
+                                        const Color.fromARGB(255, 0, 73, 133),
+                                    controlAffinity:
+                                        ListTileControlAffinity.leading,
+                                  ),
+                                );
+                              }).toList(),
                       ),
                     ),
                   ),
