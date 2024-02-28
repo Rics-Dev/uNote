@@ -15,10 +15,14 @@ class TasksAPI extends ChangeNotifier {
   List<Task> _tasks = [];
   List<String> _tags = [];
   List<String> _filteredTags = [];
+  List<Task> _filteredTasks = [];
+  List<String> _selectedTags = [];
 
+  List<String> get selectedTags => _selectedTags;
   List<Task> get tasks => _tasks;
   List<String> get tags => _tags;
   List<String> get filteredTags => _filteredTags;
+  List<Task> get filteredTasks => _filteredTasks;
 
   TasksAPI(
       {String endpoint = constants.appwriteEndpoint,
@@ -92,6 +96,12 @@ class TasksAPI extends ChangeNotifier {
       '\u0024updatedAt': DateTime.now().toIso8601String(),
     });
     _tasks.add(newTask);
+    final newTags = tags.map((tag) => tag).toList();
+    for (var tag in newTags) {
+      if (!_tags.contains(tag)) {
+        _tags.add(tag);
+      }
+    }
     notifyListeners();
     try {
       //creating tags when creating a task
@@ -172,6 +182,43 @@ class TasksAPI extends ChangeNotifier {
     }
   }
 
+  void updateTask(String id, {required bool isDone}) async {
+    final taskIndex = _tasks.indexWhere((task) => task.id == id);
+    final task = _tasks.firstWhere((task) => task.id == id);
+    task.isDone = isDone;
+
+    // if (isDone) {
+    //   _tasks.removeAt(taskIndex);
+    //   _tasks.add(task);
+    // }
+
+    notifyListeners();
+    try {
+      await databases.updateDocument(
+        databaseId: constants.appwriteDatabaseId,
+        collectionId: constants.appwriteTasksCollectionId,
+        documentId: id,
+        data: {'isDone': isDone},
+      );
+      notifyListeners();
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setStringList(
+          'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error updating task: $e');
+      }
+      // If an error occurs, revert the task's state
+      task.isDone = !isDone;
+      if (isDone) {
+        _tasks.removeLast();
+        _tasks.insert(taskIndex, task);
+      }
+      notifyListeners();
+      rethrow;
+    }
+  }
+
   void updateTasksOrder(int oldIndex, int newIndex) {
     // Perform reordering logic here
     // if (oldIndex < newIndex) {
@@ -184,6 +231,36 @@ class TasksAPI extends ChangeNotifier {
 
   void setFilteredTags(List<String> suggestions) {
     _filteredTags = suggestions;
+    notifyListeners();
+  }
+
+  // void filterTasksByTags(String tag) {
+  //   final filteredTasks =
+  //       _tasks.where((task) => task.tags.contains(tag)).toList();
+  //   updateFilteredTasks(filteredTasks);
+  //   notifyListeners();
+  // }
+
+
+  void filterTasksByTags(List tags) {
+    final filteredTasks = _tasks.where((task) {
+      return tags.every((tag) => task.tags.contains(tag));
+    }).toList();
+    updateFilteredTasks(filteredTasks);
+
+  }
+
+  void updateFilteredTasks(List<Task> filteredTasks) {
+    _filteredTasks = filteredTasks;
+    notifyListeners();
+  }
+
+  void toggleTagSelection(String tag) {
+    if (_selectedTags.contains(tag)) {
+      _selectedTags.remove(tag);
+    } else {
+      _selectedTags.add(tag);
+    }
     notifyListeners();
   }
 }
