@@ -14,7 +14,7 @@ class AddTaskView extends StatefulWidget {
 }
 
 class _AddTaskViewState extends State<AddTaskView> {
-  bool showAddTagDialog = false;
+  // bool showAddTagDialog = false;
   TextEditingController taskController = TextEditingController();
   bool isFavorite = false;
   List<String> tags = [];
@@ -38,9 +38,10 @@ class _AddTaskViewState extends State<AddTaskView> {
       context: context,
       builder: (context) => AddTagView(tags),
       isScrollControlled: true,
-    ).whenComplete(() => setState(() {
-          showAddTagDialog = !showAddTagDialog;
-        }));
+    );
+    // ).whenComplete(() => setState(() {
+    //       showAddTagDialog = !showAddTagDialog;
+    //     }));
 
     if (selectedTags != null) {
       // Handle the selected tags here
@@ -140,7 +141,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                   ),
                   TextField(
                     controller: taskController,
-                    autofocus: true, // Automatically focus the input field
+                    // autofocus: true,
                     decoration: const InputDecoration(
                       labelText: 'Enter Task',
                       border: OutlineInputBorder(),

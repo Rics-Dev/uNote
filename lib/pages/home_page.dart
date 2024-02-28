@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   bool deleteFloatingActionButton = false;
   String _topModalData = "";
 
-  bool addTaskDialogOpened = false;
+  // bool addTaskDialogOpened = false;
   int _bottomNavIndex = 0;
   List<IconData> iconList = [
     Icons.inbox_rounded,
@@ -51,9 +51,11 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (context) => const AddTaskView(),
       isScrollControlled: true,
-    ).whenComplete(() => setState(() {
-          addTaskDialogOpened = !addTaskDialogOpened;
-        }));
+      // expand: true,
+    );
+    // .whenComplete(() => setState(() {
+    //       addTaskDialogOpened = !addTaskDialogOpened;
+    //     }));
   }
 
   Future<void> _showCalendarView() async {
@@ -82,7 +84,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.read<AuthAPI>().username;
     return Scaffold(
       appBar: AppBar(
         title: Text(appBarTitles[_bottomNavIndex]),
@@ -131,12 +132,13 @@ class _HomePageState extends State<HomePage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-             DrawerHeader(
-              decoration:const  BoxDecoration(
+            const DrawerHeader(
+              decoration: BoxDecoration(
                 color: Colors.blue,
               ),
-                child: Text(user ?? '',
-                style: const TextStyle(
+              child: Text(
+                'user',
+                style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                 ),
@@ -177,12 +179,12 @@ class _HomePageState extends State<HomePage> {
                 //     ? const Icon(Icons.close_rounded, color: Colors.white, size: 38)
                 //     : const Icon(Icons.add_rounded, color: Colors.white, size: 38),
                 onPressed: () {
-                  setState(() {
-                    addTaskDialogOpened = !addTaskDialogOpened;
-                  });
-                  if (addTaskDialogOpened) {
+                  // setState(() {
+                  //   addTaskDialogOpened = !addTaskDialogOpened;
+                  // });
+                  // if (addTaskDialogOpened) {
                     _showAddTaskDialog();
-                  }
+                  // }
                 }, //params
               )
             : FloatingActionButton(
@@ -195,12 +197,12 @@ class _HomePageState extends State<HomePage> {
                 //     ? const Icon(Icons.close_rounded, color: Colors.white, size: 38)
                 //     : const Icon(Icons.add_rounded, color: Colors.white, size: 38),
                 onPressed: () {
-                  setState(() {
-                    addTaskDialogOpened = !addTaskDialogOpened;
-                  });
-                  if (addTaskDialogOpened) {
+                  // setState(() {
+                  //   addTaskDialogOpened = !addTaskDialogOpened;
+                  // });
+                  // if (addTaskDialogOpened) {
                     _showAddTaskDialog();
-                  }
+                  // }
                 }, //params
               )
         : FloatingActionButton(
@@ -212,12 +214,12 @@ class _HomePageState extends State<HomePage> {
             //     ? const Icon(Icons.close_rounded, color: Colors.white, size: 38)
             //     : const Icon(Icons.add_rounded, color: Colors.white, size: 38),
             onPressed: () {
-              setState(() {
-                addTaskDialogOpened = !addTaskDialogOpened;
-              });
-              if (addTaskDialogOpened) {
+              // setState(() {
+              //   addTaskDialogOpened = !addTaskDialogOpened;
+              // });
+              // if (addTaskDialogOpened) {
                 _showAddTaskDialog();
-              }
+              // }
             },
             //params
           );

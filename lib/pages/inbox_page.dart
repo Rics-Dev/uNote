@@ -49,7 +49,7 @@ class InboxPage extends StatelessWidget {
                     return Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(18,12,18,0),
+                          padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
                           child: AnimatedContainer(
                             width: double.infinity,
                             duration: const Duration(milliseconds: 300),
