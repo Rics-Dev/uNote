@@ -39,6 +39,8 @@ class TasksAPI extends ChangeNotifier {
     databases = Databases(client);
   }
 
+
+  //for fetching tasks
   void fetchTasks() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -81,6 +83,8 @@ class TasksAPI extends ChangeNotifier {
     }
   }
 
+
+  //to create tasks and tags
   Future<void> createTask(
       {required String task, required List<String> tags}) async {
     final List<Map<String, dynamic>> tagList =
@@ -153,6 +157,9 @@ class TasksAPI extends ChangeNotifier {
     }
   }
 
+
+
+  //to delete tasks
   Future<void> deleteTask({required String taskId}) async {
     Task? removedTask;
     _tasks.removeWhere((task) {
@@ -182,6 +189,7 @@ class TasksAPI extends ChangeNotifier {
     }
   }
 
+  //to update tasks
   void updateTask(String id, {required bool isDone}) async {
     final taskIndex = _tasks.indexWhere((task) => task.id == id);
     final task = _tasks.firstWhere((task) => task.id == id);
@@ -219,6 +227,8 @@ class TasksAPI extends ChangeNotifier {
     }
   }
 
+
+  //to update tasks order only locally
   void updateTasksOrder(int oldIndex, int newIndex) {
     // Perform reordering logic here
     // if (oldIndex < newIndex) {
@@ -229,32 +239,29 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners(); // Notify listeners for rebuild
   }
 
+  //to search for tags when creating them
   void setFilteredTags(List<String> suggestions) {
     _filteredTags = suggestions;
     notifyListeners();
   }
 
-  // void filterTasksByTags(String tag) {
-  //   final filteredTasks =
-  //       _tasks.where((task) => task.tags.contains(tag)).toList();
-  //   updateFilteredTasks(filteredTasks);
-  //   notifyListeners();
-  // }
 
-
+  //to filter tasks by tags
   void filterTasksByTags(List tags) {
     final filteredTasks = _tasks.where((task) {
       return tags.every((tag) => task.tags.contains(tag));
     }).toList();
     updateFilteredTasks(filteredTasks);
-
   }
 
+  //to update filtered tasks
   void updateFilteredTasks(List<Task> filteredTasks) {
     _filteredTasks = filteredTasks;
     notifyListeners();
   }
 
+
+  //when selecting tags in the inbox page to filter
   void toggleTagSelection(String tag) {
     if (_selectedTags.contains(tag)) {
       _selectedTags.remove(tag);

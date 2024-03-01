@@ -2,12 +2,12 @@ import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:provider/provider.dart';
-import 'package:utask/services/task.dart';
+import 'package:utask/providers/task.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
 import '../providers/drag_provider.dart';
-import '../widgets/add_task_view.dart';
-import '../widgets/calendar_view.dart';
-import '../widgets/build_body.dart';
+import '../widgets/homePage/add_task_modal.dart';
+import '../widgets/homePage/build_body_home_page.dart';
+import '../widgets/homePage/calendar_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -104,6 +104,7 @@ class _HomePageState extends State<HomePage> {
             removeTask(data);
             // tasks.remove(data);
           }),
+      extendBody: true,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: AnimatedBottomNavigationBar(
           height: 65.0,
@@ -196,12 +197,12 @@ class _HomePageState extends State<HomePage> {
                 //     ? const Icon(Icons.close_rounded, color: Colors.white, size: 38)
                 //     : const Icon(Icons.add_rounded, color: Colors.white, size: 38),
                 onPressed: () {
-                  setState(() {
-                    addTaskDialogOpened = !addTaskDialogOpened;
-                  });
-                  if (addTaskDialogOpened) {
+                  // setState(() {
+                  //   addTaskDialogOpened = !addTaskDialogOpened;
+                  // });
+                  // if (addTaskDialogOpened) {
                     _showAddTaskDialog();
-                  }
+                  // }
                 }, //params
               )
         : FloatingActionButton(
@@ -213,12 +214,12 @@ class _HomePageState extends State<HomePage> {
             //     ? const Icon(Icons.close_rounded, color: Colors.white, size: 38)
             //     : const Icon(Icons.add_rounded, color: Colors.white, size: 38),
             onPressed: () {
-              setState(() {
-                addTaskDialogOpened = !addTaskDialogOpened;
-              });
-              if (addTaskDialogOpened) {
+              // setState(() {
+              //   addTaskDialogOpened = !addTaskDialogOpened;
+              // });
+              // if (addTaskDialogOpened) {
                 _showAddTaskDialog();
-              }
+              // }
             },
             //params
           );
