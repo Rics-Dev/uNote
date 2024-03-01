@@ -18,11 +18,7 @@ class InboxPage extends StatelessWidget {
     final tasks = tasksAPI.tasks;
     final tags = tasksAPI.tags;
     final selectedTags = tasksAPI.selectedTags;
-    final filteredTasks = selectedTags.isEmpty || tasksAPI.filteredTags.isEmpty
-        ? tasks
-        : tasksAPI.filteredTasks.isNotEmpty
-            ? tasksAPI.filteredTasks
-            : [];
+    final filteredTasks = tasksAPI.filteredTasks;
 
     return Column(
       children: [

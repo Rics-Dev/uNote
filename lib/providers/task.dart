@@ -81,7 +81,9 @@ class TasksAPI extends ChangeNotifier {
       final results2 =
           response2.documents.map((e) => e.data['tagname'].toString()).toList();
       _tags = results2;
+
       _filteredTags = _tags;
+      _filteredTasks = _tasks;
       notifyListeners();
     } finally {
       notifyListeners();
@@ -248,10 +250,11 @@ class TasksAPI extends ChangeNotifier {
 
   //to filter tasks by tags
   void filterTasksByTags(List tags) {
-    final filteredTasks = _tasks.where((task) {
+    _filteredTasks = _tasks.where((task) {
       return tags.every((tag) => task.tags.contains(tag));
     }).toList();
-    updateFilteredTasks(filteredTasks);
+    notifyListeners();
+    // updateFilteredTasks(filteredTasks);
   }
 
   //to update filtered tasks
@@ -270,74 +273,44 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-void toggleSortByCreationDate() {
-  if (_sortByEditionDate == true) {
-    _sortByCreationDate = true;
-    _sortByEditionDate = false;
-  }
-  toggleNewToOld();
-  notifyListeners();
-}
-
-void toggleSortByEditionDate() {
-  if (_sortByCreationDate == true) {
-    _sortByCreationDate = false;
-    _sortByEditionDate = true;
-  }
-  toggleNewToOld();
-  notifyListeners();
-}
-
-void toggleNewToOld() {
-  _oldToNew = !_oldToNew;
-
-  tasks.sort((a, b) {
-    if (_sortByCreationDate) {
-      if (_oldToNew) {
-        return a.createdAt.compareTo(b.createdAt);
-      } else {
-        return b.createdAt.compareTo(a.createdAt);
-      }
-    } else if (_sortByEditionDate) {
-      if (_oldToNew) {
-        return a.updatedAt.compareTo(b.updatedAt);
-      } else {
-        return b.updatedAt.compareTo(a.updatedAt);
-      }
+  void toggleSortByCreationDate() {
+    if (_sortByEditionDate == true) {
+      _sortByCreationDate = true;
+      _sortByEditionDate = false;
     }
+    toggleNewToOld();
+    notifyListeners();
+  }
 
-    // Ensure that the function always returns an integer
-    return 0; // You can return any value here since it won't affect the sorting
-  });
+  void toggleSortByEditionDate() {
+    if (_sortByCreationDate == true) {
+      _sortByCreationDate = false;
+      _sortByEditionDate = true;
+    }
+    toggleNewToOld();
+    notifyListeners();
+  }
 
-  // Assign the sorted result back to filteredTasks
-  _tasks = List.from(tasks);
+  void toggleNewToOld() {
+    _oldToNew = !_oldToNew;
 
-  notifyListeners();
+    filteredTasks.sort((a, b) {
+      if (_sortByCreationDate) {
+        if (_oldToNew) {
+          return a.createdAt.compareTo(b.createdAt);
+        } else {
+          return b.createdAt.compareTo(a.createdAt);
+        }
+      } else if (_sortByEditionDate) {
+        if (_oldToNew) {
+          return a.updatedAt.compareTo(b.updatedAt);
+        } else {
+          return b.updatedAt.compareTo(a.updatedAt);
+        }
+      }
+      return 0;
+    });
+
+    notifyListeners();
+  }
 }
-
-  void setFilteredTasks(List filteredTasks) {}
-
-}
-
-
-
-  // Future<void> getTasks({required AuthAPI auth}) async {
-  //   try {
-  //     final response = await databases.listDocuments(
-  //       databaseId: constants.appwriteDatabaseId,
-  //       collectionId: constants.appwriteTasksCollectionId,
-  //       queries: [
-  //         Query.equal("userID", [auth.userid])
-  //       ],
-  //     );
-  //     final results =
-  //         response.documents.map((e) => Task.fromMap(e.data)).toList();
-  //     tasks = results;
-  //     final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     prefs.setStringList(
-  //         'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
-  //   } finally {
-  //     notifyListeners();
-  //   }
-  // }
