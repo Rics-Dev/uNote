@@ -84,8 +84,9 @@ class TasksAPI extends ChangeNotifier {
         databaseId: constants.appwriteDatabaseId,
         collectionId: constants.appwriteTagsCollectionId,
       );
-      final serverTagsResults =
-          serverTags.documents.map((e) => e.data['tagname'].toString()).toList();
+      final serverTagsResults = serverTags.documents
+          .map((e) => e.data['tagname'].toString())
+          .toList();
       _tags = serverTagsResults;
 
       prefs.setStringList('tags', tags);
@@ -308,10 +309,6 @@ class TasksAPI extends ChangeNotifier {
 
   //to update tasks order only locally
   void updateTasksOrder(int oldIndex, int newIndex) {
-    // Perform reordering logic here
-    // if (oldIndex < newIndex) {
-    //     newIndex -= 1;
-    //   }
     final task = tasks.removeAt(oldIndex);
     tasks.insert(newIndex, task);
     notifyListeners(); // Notify listeners for rebuild
@@ -352,7 +349,7 @@ class TasksAPI extends ChangeNotifier {
       _sortByCreationDate = true;
       _sortByEditionDate = false;
     }
-    toggleNewToOld();
+    sortTasks();
     notifyListeners();
   }
 
@@ -361,13 +358,17 @@ class TasksAPI extends ChangeNotifier {
       _sortByCreationDate = false;
       _sortByEditionDate = true;
     }
-    toggleNewToOld();
+    sortTasks();
     notifyListeners();
   }
 
   void toggleNewToOld() {
     _oldToNew = !_oldToNew;
+    sortTasks();
+    notifyListeners();
+  }
 
+  void sortTasks() {
     filteredTasks.sort((a, b) {
       if (_sortByCreationDate) {
         if (_oldToNew) {

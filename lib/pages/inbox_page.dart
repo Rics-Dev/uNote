@@ -29,6 +29,8 @@ class InboxPage extends StatelessWidget {
             tags: tags,
             context: context,
             tasksAPI: tasksAPI),
+        
+
         TasksViewInboxPage(filteredTasks: filteredTasks),
       ],
     );

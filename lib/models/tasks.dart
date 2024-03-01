@@ -7,7 +7,6 @@ class Task {
   String content; // Content of the task.
   String id; // Unique identifier for the task.
   List<String> tags; // List of tags associated with the task.
-  bool favorite; // Indicates whether the task is marked as a favorite.
   bool isDone; // Indicates whether the task is completed.
   DateTime createdAt; // Date and time when the task was created.
   DateTime updatedAt; // Date and time when the task was last updated.
@@ -17,7 +16,6 @@ class Task {
     required this.content, // Content is required.
     required this.id, // ID is required.
     this.tags = const [], // Tags are optional, initialized as an empty list by default.
-    this.favorite = false, // Favorite status is optional, initialized as false by default.
     this.isDone = false, // Completion status is optional, initialized as false by default.
     required this.createdAt, // Creation time is required.
     required this.updatedAt, // Update time is required.
@@ -32,7 +30,6 @@ class Task {
         content: json["content"], // Extracting content from the Map.
         id: json["\u0024id"] ?? "", // Extracting ID from the Map, with fallback to an empty string if not present.
         tags: List<String>.from(json["tags"].map((x) => x is Map ? x["tagname"] : x)), // Extracting and formatting tags from the Map.
-        favorite: json["favorite"], // Extracting favorite status from the Map.
         isDone: json["isDone"], // Extracting completion status from the Map.
         createdAt: DateTime.parse(json["\u0024createdAt"]), // Parsing creation time from string to DateTime.
         updatedAt: DateTime.parse(json["\u0024updatedAt"]), // Parsing update time from string to DateTime.
@@ -48,7 +45,6 @@ class Task {
       "content": content, // Adding content to the Map.
       "\u0024id": id, // Adding ID to the Map with special prefix.
       "tags": tags, // Adding tags to the Map.
-      "favorite": favorite, // Adding favorite status to the Map.
       "isDone": isDone, // Adding completion status to the Map.
       "\u0024createdAt": createdAt.toIso8601String(), // Adding creation time to the Map in ISO 8601 format.
       "\u0024updatedAt": updatedAt.toIso8601String(), // Adding update time to the Map in ISO 8601 format.

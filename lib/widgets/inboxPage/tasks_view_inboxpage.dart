@@ -2,118 +2,168 @@ import 'package:flutter/material.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/tasks.dart';
 import '../../providers/drag_provider.dart';
 import '../../providers/task_provider.dart';
 
 class TasksViewInboxPage extends StatelessWidget {
   const TasksViewInboxPage({
-    super.key,
+    Key? key,
     required this.filteredTasks,
-  });
+  }) : super(key: key);
 
-  final List filteredTasks;
+  final List<Task> filteredTasks;
 
   @override
   Widget build(BuildContext context) {
+    final doneTasks = filteredTasks.where((task) => task.isDone).toList();
+    final notDoneTasks = filteredTasks.where((task) => !task.isDone).toList();
+
     return Expanded(
-      child: ListView.builder(
-        itemCount: filteredTasks.length,
-        itemBuilder: (context, index) {
-          return LongPressDraggable(
-            dragAnchorStrategy:
-                (Draggable<Object> _, BuildContext __, Offset ___) =>
-                    const Offset(70, 70),
-            // delay: const Duration(milliseconds: 100),
-            onDragStarted: () {
-              context.read<DragStateProvider>().startDrag(index);
+      child: filteredTasks.isEmpty
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('No tasks Yet! Add a task to get started!'),
+                  SizedBox(height: 40),
+                  Icon(
+                    Icons.arrow_downward_rounded,
+                    size: 50,
+                    color: Color.fromARGB(255, 0, 73, 133),
+                  )
+                ],
+              ),
+            )
+          : ListView.builder(
+              itemCount: notDoneTasks.length + (doneTasks.isNotEmpty ? 1 : 0),
+              itemBuilder: (context, index) {
+                return buildTaskItem(context, notDoneTasks, doneTasks, index);
+              },
+            ),
+    );
+  }
+
+  Widget buildTaskItem(
+    BuildContext context,
+    List<Task> notDoneTasks,
+    List<Task> doneTasks,
+    int index,
+  ) {
+    if (index < notDoneTasks.length) {
+      return buildTaskWidget(context, notDoneTasks[index], index);
+    } else {
+      return doneTasks.isNotEmpty
+          ? doneTasksList(context, doneTasks)
+          : const SizedBox();
+    }
+  }
+
+  Widget buildTaskWidget(BuildContext context, Task task, index) {
+    return LongPressDraggable(
+      dragAnchorStrategy: (Draggable<Object> _, BuildContext __, Offset ___) =>
+          const Offset(70, 70),
+      key: ValueKey(task),
+      data: task.id,
+      onDragStarted: () {
+        context.read<DragStateProvider>().startDrag(index);
+      },
+      onDragEnd: (data) {
+        context.read<DragStateProvider>().endDrag();
+      },
+      feedback: buildTaskCard(task),
+      childWhenDragging: const SizedBox(),
+      child: buildDragTarget(context, task),
+    );
+  }
+
+  Widget buildDragTarget(BuildContext context, Task task) {
+    return DragTarget(
+      builder: (context, incoming, rejected) {
+        return GestureDetector(
+          onTap: () {
+            showTaskDetails(context);
+          },
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
+            child: buildTaskContainer(context, task, incoming),
+          ),
+        );
+      },
+      // Drag target callbacks...
+    );
+  }
+
+  Widget buildTaskContainer(
+      BuildContext context, Task task, List<Object?> incoming) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: incoming.isNotEmpty ? Colors.blue[100] : Colors.blue[50],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          MSHCheckbox(
+            size: 22,
+            value: task.isDone,
+            colorConfig: MSHColorConfig.fromCheckedUncheckedDisabled(
+              checkedColor: const Color.fromARGB(255, 0, 73, 133),
+            ),
+            style: MSHCheckboxStyle.fillScaleColor,
+            onChanged: (selected) {
+              context.read<TasksAPI>().updateTask(task.id, isDone: selected);
             },
-            onDragEnd: (data) {
-              context.read<DragStateProvider>().endDrag();
-            },
-            key: ValueKey(filteredTasks[index]),
-            data: filteredTasks[index].id,
-            feedback: Card(
-              color: Colors.blue[100],
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                child: Text(filteredTasks[index].content),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              task.content,
+              style: TextStyle(
+                fontSize: 14,
+                decoration: task.isDone
+                    ? TextDecoration.lineThrough
+                    : TextDecoration.none,
+                color: task.isDone ? Colors.grey : Colors.black,
               ),
             ),
-            childWhenDragging: const SizedBox(),
-            child: DragTarget(
-              builder: (context, incoming, rejected) {
-                // final isDragging =
-                //     Provider.of<DragStateProvider>(context).isDragging;
-      
-                return Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        showTaskDetails(context);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: incoming.isNotEmpty
-                                ? Colors.blue[100]
-                                : Colors.blue[50],
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              MSHCheckbox(
-                                size: 22,
-                                value: filteredTasks[index].isDone,
-                                colorConfig:
-                                    MSHColorConfig.fromCheckedUncheckedDisabled(
-                                  checkedColor:
-                                      const Color.fromARGB(255, 0, 73, 133),
-                                ),
-                                style: MSHCheckboxStyle.fillScaleColor,
-                                onChanged: (selected) {
-                                  context.read<TasksAPI>().updateTask(
-                                        filteredTasks[index].id,
-                                        isDone: selected,
-                                      );
-                                },
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: Text(filteredTasks[index].content,
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        decoration:
-                                            filteredTasks[index].isDone == true
-                                                ? TextDecoration.lineThrough
-                                                : TextDecoration.none,
-                                        color:
-                                            filteredTasks[index].isDone == true
-                                                ? Colors.grey
-                                                : Colors.black)),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-              onWillAccept: (data) => true,
-              onAccept: (data) {
-                final oldIndex =
-                    context.read<DragStateProvider>().originalIndex;
-                final newIndex = index;
-                context.read<TasksAPI>().updateTasksOrder(oldIndex, newIndex);
-              },
-            ),
-          );
-        },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildTaskCard(Task task) {
+    return Card(
+      color: Colors.blue[100],
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        child: Text(task.content),
+      ),
+    );
+  }
+
+  Widget doneTasksList(BuildContext context, List<Task> doneTasks) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
+      child: Card(
+        child: Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            title: Text('Done tasks (${doneTasks.length})'),
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: doneTasks.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return buildTaskWidget(context, doneTasks[index], index);
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -182,5 +232,9 @@ class TasksViewInboxPage extends StatelessWidget {
         );
       },
     );
+  }
+
+  _filterNotDoneTasks(List filteredTasks) {
+    return filteredTasks.where((task) => !task.isDone).toList();
   }
 }
