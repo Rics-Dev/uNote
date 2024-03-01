@@ -82,7 +82,7 @@ class TasksViewInboxPage extends StatelessWidget {
       builder: (context, incoming, rejected) {
         return GestureDetector(
           onTap: () {
-            showTaskDetails(context);
+            showTaskDetails(context, task);
           },
           child: Padding(
             padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
@@ -151,7 +151,7 @@ class TasksViewInboxPage extends StatelessWidget {
         child: Theme(
           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
           child: ExpansionTile(
-            title: Text('Done tasks (${doneTasks.length})'),
+            title: Text('✔️ Done tasks (${doneTasks.length})'),
             children: [
               ListView.builder(
                 shrinkWrap: true,
@@ -168,7 +168,7 @@ class TasksViewInboxPage extends StatelessWidget {
     );
   }
 
-  Future<dynamic> showTaskDetails(BuildContext context) {
+  Future<dynamic> showTaskDetails(BuildContext context, Task task) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -178,50 +178,55 @@ class TasksViewInboxPage extends StatelessWidget {
           ),
           child: Container(
             width: 300,
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
+                  const Text(
                     'Edit Task',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextFormField(
-                    initialValue: 'Example Task',
-                    decoration: InputDecoration(
+                    initialValue: task.content,
+                    decoration: const InputDecoration(
                       labelText: 'Task Name',
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   TextFormField(
                     initialValue: 'This is an example task description.',
                     maxLines: 2,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Task Description',
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          // Save changes
-                          Navigator.pop(context);
-                        },
-                        child: Text('Save'),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
                           // Cancel editing
                           Navigator.pop(context);
                         },
-                        child: Text('Cancel'),
+                        child: const Text('Cancel'),
+                      ),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color.fromARGB(255, 0, 73, 133),
+                          ),
+                        ),
+                        onPressed: () {
+                          // Save changes
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Save', style: TextStyle(color: Colors.white),)
                       ),
                     ],
                   ),

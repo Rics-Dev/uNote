@@ -65,34 +65,7 @@ class HorizontalTagsView extends StatelessWidget {
                       child: GestureDetector(
                         onLongPress: () {
                           // Show a confirmation dialog
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Delete Tag? $tag'),
-                                content: const Text(
-                                    'Are you sure you want to delete this tag?'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                          .pop(); // Close the dialog
-                                    },
-                                    child: const Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      // Perform the deletion logic here
-                                       tasksAPI.deleteTag(tag);// You should implement the logic to delete the tag
-                                      Navigator.of(context)
-                                          .pop(); // Close the dialog
-                                    },
-                                    child: Text('Delete'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
+                          deleteTag(context, tag);
                         },
                         onTap: () {
                           tasksAPI.toggleTagSelection(tag);
@@ -147,6 +120,41 @@ class HorizontalTagsView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Future<dynamic> deleteTag(BuildContext context, String tag) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Tag? "$tag"'),
+          content: const Text('Are you sure you want to delete this tag?'),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                
+                ElevatedButton(
+                  onPressed: () {
+                    // Save changes
+                    Navigator.pop(context);
+                  },
+                  child: Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Save changes
+                    tasksAPI.deleteTag(tag);
+                    Navigator.pop(context);
+                  },
+                  child: Text('Delete', style: TextStyle(color: Colors.red),)
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }
