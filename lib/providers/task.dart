@@ -16,13 +16,20 @@ class TasksAPI extends ChangeNotifier {
   List<String> _tags = [];
   List<String> _filteredTags = [];
   List<Task> _filteredTasks = [];
-  List<String> _selectedTags = [];
+  final List<String> _selectedTags = [];
+   bool _sortByCreationDate = true;
+   bool _sortByEditionDate = false;
+   bool _oldToNew = true;
 
-  List<String> get selectedTags => _selectedTags;
+  
   List<Task> get tasks => _tasks;
   List<String> get tags => _tags;
   List<String> get filteredTags => _filteredTags;
   List<Task> get filteredTasks => _filteredTasks;
+  List<String> get selectedTags => _selectedTags;
+  bool get sortByCreationDate => _sortByCreationDate;
+  bool get sortByEditionDate => _sortByEditionDate; 
+  bool get oldToNew => _oldToNew;
 
   TasksAPI(
       {String endpoint = constants.appwriteEndpoint,
@@ -268,6 +275,28 @@ class TasksAPI extends ChangeNotifier {
     } else {
       _selectedTags.add(tag);
     }
+    notifyListeners();
+  }
+
+  void toggleSortByCreationDate() {
+    if(_sortByEditionDate == true){
+      _sortByCreationDate = true;
+      _sortByEditionDate = false;
+    }
+    notifyListeners();
+  }
+
+  void toggleSortByEditionDate() {
+    if(_sortByCreationDate == true){
+      _sortByCreationDate = false;
+      _sortByEditionDate = true;
+    }
+    notifyListeners();
+
+  }
+
+  void toggleNewToOld() {
+    _oldToNew = !_oldToNew;
     notifyListeners();
   }
 }

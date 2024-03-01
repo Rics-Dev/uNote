@@ -15,8 +15,8 @@ class TasksViewInboxPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-    height: MediaQuery.of(context).size.height - 200,
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.6,
       child: ListView.builder(
         itemCount: filteredTasks.length,
         itemBuilder: (context, index) {

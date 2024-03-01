@@ -19,6 +19,7 @@ class HorizontalTagsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final filteredTasks = tasksAPI.filteredTasks;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
       child: Row(
@@ -31,7 +32,7 @@ class HorizontalTagsView extends StatelessWidget {
                           border: Border.all(
                               color: Colors.black)),
                       child: Text(
-                        selectedTags.length.toString(),
+                        filteredTasks.length.toString(),
                         style: const TextStyle(
                             color:  Color.fromARGB(255, 0, 73, 133)),
                       ))
