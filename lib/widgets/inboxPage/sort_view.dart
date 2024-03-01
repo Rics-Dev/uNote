@@ -11,9 +11,9 @@ class SortView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tasksAPI = context.watch<TasksAPI>();
-    final sortByCreationDate = tasksAPI.sortByCreationDate;
-    final sortByEditionDate = tasksAPI.sortByEditionDate;
     final oldToNew = tasksAPI.oldToNew;
+    
+    SortCriteria sortCriteria = tasksAPI.sortCriteria;
 
     return SafeArea(
         child: SizedBox(
@@ -24,10 +24,13 @@ class SortView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(
-            height: 5,
+            height: 10,
           ),
           const Text('Sort by',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.normal)),
+          const SizedBox(
+            height: 5,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -35,7 +38,7 @@ class SortView extends StatelessWidget {
                 onPressed: () {
                   tasksAPI.toggleSortByCreationDate();
                 },
-                style: sortByCreationDate
+                style: sortCriteria == SortCriteria.creationDate
                     ? ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                           const Color.fromARGB(255, 0, 73,
@@ -45,7 +48,7 @@ class SortView extends StatelessWidget {
                     : null,
                 child: Text('Date Created',
                     style: TextStyle(
-                      color: sortByCreationDate
+                      color: sortCriteria == SortCriteria.creationDate
                           ? Colors.white
                           : const Color.fromARGB(255, 0, 73, 133),
                     )),
@@ -72,7 +75,7 @@ class SortView extends StatelessWidget {
                 onPressed: () {
                   tasksAPI.toggleSortByEditionDate();
                 },
-                style: sortByEditionDate
+                style: sortCriteria == SortCriteria.editionDate
                     ? ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                           const Color.fromARGB(255, 0, 73,
@@ -82,7 +85,53 @@ class SortView extends StatelessWidget {
                     : null,
                 child: Text('Date Edited',
                     style: TextStyle(
-                      color: sortByEditionDate
+                      color: sortCriteria == SortCriteria.editionDate
+                          ? Colors.white
+                          : const Color.fromARGB(255, 0, 73, 133),
+                    )),
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              OutlinedButton(
+                onPressed: () {
+                  tasksAPI.toggleSortByNameAZ();
+                },
+                style: sortCriteria == SortCriteria.nameAZ
+                    ? ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color.fromARGB(255, 0, 73,
+                              133), // Change the text color when not selected
+                        ),
+                      )
+                    : null,
+                child: Text('Name A - Z',
+                    style: TextStyle(
+                      color: sortCriteria == SortCriteria.nameAZ
+                          ? Colors.white
+                          : const Color.fromARGB(255, 0, 73, 133),
+                    )),
+              ),
+              OutlinedButton(
+                onPressed: () {
+                  tasksAPI.toggleSortByNameZA();
+                },
+                style: sortCriteria == SortCriteria.nameZA
+                    ? ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color.fromARGB(255, 0, 73,
+                              133), // Change the text color when not selected
+                        ),
+                      )
+                    : null,
+                child: Text('Name Z - A',
+                    style: TextStyle(
+                      color: sortCriteria == SortCriteria.nameZA
                           ? Colors.white
                           : const Color.fromARGB(255, 0, 73, 133),
                     )),

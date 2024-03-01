@@ -7,6 +7,13 @@ import '../constants.dart' as constants;
 import '../models/tasks.dart';
 import 'auth.dart';
 
+enum SortCriteria {
+  creationDate,
+  editionDate,
+  nameAZ,
+  nameZA,
+}
+
 class TasksAPI extends ChangeNotifier {
   Client client = Client();
   late final Account account;
@@ -20,6 +27,10 @@ class TasksAPI extends ChangeNotifier {
   bool _sortByCreationDate = true;
   bool _sortByEditionDate = false;
   bool _oldToNew = true;
+  bool _sortByNameAZ = false;
+  bool _sortByNameZA = false;
+
+  SortCriteria _sortCriteria = SortCriteria.creationDate;
 
   List<Task> get tasks => _tasks;
   List<String> get tags => _tags;
@@ -29,6 +40,9 @@ class TasksAPI extends ChangeNotifier {
   bool get sortByCreationDate => _sortByCreationDate;
   bool get sortByEditionDate => _sortByEditionDate;
   bool get oldToNew => _oldToNew;
+  bool get sortByNameAZ => _sortByNameAZ;
+  bool get sortByNameZA => _sortByNameZA;
+  SortCriteria get sortCriteria => _sortCriteria;
 
   TasksAPI(
       {String endpoint = constants.appwriteEndpoint,
@@ -109,7 +123,6 @@ class TasksAPI extends ChangeNotifier {
       'content': task,
       'userID': auth.userid,
       'tags': tagList,
-      'favorite': false,
       'isDone': false,
       '\u0024createdAt': DateTime.now().toIso8601String(),
       '\u0024updatedAt': DateTime.now().toIso8601String(),
@@ -345,19 +358,25 @@ class TasksAPI extends ChangeNotifier {
   }
 
   void toggleSortByCreationDate() {
-    if (_sortByEditionDate == true) {
-      _sortByCreationDate = true;
-      _sortByEditionDate = false;
-    }
+    _sortCriteria = SortCriteria.creationDate;
     sortTasks();
     notifyListeners();
   }
 
   void toggleSortByEditionDate() {
-    if (_sortByCreationDate == true) {
-      _sortByCreationDate = false;
-      _sortByEditionDate = true;
-    }
+    _sortCriteria = SortCriteria.editionDate;
+    sortTasks();
+    notifyListeners();
+  }
+
+  void toggleSortByNameAZ() {
+    _sortCriteria = SortCriteria.nameAZ;
+    sortTasks();
+    notifyListeners();
+  }
+
+  void toggleSortByNameZA() {
+    _sortCriteria = SortCriteria.nameZA;
     sortTasks();
     notifyListeners();
   }
@@ -370,22 +389,24 @@ class TasksAPI extends ChangeNotifier {
 
   void sortTasks() {
     filteredTasks.sort((a, b) {
-      if (_sortByCreationDate) {
-        if (_oldToNew) {
-          return a.createdAt.compareTo(b.createdAt);
-        } else {
-          return b.createdAt.compareTo(a.createdAt);
-        }
-      } else if (_sortByEditionDate) {
-        if (_oldToNew) {
-          return a.updatedAt.compareTo(b.updatedAt);
-        } else {
-          return b.updatedAt.compareTo(a.updatedAt);
-        }
+      switch (sortCriteria) {
+        case SortCriteria.creationDate:
+          return _sortByDate(a.createdAt, b.createdAt);
+        case SortCriteria.editionDate:
+          return _sortByDate(a.updatedAt, b.updatedAt);
+        case SortCriteria.nameAZ:
+          return a.content.compareTo(b.content);
+        case SortCriteria.nameZA:
+          return b.content.compareTo(a.content);
+        default:
+          return 0;
       }
-      return 0;
     });
 
     notifyListeners();
+  }
+
+  int _sortByDate(DateTime a, DateTime b) {
+    return _oldToNew ? a.compareTo(b) : b.compareTo(a);
   }
 }

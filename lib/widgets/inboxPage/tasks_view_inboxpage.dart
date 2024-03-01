@@ -233,8 +233,4 @@ class TasksViewInboxPage extends StatelessWidget {
       },
     );
   }
-
-  _filterNotDoneTasks(List filteredTasks) {
-    return filteredTasks.where((task) => !task.isDone).toList();
-  }
 }
