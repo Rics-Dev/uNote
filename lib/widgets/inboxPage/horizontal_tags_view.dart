@@ -20,23 +20,28 @@ class HorizontalTagsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final filteredTasks = tasksAPI.filteredTasks;
     final allTasks = tasksAPI.tasks;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
       child: Row(
         children: [
           selectedTags.isNotEmpty
-              ? Container(
-                  padding: const EdgeInsets.all(13),
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.grey)),
-                  child: Text(
-                    selectedTags.length.toString(),
-                    style:
-                        const TextStyle(color: Color.fromARGB(255, 0, 73, 133)),
-                  ))
+              ? GestureDetector(
+                  onTap: () {
+                    tasksAPI.clearSelectedTags();
+                    tasksAPI.filterTasksByTags(tasksAPI.selectedTags);
+                  },
+                child: Container(
+                    padding: const EdgeInsets.all(13),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.grey)),
+                    child: Text(
+                      selectedTags.length.toString(),
+                      style:
+                          const TextStyle(color: Color.fromARGB(255, 0, 73, 133)),
+                    )),
+              )
               : const SizedBox(),
           Expanded(
             child: SingleChildScrollView(
@@ -53,16 +58,14 @@ class HorizontalTagsView extends StatelessWidget {
                           .where((task) => task.tags.contains(tag))
                           .length
                           .toString(),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
                       child: GestureDetector(
                         onTap: () {
-                          context.read<TasksAPI>().toggleTagSelection(tag);
-                          context
-                              .read<TasksAPI>()
-                              .filterTasksByTags(selectedTags);
+                          tasksAPI.toggleTagSelection(tag);
+                          tasksAPI.filterTasksByTags(tasksAPI.selectedTags);
                         },
                         child: OutlinedButton.icon(
                           onPressed: () {

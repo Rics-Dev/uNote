@@ -51,10 +51,16 @@ class TasksAPI extends ChangeNotifier {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       // await prefs.remove('tasks');
       final cachedTasks = prefs.getStringList('tasks');
+      final cachedTags = prefs.getStringList('tags');
       if (cachedTasks != null) {
         _tasks = cachedTasks
             .map((jsonString) => Task.fromJson(json.decode(jsonString)))
             .toList();
+        _filteredTasks = _tasks;
+        notifyListeners();
+      }
+      if (cachedTags != null) {
+        _tags = cachedTags;
         notifyListeners();
       }
 
@@ -81,6 +87,8 @@ class TasksAPI extends ChangeNotifier {
       final results2 =
           response2.documents.map((e) => e.data['tagname'].toString()).toList();
       _tags = results2;
+
+      prefs.setStringList('tags', tags);
 
       _filteredTags = _tags;
       _filteredTasks = _tasks;
@@ -248,22 +256,8 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-  //to filter tasks by tags
-  void filterTasksByTags(List tags) {
-    _filteredTasks = _tasks.where((task) {
-      return tags.every((tag) => task.tags.contains(tag));
-    }).toList();
-    notifyListeners();
-    // updateFilteredTasks(filteredTasks);
-  }
 
-  //to update filtered tasks
-  void updateFilteredTasks(List<Task> filteredTasks) {
-    _filteredTasks = filteredTasks;
-    notifyListeners();
-  }
-
-  //when selecting tags in the inbox page to filter
+    //when selecting tags in the inbox page to filter
   void toggleTagSelection(String tag) {
     if (_selectedTags.contains(tag)) {
       _selectedTags.remove(tag);
@@ -272,6 +266,23 @@ class TasksAPI extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+    void clearSelectedTags() {
+    _selectedTags.clear();
+    notifyListeners();
+  }
+
+  //to filter tasks by tags
+  void filterTasksByTags(List tags) {
+    _filteredTasks = _tasks.where((task) {
+      return tags.every((tag) => task.tags.contains(tag));
+    }).toList();
+    notifyListeners();
+  }
+
+
+
+
 
   void toggleSortByCreationDate() {
     if (_sortByEditionDate == true) {
