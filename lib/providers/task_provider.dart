@@ -244,6 +244,28 @@ class TasksAPI extends ChangeNotifier {
     }
   }
 
+  void deleteTag(String tag) {
+    _tags.remove(tag);
+    for (var task in _tasks) {
+      if (task.tags.contains(tag)) {
+        // If the task contains the tag, remove it
+        task.tags.remove(tag);
+      }
+    }
+    notifyListeners();
+    try {
+      databases.deleteDocument(
+        databaseId: constants.appwriteDatabaseId,
+        collectionId: constants.appwriteTagsCollectionId,
+        documentId: tag,
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error deleting tag: $e');
+      }
+    }
+  }
+
   //to update tasks
   void updateTask(String id, {required bool isDone}) async {
     final taskIndex = _tasks.indexWhere((task) => task.id == id);

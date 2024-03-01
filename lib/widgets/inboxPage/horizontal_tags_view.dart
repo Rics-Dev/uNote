@@ -31,17 +31,17 @@ class HorizontalTagsView extends StatelessWidget {
                     tasksAPI.clearSelectedTags();
                     tasksAPI.filterTasksByTags(tasksAPI.selectedTags);
                   },
-                child: Container(
-                    padding: const EdgeInsets.all(13),
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.grey)),
-                    child: Text(
-                      selectedTags.length.toString(),
-                      style:
-                          const TextStyle(color: Color.fromARGB(255, 0, 73, 133)),
-                    )),
-              )
+                  child: Container(
+                      padding: const EdgeInsets.all(13),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.grey)),
+                      child: Text(
+                        selectedTags.length.toString(),
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 0, 73, 133)),
+                      )),
+                )
               : const SizedBox(),
           Expanded(
             child: SingleChildScrollView(
@@ -63,6 +63,37 @@ class HorizontalTagsView extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
                       child: GestureDetector(
+                        onLongPress: () {
+                          // Show a confirmation dialog
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Delete Tag? $tag'),
+                                content: const Text(
+                                    'Are you sure you want to delete this tag?'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Close the dialog
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      // Perform the deletion logic here
+                                       tasksAPI.deleteTag(tag);// You should implement the logic to delete the tag
+                                      Navigator.of(context)
+                                          .pop(); // Close the dialog
+                                    },
+                                    child: Text('Delete'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                         onTap: () {
                           tasksAPI.toggleTagSelection(tag);
                           tasksAPI.filterTasksByTags(tasksAPI.selectedTags);
