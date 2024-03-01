@@ -67,26 +67,26 @@ class TasksAPI extends ChangeNotifier {
       if (auth.status == AuthStatus.uninitialized) {
         await auth.loadUser();
       }
-      final response = await databases.listDocuments(
+      final serverTasks = await databases.listDocuments(
         databaseId: constants.appwriteDatabaseId,
         collectionId: constants.appwriteTasksCollectionId,
         queries: [
           Query.equal("userID", [auth.userid])
         ],
       );
-      final results =
-          response.documents.map((e) => Task.fromMap(e.data)).toList();
-      _tasks = results;
+      final serverTasksResults =
+          serverTasks.documents.map((e) => Task.fromMap(e.data)).toList();
+      _tasks = serverTasksResults;
       prefs.setStringList(
           'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
       notifyListeners();
-      final response2 = await databases.listDocuments(
+      final serverTags = await databases.listDocuments(
         databaseId: constants.appwriteDatabaseId,
         collectionId: constants.appwriteTagsCollectionId,
       );
-      final results2 =
-          response2.documents.map((e) => e.data['tagname'].toString()).toList();
-      _tags = results2;
+      final serverTagsResults =
+          serverTags.documents.map((e) => e.data['tagname'].toString()).toList();
+      _tags = serverTagsResults;
 
       prefs.setStringList('tags', tags);
 
@@ -244,7 +244,7 @@ class TasksAPI extends ChangeNotifier {
     }
   }
 
-  void deleteTag(String tag) {
+  void deleteTag(String tag) async {
     _tags.remove(tag);
     for (var task in _tasks) {
       if (task.tags.contains(tag)) {
@@ -254,11 +254,13 @@ class TasksAPI extends ChangeNotifier {
     }
     notifyListeners();
     try {
-      databases.deleteDocument(
+      await databases.deleteDocument(
         databaseId: constants.appwriteDatabaseId,
         collectionId: constants.appwriteTagsCollectionId,
         documentId: tag,
       );
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setStringList('tags', _tags);
     } catch (e) {
       if (kDebugMode) {
         print('Error deleting tag: $e');
@@ -266,7 +268,7 @@ class TasksAPI extends ChangeNotifier {
     }
   }
 
-  //to update tasks
+  //to update tasks (for now only when it's done)
   void updateTask(String id, {required bool isDone}) async {
     final taskIndex = _tasks.indexWhere((task) => task.id == id);
     final task = _tasks.firstWhere((task) => task.id == id);
