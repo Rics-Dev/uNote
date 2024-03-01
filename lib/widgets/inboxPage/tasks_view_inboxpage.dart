@@ -3,7 +3,7 @@ import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/drag_provider.dart';
-import '../../providers/task.dart';
+import '../../providers/task_provider.dart';
 
 class TasksViewInboxPage extends StatelessWidget {
   const TasksViewInboxPage({

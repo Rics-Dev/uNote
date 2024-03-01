@@ -2,7 +2,7 @@ import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/task.dart';
+import '../../providers/task_provider.dart';
 import 'package:toastification/toastification.dart';
 
 import 'add_tag_modal.dart';

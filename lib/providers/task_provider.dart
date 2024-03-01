@@ -159,6 +159,7 @@ class TasksAPI extends ChangeNotifier {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setStringList(
           'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
+      prefs.setStringList('tags', _tags);
     } catch (e) {
       if (kDebugMode) {
         print('Error creating task: $e');
@@ -181,7 +182,12 @@ class TasksAPI extends ChangeNotifier {
       }
       return false;
     });
+    _filteredTasks.removeWhere((task) => task.id == taskId);
     notifyListeners();
+
+    //after removing task remove unused tags
+    removeUnusedTag(removedTask);
+
     try {
       await databases.deleteDocument(
           databaseId: constants.appwriteDatabaseId,
@@ -191,6 +197,8 @@ class TasksAPI extends ChangeNotifier {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setStringList(
           'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
+
+      prefs.setStringList('tags', _tags);
     } catch (e) {
       if (removedTask != null) {
         _tasks.add(removedTask!);
@@ -198,6 +206,41 @@ class TasksAPI extends ChangeNotifier {
       }
     } finally {
       notifyListeners();
+    }
+  }
+
+  void removeUnusedTag(Task? removedTask) async {
+    if (removedTask != null && removedTask.tags.isNotEmpty) {
+      final List<String> tagsToRemove = removedTask.tags
+          .toList(); // Copy the list to avoid concurrent modification issues
+      for (final tagToRemove in tagsToRemove) {
+        bool isTagUsed = false;
+        for (final task in _tasks) {
+          if (task.id != removedTask.id && task.tags.contains(tagToRemove)) {
+            // Check if the tag is used by any other task except the removed task
+            isTagUsed = true;
+            break;
+          }
+        }
+
+        // If the tag is not used by any other task, remove it
+        if (!isTagUsed) {
+          tags.remove(tagToRemove);
+          clearSelectedTags();
+          notifyListeners();
+          try {
+            await databases.deleteDocument(
+              databaseId: constants.appwriteDatabaseId,
+              collectionId: constants.appwriteTagsCollectionId,
+              documentId: tagToRemove,
+            );
+          } catch (e) {
+            if (kDebugMode) {
+              print('Error removing tag: $e');
+            }
+          }
+        }
+      }
     }
   }
 
@@ -256,8 +299,7 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-
-    //when selecting tags in the inbox page to filter
+  //when selecting tags in the inbox page to filter
   void toggleTagSelection(String tag) {
     if (_selectedTags.contains(tag)) {
       _selectedTags.remove(tag);
@@ -267,8 +309,9 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-    void clearSelectedTags() {
+  void clearSelectedTags() {
     _selectedTags.clear();
+    _filteredTasks = tasks;
     notifyListeners();
   }
 
@@ -279,10 +322,6 @@ class TasksAPI extends ChangeNotifier {
     }).toList();
     notifyListeners();
   }
-
-
-
-
 
   void toggleSortByCreationDate() {
     if (_sortByEditionDate == true) {

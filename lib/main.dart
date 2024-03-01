@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'providers/drag_provider.dart';
 import 'router/router.dart';
 import 'providers/auth.dart';
-import 'providers/task.dart';
+import 'providers/task_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/task.dart';
+import '../../providers/task_provider.dart';
 
 class SortView extends StatelessWidget {
   const SortView({
@@ -23,6 +23,9 @@ class SortView extends StatelessWidget {
         // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          const SizedBox(
+            height: 5,
+          ),
           const Text('Sort by',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
           Row(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/task.dart';
+import '../../providers/task_provider.dart';
 
 class AddTagView extends StatefulWidget {
   final List<String> initialSelectedTags;
@@ -13,6 +13,7 @@ class AddTagView extends StatefulWidget {
 }
 
 class _AddTagViewState extends State<AddTagView> {
+  final TextEditingController tagController = TextEditingController();
   late List<String> selectedTags;
 
   @override
@@ -31,25 +32,48 @@ class _AddTagViewState extends State<AddTagView> {
             padding: MediaQuery.of(context).viewInsets,
             child: Container(
               padding: const EdgeInsets.fromLTRB(20.0, 10, 20.0, 20.0),
-              height: MediaQuery.of(context).size.height * 0.30,
+              height: MediaQuery.of(context).size.height * 0.50,
               child: Column(
                 children: [
                   SizedBox(
                     height: 40,
                     child: TextField(
+                      controller: tagController,
                       decoration: const InputDecoration(
                         labelText: '# Add Tag or select already existing ones',
                         border: OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.done,
+                      onChanged: (String value) {
+                        if (RegExp(r'^[a-zA-Z0-9][a-zA-Z0-9_\-\.]*$')
+                            .hasMatch(value)) {
+                          // Only add value if it matches the allowed pattern
+                          setState(() {
+                            tagController.text = value;
+                            tagController.selection =
+                                TextSelection.fromPosition(TextPosition(
+                                    offset: tagController.text.length));
+                          });
+                        } else {
+                          // Remove invalid characters
+                          setState(() {
+                            tagController.text = tagController.text
+                                .replaceAll(RegExp(r'[^a-zA-Z0-9_\-\.]'), '');
+                            tagController.selection =
+                                TextSelection.fromPosition(TextPosition(
+                                    offset: tagController.text.length));
+                          });
+                        }
+                        searchTags(value);
+                      },
                       onSubmitted: (_) {
                         if (_.isNotEmpty) {
                           selectedTags.add(_);
+                          tagController.clear();
                         }
                         Navigator.pop(context, selectedTags);
                       },
-                      onChanged: searchTags,
                     ),
                   ),
                   const SizedBox(height: 10.0),
