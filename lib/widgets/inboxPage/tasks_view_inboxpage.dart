@@ -15,8 +15,7 @@ class TasksViewInboxPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.6,
+    return Expanded(
       child: ListView.builder(
         itemCount: filteredTasks.length,
         itemBuilder: (context, index) {
@@ -45,7 +44,7 @@ class TasksViewInboxPage extends StatelessWidget {
               builder: (context, incoming, rejected) {
                 // final isDragging =
                 //     Provider.of<DragStateProvider>(context).isDragging;
-
+      
                 return Column(
                   children: [
                     GestureDetector(

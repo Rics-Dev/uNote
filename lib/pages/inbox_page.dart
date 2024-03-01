@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
+import 'package:utask/providers/auth.dart';
 import '../providers/task.dart';
 import '../widgets/inboxPage/horizontal_tags_view.dart';
 import '../widgets/inboxPage/sort_filter_view.dart';

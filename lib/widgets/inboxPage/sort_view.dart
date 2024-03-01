@@ -47,17 +47,23 @@ class SortView extends StatelessWidget {
                           : const Color.fromARGB(255, 0, 73, 133),
                     )),
               ),
-              IconButton.outlined(
-                onPressed: () {
-                  tasksAPI.toggleNewToOld();
-                },
-                color: const Color.fromARGB(255, 0, 73, 133),
-                icon: Icon(
-                  oldToNew
-                      ? Icons.arrow_downward_rounded
-                      : Icons.arrow_upward_rounded,
-                  color: const Color.fromARGB(255, 0, 73, 133),
-                ),
+              Column(
+                children: [
+                  Text('Old'),
+                  IconButton.outlined(
+                    onPressed: () {
+                      tasksAPI.toggleNewToOld();
+                    },
+                    color: const Color.fromARGB(255, 0, 73, 133),
+                    icon: Icon(
+                      oldToNew
+                          ? Icons.arrow_downward_rounded
+                          : Icons.arrow_upward_rounded,
+                      color: const Color.fromARGB(255, 0, 73, 133),
+                    ),
+                  ),
+                  Text('New'),
+                ],
               ),
               OutlinedButton(
                 onPressed: () {

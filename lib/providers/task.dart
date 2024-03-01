@@ -17,18 +17,17 @@ class TasksAPI extends ChangeNotifier {
   List<String> _filteredTags = [];
   List<Task> _filteredTasks = [];
   final List<String> _selectedTags = [];
-   bool _sortByCreationDate = true;
-   bool _sortByEditionDate = false;
-   bool _oldToNew = true;
+  bool _sortByCreationDate = true;
+  bool _sortByEditionDate = false;
+  bool _oldToNew = true;
 
-  
   List<Task> get tasks => _tasks;
   List<String> get tags => _tags;
   List<String> get filteredTags => _filteredTags;
   List<Task> get filteredTasks => _filteredTasks;
   List<String> get selectedTags => _selectedTags;
   bool get sortByCreationDate => _sortByCreationDate;
-  bool get sortByEditionDate => _sortByEditionDate; 
+  bool get sortByEditionDate => _sortByEditionDate;
   bool get oldToNew => _oldToNew;
 
   TasksAPI(
@@ -45,7 +44,6 @@ class TasksAPI extends ChangeNotifier {
     account = Account(client);
     databases = Databases(client);
   }
-
 
   //for fetching tasks
   void fetchTasks() async {
@@ -89,7 +87,6 @@ class TasksAPI extends ChangeNotifier {
       notifyListeners();
     }
   }
-
 
   //to create tasks and tags
   Future<void> createTask(
@@ -164,8 +161,6 @@ class TasksAPI extends ChangeNotifier {
     }
   }
 
-
-
   //to delete tasks
   Future<void> deleteTask({required String taskId}) async {
     Task? removedTask;
@@ -234,7 +229,6 @@ class TasksAPI extends ChangeNotifier {
     }
   }
 
-
   //to update tasks order only locally
   void updateTasksOrder(int oldIndex, int newIndex) {
     // Perform reordering logic here
@@ -252,7 +246,6 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-
   //to filter tasks by tags
   void filterTasksByTags(List tags) {
     final filteredTasks = _tasks.where((task) {
@@ -267,7 +260,6 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-
   //when selecting tags in the inbox page to filter
   void toggleTagSelection(String tag) {
     if (_selectedTags.contains(tag)) {
@@ -278,27 +270,54 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleSortByCreationDate() {
-    if(_sortByEditionDate == true){
-      _sortByCreationDate = true;
-      _sortByEditionDate = false;
+void toggleSortByCreationDate() {
+  if (_sortByEditionDate == true) {
+    _sortByCreationDate = true;
+    _sortByEditionDate = false;
+  }
+  toggleNewToOld();
+  notifyListeners();
+}
+
+void toggleSortByEditionDate() {
+  if (_sortByCreationDate == true) {
+    _sortByCreationDate = false;
+    _sortByEditionDate = true;
+  }
+  toggleNewToOld();
+  notifyListeners();
+}
+
+void toggleNewToOld() {
+  _oldToNew = !_oldToNew;
+
+  tasks.sort((a, b) {
+    if (_sortByCreationDate) {
+      if (_oldToNew) {
+        return a.createdAt.compareTo(b.createdAt);
+      } else {
+        return b.createdAt.compareTo(a.createdAt);
+      }
+    } else if (_sortByEditionDate) {
+      if (_oldToNew) {
+        return a.updatedAt.compareTo(b.updatedAt);
+      } else {
+        return b.updatedAt.compareTo(a.updatedAt);
+      }
     }
-    notifyListeners();
-  }
 
-  void toggleSortByEditionDate() {
-    if(_sortByCreationDate == true){
-      _sortByCreationDate = false;
-      _sortByEditionDate = true;
-    }
-    notifyListeners();
+    // Ensure that the function always returns an integer
+    return 0; // You can return any value here since it won't affect the sorting
+  });
 
-  }
+  // Assign the sorted result back to filteredTasks
+  _tasks = List.from(tasks);
 
-  void toggleNewToOld() {
-    _oldToNew = !_oldToNew;
-    notifyListeners();
-  }
+  notifyListeners();
+}
+
+  void setFilteredTasks(List filteredTasks) {}
+
 }
 
 
