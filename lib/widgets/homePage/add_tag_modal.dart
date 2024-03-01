@@ -46,7 +46,7 @@ class _AddTagViewState extends State<AddTagView> {
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.done,
                       onChanged: (String value) {
-                        if (RegExp(r'^[a-zA-Z0-9][a-zA-Z0-9_\-\.]*$')
+                        if (RegExp(r'^[a-zA-Z_][a-zA-Z0-9_\-\.]*$')
                             .hasMatch(value)) {
                           // Only add value if it matches the allowed pattern
                           setState(() {
@@ -59,13 +59,14 @@ class _AddTagViewState extends State<AddTagView> {
                           // Remove invalid characters
                           setState(() {
                             tagController.text = tagController.text
-                                .replaceAll(RegExp(r'[^a-zA-Z0-9_\-\.]'), '');
+                                .replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
                             tagController.selection =
                                 TextSelection.fromPosition(TextPosition(
                                     offset: tagController.text.length));
                           });
                         }
-                        searchTags(value);
+                        searchTags(tagController
+                            .text); // Call searchTags with the updated value
                       },
                       onSubmitted: (_) {
                         if (_.isNotEmpty) {
