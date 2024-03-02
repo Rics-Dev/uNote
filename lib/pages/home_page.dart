@@ -17,7 +17,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-TextEditingController searchBar = TextEditingController();
   
   bool deleteFloatingActionButton = false;
 
@@ -32,11 +31,7 @@ TextEditingController searchBar = TextEditingController();
     'Your lists',
   ];
 
-  @override
-  void dispose(){
-    searchBar.dispose();
-    super.dispose();
-  }
+
 
 
   void removeTask(Object? data) async {
@@ -154,7 +149,7 @@ TextEditingController searchBar = TextEditingController();
           ],
         ),
       ),
-      body: buildBody(_bottomNavIndex, searchBar),
+      body: buildBody(_bottomNavIndex),
     );
   }
 
