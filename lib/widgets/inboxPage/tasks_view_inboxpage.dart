@@ -147,6 +147,8 @@ class TasksViewInboxPage extends StatelessWidget {
               ),
             ),
           ),
+          Spacer(),
+          Icon(Icons.push_pin_outlined, color: Colors.grey[600]),
         ],
       ),
     );

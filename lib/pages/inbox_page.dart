@@ -10,7 +10,7 @@ class InboxPage extends StatelessWidget {
   Widget build(BuildContext context) {
     
 
-    return const Column(
+    return Column(
       children: [
         SortAndFilterView(),
         SizedBox(height: 10),

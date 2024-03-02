@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
 import 'package:utask/widgets/inboxPage/sort_view.dart';
-import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:searchbar_animation/searchbar_animation.dart';
 
 import '../../providers/task_provider.dart';
@@ -17,13 +16,8 @@ class SortAndFilterView extends StatefulWidget {
 }
 
 class _SortAndFilterViewState extends State<SortAndFilterView> {
-  final TextEditingController searchBar = TextEditingController();
-
-  @override
-  void dispose() {
-    searchBar.dispose();
-    super.dispose();
-  }
+  TextEditingController searchBar = TextEditingController(); 
+  
 
   @override
   Widget build(BuildContext context) {
@@ -49,17 +43,28 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
             isSearchBoxOnRightSide: true,
             buttonBorderColour: Colors.black,
             textEditingController: searchBar,
-            trailingWidget: const Icon(Icons.search_rounded, color: Color.fromARGB(255, 0, 73, 133),),
-            secondaryButtonWidget: const Icon(Icons.close_rounded, color: Color.fromARGB(255, 0, 73, 133),),
-            buttonWidget: const Icon(Icons.search_rounded, color: Color.fromARGB(255, 0, 73, 133),),
+            trailingWidget: const Icon(
+              Icons.search_rounded,
+              color: Color.fromARGB(255, 0, 73, 133),
+            ),
+            secondaryButtonWidget: const Icon(
+              Icons.close_rounded,
+              color: Color.fromARGB(255, 0, 73, 133),
+            ),
+            buttonWidget: const Icon(
+              Icons.search_rounded,
+              color: Color.fromARGB(255, 0, 73, 133),
+            ),
             onFieldSubmitted: (String value) {
               debugPrint('onFieldSubmitted value $value');
             },
-            onCollapseComplete: () {
-              searchBar.clear();
-            },
+            // onCollapseComplete: () {
+            //   searchBar.clear();
+            // },
             onChanged: (String value) {
-              searchTasks(searchBar.text);
+              if (mounted) {
+                searchTasks(searchBar.text);
+              }
             },
           ),
         ],
@@ -69,6 +74,7 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
 
   Future<dynamic> showSortView(BuildContext context) {
     return showTopModalSheet(
+      transitionDuration: const Duration(milliseconds: 500),
       context,
       const SortView(),
       backgroundColor: Colors.white,
@@ -77,11 +83,11 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
       ),
     );
   }
-  
+
   void searchTasks(String query) {
-    if (query.isEmpty){
+    if (query.isEmpty) {
       context.read<TasksAPI>().setSearchedTasks([]);
-    }else{
+    } else {
       final suggestions = context.read<TasksAPI>().tasks.where((task) {
         return task.content.toLowerCase().contains(query.toLowerCase());
       }).toList();

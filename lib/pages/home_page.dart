@@ -17,6 +17,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+TextEditingController searchBar = TextEditingController();
+  
   bool deleteFloatingActionButton = false;
 
   bool addTaskDialogOpened = false;
@@ -29,6 +31,13 @@ class _HomePageState extends State<HomePage> {
     'Your inbox',
     'Your lists',
   ];
+
+  @override
+  void dispose(){
+    searchBar.dispose();
+    super.dispose();
+  }
+
 
   void removeTask(Object? data) async {
     final removedTaskId = data as String?;
@@ -55,6 +64,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<dynamic> _showCalendarView() {
     return showTopModalSheet<String?>(
+      transitionDuration: const Duration(milliseconds: 500),
       context,
       const CalendarView(),
       backgroundColor: Colors.white,
@@ -144,7 +154,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: buildBody(_bottomNavIndex),
+      body: buildBody(_bottomNavIndex, searchBar),
     );
   }
 
