@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:utask/providers/task_provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
 import '../providers/drag_provider.dart';
-import '../widgets/homePage/add_task_modal.dart';
+import '../widgets/homePage/add_task_widgets/add_task_modal.dart';
 import '../widgets/homePage/build_body_home_page.dart';
 import '../widgets/homePage/calendar_view.dart';
 

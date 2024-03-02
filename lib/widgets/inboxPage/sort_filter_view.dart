@@ -57,9 +57,10 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
             onFieldSubmitted: (String value) {
               debugPrint('onFieldSubmitted value $value');
             },
-            // onCollapseComplete: () {
-            //   searchBar.clear();
-            // },
+            onCollapseComplete: () {
+              searchBar.clear();
+              context.read<TasksAPI>().setSearchedTasks([]);
+            },
             onChanged: (String value) {
               if (mounted) {
                 searchTasks(searchBar.text);

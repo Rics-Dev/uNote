@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-
 import '../../providers/task_provider.dart';
 import 'package:badges/badges.dart' as badges;
 
@@ -17,6 +16,7 @@ class HorizontalTagsView extends StatelessWidget {
     final selectedTags = tasksAPI.selectedTags;
 
     final allTasks = tasksAPI.tasks;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
       child: Row(
@@ -112,6 +112,14 @@ class HorizontalTagsView extends StatelessWidget {
               ),
             ),
           ),
+          // Spacer(),
+          // IconButton.outlined(
+          //   onPressed: () {},
+          //   icon: const Icon(
+          //     Icons.label_outline_rounded,
+          //     color: Color.fromARGB(255, 0, 73, 133),
+          //   ),
+          // ),
         ],
       ),
     );

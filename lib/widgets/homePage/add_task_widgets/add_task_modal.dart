@@ -2,10 +2,12 @@ import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/task_provider.dart';
+import '../../../providers/task_provider.dart';
 import 'package:toastification/toastification.dart';
 
+import 'add_date.dart';
 import 'add_tag_modal.dart';
+import 'package:intl/intl.dart';
 
 class AddTaskView extends StatefulWidget {
   const AddTaskView({
@@ -43,6 +45,8 @@ class _AddTaskViewState extends State<AddTaskView> {
   Widget build(BuildContext context) {
     final tasksAPI = context.watch<TasksAPI>();
     final temporarilyAddedTags = tasksAPI.temporarilyAddedTags;
+    final dueDate = tasksAPI.dueDate;
+     String? formattedDate = dueDate != null ? DateFormat('EEEE, MMM d, y').format(dueDate) : null;
 
     return SafeArea(
       child: Padding(
@@ -154,10 +158,41 @@ class _AddTaskViewState extends State<AddTaskView> {
                 },
               ),
               const SizedBox(height: 10.0),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  dueDate == null
+                      ? IconButton.outlined(
+                          onPressed: () {
+                            showAddDueDateDialog(context);
+                          },
+                          icon: const Icon(
+                            Icons.calendar_today_rounded,
+                            color: Color.fromARGB(255, 0, 73, 133),
+                          ),
+                        )
+                      : OutlinedButton.icon(
+                          onPressed: () {
+                            showAddDueDateDialog(context);
+                          },
+                          icon: const Icon(
+                            Icons.calendar_today_rounded,
+                            color: Color.fromARGB(255, 0, 73, 133),
+                          ),
+                          label: Text(formattedDate!),
+                        ),
+                  IconButton.outlined(
+                    onPressed: () {
+                      showAddPriorityDialog(context);
+                    },
+                    icon: const Icon(
+                      Icons.flag_outlined,
+                      color: Color.fromARGB(255, 0, 73, 133),
+                    ),
+                  ),
+                ],
               ),
+              const SizedBox(height: 20.0),
               Center(
                 child: ElevatedButton(
                   onPressed: () {
@@ -186,6 +221,22 @@ class _AddTaskViewState extends State<AddTaskView> {
   }
 
   Future<dynamic> showAddTagDialog(context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) => const AddTagView(),
+      isScrollControlled: true,
+    ).whenComplete(() => clearSearchedTags());
+  }
+
+  Future<dynamic> showAddDueDateDialog(context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) => const AddDueDateView(),
+      isScrollControlled: true,
+    ).whenComplete(() => clearSearchedTags());
+  }
+
+  Future<dynamic> showAddPriorityDialog(context) {
     return showModalBottomSheet(
       context: context,
       builder: (context) => const AddTagView(),

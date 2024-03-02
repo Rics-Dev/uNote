@@ -114,7 +114,7 @@ class TasksViewInboxPage extends StatelessWidget {
               showTaskDetails(context, task);
             },
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
+              padding: const EdgeInsets.fromLTRB(18, 6, 18, 6),
               child: buildTaskContainer(context, task, incoming),
             ),
           );

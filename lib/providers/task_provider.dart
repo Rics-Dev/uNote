@@ -27,6 +27,8 @@ class TasksAPI extends ChangeNotifier {
   final List<String> _selectedTags = [];
   final List<String> _temporarilyAddedTags = [];
   bool _oldToNew = true;
+  DateTime? _dueDate = null;
+  bool _isTimeSet = false;
 
   SortCriteria _sortCriteria = SortCriteria.creationDate;
 
@@ -39,6 +41,8 @@ class TasksAPI extends ChangeNotifier {
   List<String> get temporarilyAddedTags => _temporarilyAddedTags;
   bool get oldToNew => _oldToNew;
   SortCriteria get sortCriteria => _sortCriteria;
+  DateTime? get dueDate => _dueDate;
+  bool get isTimeSet => _isTimeSet;
 
   TasksAPI(
       {String endpoint = constants.appwriteEndpoint,
@@ -124,6 +128,8 @@ class TasksAPI extends ChangeNotifier {
       'isDone': false,
       '\u0024createdAt': DateTime.now().toIso8601String(),
       '\u0024updatedAt': DateTime.now().toIso8601String(),
+      'dueDate': null,
+      'priority': null,
     });
     _tasks.add(newTask);
 
@@ -449,6 +455,16 @@ class TasksAPI extends ChangeNotifier {
     if (!_temporarilyAddedTags.contains(tag)) {
       _temporarilyAddedTags.add(tag);
     }
+    notifyListeners();
+  }
+
+  void setDueDate(DateTime? selectedDay) {
+    _dueDate = selectedDay;
+    notifyListeners();
+  }
+
+  void setTimeSet(bool bool) {
+    _isTimeSet = bool;
     notifyListeners();
   }
 }
