@@ -160,6 +160,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                   onPressed: () {
                     if (taskController.text.isNotEmpty) {
                       addTask(taskController.text, temporarilyAddedTags);
+                      // context.read<TasksAPI>().removeAllTemporaryTags();
                       Navigator.pop(context, true);
                     } else {
                       toastEmptyTask(context);

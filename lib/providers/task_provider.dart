@@ -160,6 +160,7 @@ if (tags.isNotEmpty && _selectedTags.any((tag) => tags.contains(tag))) {
           );
           tagIds.add(tagDocument.data['\u0024id']);
         }
+
       }
       final document = await databases.createDocument(
           databaseId: constants.appwriteDatabaseId,
@@ -170,6 +171,7 @@ if (tags.isNotEmpty && _selectedTags.any((tag) => tags.contains(tag))) {
       final serverTask = Task.fromMap(document.data);
       _tasks.removeLast();
       _tasks.add(serverTask);
+       _temporarilyAddedTags.clear();
       notifyListeners();
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setStringList(
@@ -181,7 +183,6 @@ if (tags.isNotEmpty && _selectedTags.any((tag) => tags.contains(tag))) {
       }
       _tasks.removeLast();
       notifyListeners();
-      rethrow;
     } finally {
       notifyListeners();
     }
@@ -436,7 +437,10 @@ void filterTasksByTags(List tags) {
     notifyListeners();
   }
   void addTemporarilyAddedTags(String tag){
-    _temporarilyAddedTags.add(tag);
+    if(!_temporarilyAddedTags.contains(tag)){
+      _temporarilyAddedTags.add(tag);
+    }
     notifyListeners();
   }
+
 }

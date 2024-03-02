@@ -73,7 +73,7 @@ class _AddTagViewState extends State<AddTagView> {
                       },
                       onSubmitted: (_) {
                         if (_.isNotEmpty) {
-                          context.read<TasksAPI>().temporarilyAddedTags.add(_);
+                          context.read<TasksAPI>().addTemporarilyAddedTags(_);
                           tagController.clear();
                         }
                         Navigator.pop(context);
