@@ -396,20 +396,38 @@ void filterTasksByTags(List tags) {
   }
 
   void sortTasks() {
-    filteredTasks.sort((a, b) {
-      switch (sortCriteria) {
-        case SortCriteria.creationDate:
-          return _sortByDate(a.createdAt, b.createdAt);
-        case SortCriteria.editionDate:
-          return _sortByDate(a.updatedAt, b.updatedAt);
-        case SortCriteria.nameAZ:
-          return a.content.compareTo(b.content);
-        case SortCriteria.nameZA:
-          return b.content.compareTo(a.content);
-        default:
-          return 0;
-      }
-    });
+    if(filteredTasks.isNotEmpty){
+      _filteredTasks.sort((a, b) {
+        switch (sortCriteria) {
+          case SortCriteria.creationDate:
+            return _sortByDate(a.createdAt, b.createdAt);
+          case SortCriteria.editionDate:
+            return _sortByDate(a.updatedAt, b.updatedAt);
+          case SortCriteria.nameAZ:
+            return a.content.compareTo(b.content);
+          case SortCriteria.nameZA:
+            return b.content.compareTo(a.content);
+          default:
+            return 0;
+        }
+      });
+    }
+    else{
+      _tasks.sort((a, b) {
+        switch (sortCriteria) {
+          case SortCriteria.creationDate:
+            return _sortByDate(a.createdAt, b.createdAt);
+          case SortCriteria.editionDate:
+            return _sortByDate(a.updatedAt, b.updatedAt);
+          case SortCriteria.nameAZ:
+            return a.content.compareTo(b.content);
+          case SortCriteria.nameZA:
+            return b.content.compareTo(a.content);
+          default:
+            return 0;
+        }
+      });
+    }
 
     notifyListeners();
   }

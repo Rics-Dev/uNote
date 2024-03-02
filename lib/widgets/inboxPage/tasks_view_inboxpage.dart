@@ -14,14 +14,12 @@ class TasksViewInboxPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tasksAPI = context.watch<TasksAPI>();
-    List<Task> tasks = tasksAPI.tasks;
+    
 
     // final selectedTags = tasksAPI.selectedTags;
 
     // final filteredTasks = tasksAPI.filteredTasks;
 
-    tasks = tasksAPI.filteredTasks.isEmpty ? tasks : tasksAPI.filteredTasks;
 
     // List<Task> filteredTasks =
     //     (selectedTags.isEmpty || tasksAPI.filteredTasks.isEmpty)
@@ -29,6 +27,11 @@ class TasksViewInboxPage extends StatelessWidget {
     //         : tasksAPI.filteredTasks.isNotEmpty
     //             ? tasksAPI.filteredTasks
     //             : [];
+
+
+    final tasksAPI = context.watch<TasksAPI>();
+    List<Task> tasks = tasksAPI.tasks;
+    tasks = tasksAPI.filteredTasks.isEmpty ? tasks : tasksAPI.filteredTasks;
 
     final notDoneTasks = tasks.where((task) => !task.isDone).toList();
     final doneTasks = tasks.where((task) => task.isDone).toList();
