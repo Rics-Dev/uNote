@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
 
@@ -12,12 +13,19 @@ class TasksViewInboxPage extends StatelessWidget {
     required this.filteredTasks,
   }) : super(key: key);
 
-  final List<Task> filteredTasks;
+  final List<dynamic> filteredTasks;
 
   @override
   Widget build(BuildContext context) {
-    final doneTasks = filteredTasks.where((task) => task.isDone).toList();
-    final notDoneTasks = filteredTasks.where((task) => !task.isDone).toList();
+    _filterNotDoneTasks(List filteredTasks) {
+      return filteredTasks.where((task) => !task.isDone).toList();
+    }
+    _filterDoneTasks(List filteredTasks) {
+      return filteredTasks.where((task) => task.isDone).toList();
+    }
+
+    final doneTasks = _filterDoneTasks(filteredTasks);
+    final notDoneTasks = _filterNotDoneTasks(filteredTasks);
 
     return Expanded(
       child: filteredTasks.isEmpty
@@ -46,8 +54,8 @@ class TasksViewInboxPage extends StatelessWidget {
 
   Widget buildTaskItem(
     BuildContext context,
-    List<Task> notDoneTasks,
-    List<Task> doneTasks,
+    List<dynamic> notDoneTasks,
+    List<dynamic> doneTasks,
     int index,
   ) {
     if (index < notDoneTasks.length) {
@@ -144,14 +152,23 @@ class TasksViewInboxPage extends StatelessWidget {
     );
   }
 
-  Widget doneTasksList(BuildContext context, List<Task> doneTasks) {
+  Widget doneTasksList(BuildContext context, List<dynamic> doneTasks) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
       child: Card(
         child: Theme(
           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
           child: ExpansionTile(
-            title: Text('✔️ Done tasks (${doneTasks.length})'),
+            backgroundColor: const Color(0xFFEEEDED),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            leading: SvgPicture.asset(
+              'assets/check-circle.svg',
+              width: 24,
+              height: 24,
+            ),
+            title: Text('Done tasks (${doneTasks.length})'),
             children: [
               ListView.builder(
                 shrinkWrap: true,
@@ -217,17 +234,19 @@ class TasksViewInboxPage extends StatelessWidget {
                         child: const Text('Cancel'),
                       ),
                       ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color.fromARGB(255, 0, 73, 133),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              const Color.fromARGB(255, 0, 73, 133),
+                            ),
                           ),
-                        ),
-                        onPressed: () {
-                          // Save changes
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Save', style: TextStyle(color: Colors.white),)
-                      ),
+                          onPressed: () {
+                            // Save changes
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            'Save',
+                            style: TextStyle(color: Colors.white),
+                          )),
                     ],
                   ),
                 ],

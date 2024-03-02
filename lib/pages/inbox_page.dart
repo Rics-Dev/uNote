@@ -18,7 +18,11 @@ class InboxPage extends StatelessWidget {
     final tasks = tasksAPI.tasks;
     final tags = tasksAPI.tags;
     final selectedTags = tasksAPI.selectedTags;
-    final filteredTasks = tasksAPI.filteredTasks;
+    final filteredTasks = selectedTags.isEmpty || tasksAPI.filteredTags.isEmpty
+        ? tasks
+        : tasksAPI.filteredTasks.isNotEmpty
+            ? tasksAPI.filteredTasks
+            : [];
 
     return Column(
       children: [
@@ -29,12 +33,8 @@ class InboxPage extends StatelessWidget {
             tags: tags,
             context: context,
             tasksAPI: tasksAPI),
-        
-
         TasksViewInboxPage(filteredTasks: filteredTasks),
       ],
     );
   }
 }
-
-

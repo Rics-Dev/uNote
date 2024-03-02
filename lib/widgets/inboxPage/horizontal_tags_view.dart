@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/task_provider.dart';
@@ -134,7 +135,6 @@ class HorizontalTagsView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                
                 ElevatedButton(
                   onPressed: () {
                     // Save changes
@@ -143,13 +143,28 @@ class HorizontalTagsView extends StatelessWidget {
                   child: Text('Cancel'),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    // Save changes
-                    tasksAPI.deleteTag(tag);
-                    Navigator.pop(context);
-                  },
-                  child: Text('Delete', style: TextStyle(color: Colors.red),)
-                ),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.red),
+                    ),
+                    onPressed: () {
+                      // Save changes
+                      tasksAPI.deleteTag(tag);
+                      Navigator.pop(context);
+                    },
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          'assets/trash-2.svg',
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 5),
+                        const Text(
+                          'Delete',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    )),
               ],
             ),
           ],

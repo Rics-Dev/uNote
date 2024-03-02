@@ -24,11 +24,7 @@ class TasksAPI extends ChangeNotifier {
   List<String> _filteredTags = [];
   List<Task> _filteredTasks = [];
   final List<String> _selectedTags = [];
-  bool _sortByCreationDate = true;
-  bool _sortByEditionDate = false;
   bool _oldToNew = true;
-  bool _sortByNameAZ = false;
-  bool _sortByNameZA = false;
 
   SortCriteria _sortCriteria = SortCriteria.creationDate;
 
@@ -37,11 +33,7 @@ class TasksAPI extends ChangeNotifier {
   List<String> get filteredTags => _filteredTags;
   List<Task> get filteredTasks => _filteredTasks;
   List<String> get selectedTags => _selectedTags;
-  bool get sortByCreationDate => _sortByCreationDate;
-  bool get sortByEditionDate => _sortByEditionDate;
   bool get oldToNew => _oldToNew;
-  bool get sortByNameAZ => _sortByNameAZ;
-  bool get sortByNameZA => _sortByNameZA;
   SortCriteria get sortCriteria => _sortCriteria;
 
   TasksAPI(
@@ -114,8 +106,10 @@ class TasksAPI extends ChangeNotifier {
   }
 
   //to create tasks and tags
-  Future<void> createTask(
-      {required String task, required List<String> tags}) async {
+  Future<void> createTask({
+    required String task,
+    required List<String> tags,
+  }) async {
     final List<Map<String, dynamic>> tagList =
         tags.map((tag) => {'tagname': tag}).toList();
     List<String> tagIds = [];
@@ -128,6 +122,12 @@ class TasksAPI extends ChangeNotifier {
       '\u0024updatedAt': DateTime.now().toIso8601String(),
     });
     _tasks.add(newTask);
+
+
+    if(selectedTags.every((tag) => newTask.tags.contains(tag))){
+      _filteredTasks.add(newTask);
+    }
+
     final newTags = tags.map((tag) => tag).toList();
     for (var tag in newTags) {
       if (!_tags.contains(tag)) {
