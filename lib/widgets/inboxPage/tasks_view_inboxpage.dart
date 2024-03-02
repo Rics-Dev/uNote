@@ -15,20 +15,26 @@ class TasksViewInboxPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tasksAPI = context.watch<TasksAPI>();
-    final tasks = tasksAPI.tasks;
-    final selectedTags = tasksAPI.selectedTags;
-    List<Task> filteredTasks =
-        (selectedTags.isEmpty || tasksAPI.filteredTasks.isEmpty)
-            ? tasks
-            : tasksAPI.filteredTasks.isNotEmpty
-                ? tasksAPI.filteredTasks
-                : [];
+    List<Task> tasks = tasksAPI.tasks;
 
-    final notDoneTasks = filteredTasks.where((task) => !task.isDone).toList();
-    final doneTasks = filteredTasks.where((task) => task.isDone).toList();
+    // final selectedTags = tasksAPI.selectedTags;
+
+    // final filteredTasks = tasksAPI.filteredTasks;
+
+    tasks = tasksAPI.filteredTasks.isEmpty ? tasks : tasksAPI.filteredTasks;
+
+    // List<Task> filteredTasks =
+    //     (selectedTags.isEmpty || tasksAPI.filteredTasks.isEmpty)
+    //         ? tasks
+    //         : tasksAPI.filteredTasks.isNotEmpty
+    //             ? tasksAPI.filteredTasks
+    //             : [];
+
+    final notDoneTasks = tasks.where((task) => !task.isDone).toList();
+    final doneTasks = tasks.where((task) => task.isDone).toList();
 
     return Expanded(
-      child: filteredTasks.isEmpty
+      child: tasks.isEmpty
           ? const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -66,12 +66,10 @@ class HorizontalTagsView extends StatelessWidget {
                         },
                         onTap: () {
                           tasksAPI.toggleTagSelection(tag);
-                          tasksAPI.filterTasksByTags(tasksAPI.selectedTags);
                         },
                         child: OutlinedButton.icon(
                           onPressed: () {
                             tasksAPI.toggleTagSelection(tag);
-                            tasksAPI.filterTasksByTags(tasksAPI.selectedTags);
                           },
                           icon: Icon(
                             Icons.label_outline_rounded,

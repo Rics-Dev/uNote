@@ -62,7 +62,7 @@ class TasksAPI extends ChangeNotifier {
         _tasks = cachedTasks
             .map((jsonString) => Task.fromJson(json.decode(jsonString)))
             .toList();
-        _filteredTasks = _tasks;
+        // _filteredTasks = _tasks;
         notifyListeners();
       }
       if (cachedTags != null) {
@@ -98,7 +98,7 @@ class TasksAPI extends ChangeNotifier {
       prefs.setStringList('tags', tags);
 
       _filteredTags = _tags;
-      _filteredTasks = _tasks;
+      // _filteredTasks = _tasks;
       notifyListeners();
     } finally {
       notifyListeners();
@@ -123,10 +123,9 @@ class TasksAPI extends ChangeNotifier {
     });
     _tasks.add(newTask);
 
-  //  if (tags.isNotEmpty && _selectedTags.every((tag) => tags.contains(tag))) {
-  //   _filteredTasks.add(newTask);
-  // }
-
+if (tags.isNotEmpty && _selectedTags.any((tag) => tags.contains(tag))) {
+  _filteredTasks.add(newTask);
+}
 
     final newTags = tags.map((tag) => tag).toList();
     for (var tag in newTags) {
@@ -340,22 +339,31 @@ class TasksAPI extends ChangeNotifier {
     } else {
       _selectedTags.add(tag);
     }
+    if (selectedTags.isEmpty) {
+      _filteredTasks.clear();
+    }
+    filterTasksByTags(selectedTags);
     notifyListeners();
   }
 
   void clearSelectedTags() {
     _selectedTags.clear();
-    _filteredTasks = tasks;
+    // _filteredTasks = tasks;
+    _filteredTasks.clear();
     notifyListeners();
   }
 
   //to filter tasks by tags
-  void filterTasksByTags(List tags) {
+void filterTasksByTags(List tags) {
+  if (tags.isEmpty) {
+    _filteredTasks.clear();
+  } else {
     _filteredTasks = _tasks.where((task) {
       return tags.every((tag) => task.tags.contains(tag));
     }).toList();
-    notifyListeners();
   }
+  notifyListeners();
+}
 
   void toggleSortByCreationDate() {
     _sortCriteria = SortCriteria.creationDate;
