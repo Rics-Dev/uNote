@@ -4,9 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/task_provider.dart';
 
 class AddTagView extends StatefulWidget {
-  final List<String> initialSelectedTags;
-
-  const AddTagView(this.initialSelectedTags, {super.key});
+  const AddTagView({super.key});
 
   @override
   _AddTagViewState createState() => _AddTagViewState();
@@ -14,17 +12,15 @@ class AddTagView extends StatefulWidget {
 
 class _AddTagViewState extends State<AddTagView> {
   final TextEditingController tagController = TextEditingController();
-  late List<String> selectedTags;
-
-  @override
-  void initState() {
-    super.initState();
-    selectedTags = List.from(widget.initialSelectedTags);
-  }
 
   @override
   Widget build(BuildContext context) {
-    final tags = context.watch<TasksAPI>().filteredTags;
+    List<String> tags = context.watch<TasksAPI>().tags;
+    final searchedTags = context.watch<TasksAPI>().searchedTags;
+    final temporarilyAddedTags = context.watch<TasksAPI>().temporarilyAddedTags;
+
+    tags = searchedTags.isNotEmpty ? searchedTags : tags;
+
     return Wrap(
       children: [
         Center(
@@ -70,10 +66,11 @@ class _AddTagViewState extends State<AddTagView> {
                       },
                       onSubmitted: (_) {
                         if (_.isNotEmpty) {
-                          selectedTags.add(_);
+                          // selectedTags.add(_);
+                          context.read<TasksAPI>().temporarilyAddedTags.add(_);
                           tagController.clear();
                         }
-                        Navigator.pop(context, selectedTags);
+                        Navigator.pop(context);
                       },
                     ),
                   ),
@@ -93,17 +90,17 @@ class _AddTagViewState extends State<AddTagView> {
                                     checkboxShape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(15)),
-                                    value: selectedTags.contains(tag),
+                                    value: temporarilyAddedTags.contains(tag),
                                     onChanged: (bool? newValue) {
-                                      setState(() {
-                                        if (newValue != null) {
+                                      if (newValue != null) {
+                                        
                                           if (newValue) {
-                                            selectedTags.add(tag);
+                                            context.read<TasksAPI>().addTemporarilyAddedTags(tag);
                                           } else {
-                                            selectedTags.remove(tag);
+                                            context.read<TasksAPI>().removeTemporarilyAddedTags(tag);
                                           }
-                                        }
-                                      });
+
+                                      }
                                     },
                                     activeColor:
                                         const Color.fromARGB(255, 0, 73, 133),
@@ -127,13 +124,13 @@ class _AddTagViewState extends State<AddTagView> {
   void searchTags(String query) {
     if (query.isEmpty) {
       // If the query is empty, show all tags
-      context.read<TasksAPI>().setFilteredTags(context.read<TasksAPI>().tags);
+      context.read<TasksAPI>().setSearchedTags(context.read<TasksAPI>().tags);
     } else {
-      // Filter tags based on the query
+      // search tags based on the query
       final suggestions = context.read<TasksAPI>().tags.where((tag) {
         return tag.toLowerCase().contains(query.toLowerCase());
       }).toList();
-      context.read<TasksAPI>().setFilteredTags(suggestions);
+      context.read<TasksAPI>().setSearchedTags(suggestions);
     }
   }
 }

@@ -21,18 +21,20 @@ class TasksAPI extends ChangeNotifier {
   final AuthAPI auth = AuthAPI();
   List<Task> _tasks = [];
   List<String> _tags = [];
-  List<String> _filteredTags = [];
+  List<String> _searchedTags = [];
   List<Task> _filteredTasks = [];
   final List<String> _selectedTags = [];
+  List<String> _temporarilyAddedTags = [];
   bool _oldToNew = true;
 
   SortCriteria _sortCriteria = SortCriteria.creationDate;
 
   List<Task> get tasks => _tasks;
   List<String> get tags => _tags;
-  List<String> get filteredTags => _filteredTags;
+  List<String> get searchedTags => _searchedTags;
   List<Task> get filteredTasks => _filteredTasks;
   List<String> get selectedTags => _selectedTags;
+  List<String> get temporarilyAddedTags => _temporarilyAddedTags;
   bool get oldToNew => _oldToNew;
   SortCriteria get sortCriteria => _sortCriteria;
 
@@ -97,7 +99,7 @@ class TasksAPI extends ChangeNotifier {
 
       prefs.setStringList('tags', tags);
 
-      _filteredTags = _tags;
+      _searchedTags = _tags;
       // _filteredTasks = _tasks;
       notifyListeners();
     } finally {
@@ -327,8 +329,8 @@ if (tags.isNotEmpty && _selectedTags.any((tag) => tags.contains(tag))) {
   }
 
   //to search for tags when creating them
-  void setFilteredTags(List<String> suggestions) {
-    _filteredTags = suggestions;
+  void setSearchedTags(List<String> suggestions) {
+    _searchedTags = suggestions;
     notifyListeners();
   }
 
@@ -396,43 +398,45 @@ void filterTasksByTags(List tags) {
   }
 
   void sortTasks() {
-    if(filteredTasks.isNotEmpty){
-      _filteredTasks.sort((a, b) {
-        switch (sortCriteria) {
-          case SortCriteria.creationDate:
-            return _sortByDate(a.createdAt, b.createdAt);
-          case SortCriteria.editionDate:
-            return _sortByDate(a.updatedAt, b.updatedAt);
-          case SortCriteria.nameAZ:
-            return a.content.compareTo(b.content);
-          case SortCriteria.nameZA:
-            return b.content.compareTo(a.content);
-          default:
-            return 0;
-        }
-      });
+  List<Task> tasksToSort = filteredTasks.isNotEmpty ? _filteredTasks : _tasks;
+  
+  tasksToSort.sort((a, b) {
+    switch (sortCriteria) {
+      case SortCriteria.creationDate:
+        return _sortByDate(a.createdAt, b.createdAt);
+      case SortCriteria.editionDate:
+        return _sortByDate(a.updatedAt, b.updatedAt);
+      case SortCriteria.nameAZ:
+        return a.content.compareTo(b.content);
+      case SortCriteria.nameZA:
+        return b.content.compareTo(a.content);
+      default:
+        return 0;
     }
-    else{
-      _tasks.sort((a, b) {
-        switch (sortCriteria) {
-          case SortCriteria.creationDate:
-            return _sortByDate(a.createdAt, b.createdAt);
-          case SortCriteria.editionDate:
-            return _sortByDate(a.updatedAt, b.updatedAt);
-          case SortCriteria.nameAZ:
-            return a.content.compareTo(b.content);
-          case SortCriteria.nameZA:
-            return b.content.compareTo(a.content);
-          default:
-            return 0;
-        }
-      });
-    }
+  });
 
-    notifyListeners();
+  if (filteredTasks.isNotEmpty) {
+    _filteredTasks = tasksToSort;
+  }else{
+    _tasks = tasksToSort;
   }
+
+  notifyListeners();
+}
 
   int _sortByDate(DateTime a, DateTime b) {
     return _oldToNew ? a.compareTo(b) : b.compareTo(a);
+  }
+
+
+
+
+  void removeTemporarilyAddedTags(String tag) {
+    _temporarilyAddedTags.remove(tag);
+    notifyListeners();
+  }
+  void addTemporarilyAddedTags(String tag){
+    _temporarilyAddedTags.add(tag);
+    notifyListeners();
   }
 }

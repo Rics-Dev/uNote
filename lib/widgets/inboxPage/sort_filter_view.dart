@@ -26,20 +26,17 @@ class SortAndFilterView extends StatelessWidget {
           ),
         ],
       ),
-      
     );
   }
 
   Future<dynamic> showSortView(BuildContext context) {
     return showTopModalSheet(
-              
-              context, 
-              SortView(),
-              backgroundColor: Colors.white,
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(25),
-              ),
-            );
+      context,
+      const SortView(),
+      backgroundColor: Colors.white,
+      borderRadius: const BorderRadius.vertical(
+        bottom: Radius.circular(25),
+      ),
+    );
   }
 }
-

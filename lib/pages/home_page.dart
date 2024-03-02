@@ -45,8 +45,8 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _showAddTaskDialog() {
-    showModalBottomSheet(
+  Future<dynamic> _showAddTaskDialog(BuildContext context) {
+    return showModalBottomSheet(
       context: context,
       builder: (context) => const AddTaskView(),
       isScrollControlled: true,
@@ -70,16 +70,6 @@ class _HomePageState extends State<HomePage> {
     if (value != null) setState(() => _topModalData = value);
   }
 
-  void showSuccessDelete() {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: const Text('Task deleted successfully'),
-      elevation: 10.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      showCloseIcon: true,
-    ));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +173,7 @@ class _HomePageState extends State<HomePage> {
                   //   addTaskDialogOpened = !addTaskDialogOpened;
                   // });
                   // if (addTaskDialogOpened) {
-                    _showAddTaskDialog();
+                    _showAddTaskDialog(context);
                   // }
                 }, //params
               )
@@ -201,7 +191,7 @@ class _HomePageState extends State<HomePage> {
                   //   addTaskDialogOpened = !addTaskDialogOpened;
                   // });
                   // if (addTaskDialogOpened) {
-                    _showAddTaskDialog();
+                    _showAddTaskDialog(context);
                   // }
                 }, //params
               )
@@ -218,7 +208,7 @@ class _HomePageState extends State<HomePage> {
               //   addTaskDialogOpened = !addTaskDialogOpened;
               // });
               // if (addTaskDialogOpened) {
-                _showAddTaskDialog();
+                _showAddTaskDialog(context);
               // }
             },
             //params
