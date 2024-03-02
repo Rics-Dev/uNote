@@ -18,7 +18,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool deleteFloatingActionButton = false;
-  String _topModalData = "";
 
   bool addTaskDialogOpened = false;
   int _bottomNavIndex = 0;
@@ -50,15 +49,12 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (context) => const AddTaskView(),
       isScrollControlled: true,
-      // expand: true,
     );
-    // .whenComplete(() => setState(() {
-    //       addTaskDialogOpened = !addTaskDialogOpened;
-    //     }));
+
   }
 
-  Future<void> _showCalendarView() async {
-    final value = await showTopModalSheet<String?>(
+  Future<dynamic> _showCalendarView() {
+    return showTopModalSheet<String?>(
       context,
       const CalendarView(),
       backgroundColor: Colors.white,
@@ -66,8 +62,6 @@ class _HomePageState extends State<HomePage> {
         bottom: Radius.circular(25),
       ),
     );
-
-    if (value != null) setState(() => _topModalData = value);
   }
 
 
@@ -165,17 +159,9 @@ class _HomePageState extends State<HomePage> {
                 backgroundColor: Colors.red,
                 child: const Icon(Icons.delete_outline_rounded,
                     color: Colors.white, size: 50),
-                // addTaskDialogOpened
-                //     ? const Icon(Icons.close_rounded, color: Colors.white, size: 38)
-                //     : const Icon(Icons.add_rounded, color: Colors.white, size: 38),
                 onPressed: () {
-                  // setState(() {
-                  //   addTaskDialogOpened = !addTaskDialogOpened;
-                  // });
-                  // if (addTaskDialogOpened) {
                     _showAddTaskDialog(context);
-                  // }
-                }, //params
+                }, 
               )
             : FloatingActionButton(
                 shape: const CircleBorder(),
@@ -183,35 +169,19 @@ class _HomePageState extends State<HomePage> {
                 backgroundColor: Colors.red,
                 child: const Icon(Icons.delete_outline_rounded,
                     color: Colors.white, size: 38),
-                // addTaskDialogOpened
-                //     ? const Icon(Icons.close_rounded, color: Colors.white, size: 38)
-                //     : const Icon(Icons.add_rounded, color: Colors.white, size: 38),
+
                 onPressed: () {
-                  // setState(() {
-                  //   addTaskDialogOpened = !addTaskDialogOpened;
-                  // });
-                  // if (addTaskDialogOpened) {
                     _showAddTaskDialog(context);
-                  // }
-                }, //params
+                },
               )
         : FloatingActionButton(
             shape: const CircleBorder(),
             tooltip: 'add task',
             backgroundColor: const Color.fromARGB(255, 0, 73, 133),
             child: const Icon(Icons.add_rounded, color: Colors.white, size: 38),
-            // addTaskDialogOpened
-            //     ? const Icon(Icons.close_rounded, color: Colors.white, size: 38)
-            //     : const Icon(Icons.add_rounded, color: Colors.white, size: 38),
             onPressed: () {
-              // setState(() {
-              //   addTaskDialogOpened = !addTaskDialogOpened;
-              // });
-              // if (addTaskDialogOpened) {
                 _showAddTaskDialog(context);
-              // }
             },
-            //params
           );
   }
 
