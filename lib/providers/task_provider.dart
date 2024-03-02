@@ -23,6 +23,7 @@ class TasksAPI extends ChangeNotifier {
   List<String> _tags = [];
   List<String> _searchedTags = [];
   List<Task> _filteredTasks = [];
+  List<Task> _searchedTasks = [];
   final List<String> _selectedTags = [];
   List<String> _temporarilyAddedTags = [];
   bool _oldToNew = true;
@@ -33,6 +34,7 @@ class TasksAPI extends ChangeNotifier {
   List<String> get tags => _tags;
   List<String> get searchedTags => _searchedTags;
   List<Task> get filteredTasks => _filteredTasks;
+  List<Task> get searchedTasks => _searchedTasks;
   List<String> get selectedTags => _selectedTags;
   List<String> get temporarilyAddedTags => _temporarilyAddedTags;
   bool get oldToNew => _oldToNew;
@@ -125,9 +127,9 @@ class TasksAPI extends ChangeNotifier {
     });
     _tasks.add(newTask);
 
-if (tags.isNotEmpty && _selectedTags.any((tag) => tags.contains(tag))) {
-  _filteredTasks.add(newTask);
-}
+    if (tags.isNotEmpty && _selectedTags.any((tag) => tags.contains(tag))) {
+      _filteredTasks.add(newTask);
+    }
 
     final newTags = tags.map((tag) => tag).toList();
     for (var tag in newTags) {
@@ -160,7 +162,6 @@ if (tags.isNotEmpty && _selectedTags.any((tag) => tags.contains(tag))) {
           );
           tagIds.add(tagDocument.data['\u0024id']);
         }
-
       }
       final document = await databases.createDocument(
           databaseId: constants.appwriteDatabaseId,
@@ -171,7 +172,7 @@ if (tags.isNotEmpty && _selectedTags.any((tag) => tags.contains(tag))) {
       final serverTask = Task.fromMap(document.data);
       _tasks.removeLast();
       _tasks.add(serverTask);
-       _temporarilyAddedTags.clear();
+
       notifyListeners();
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setStringList(
@@ -184,6 +185,8 @@ if (tags.isNotEmpty && _selectedTags.any((tag) => tags.contains(tag))) {
       _tasks.removeLast();
       notifyListeners();
     } finally {
+      //remove temporarilly added tags after creating a task
+      _temporarilyAddedTags.clear();
       notifyListeners();
     }
   }
@@ -335,6 +338,14 @@ if (tags.isNotEmpty && _selectedTags.any((tag) => tags.contains(tag))) {
     notifyListeners();
   }
 
+  void setSearchedTasks(List<Task> searchedTasks) {
+    if (searchedTasks.isEmpty) {
+      _searchedTasks.clear();
+    }
+    _searchedTasks = searchedTasks;
+    notifyListeners();
+  }
+
   //when selecting tags in the inbox page to filter
   void toggleTagSelection(String tag) {
     if (_selectedTags.contains(tag)) {
@@ -357,16 +368,16 @@ if (tags.isNotEmpty && _selectedTags.any((tag) => tags.contains(tag))) {
   }
 
   //to filter tasks by tags
-void filterTasksByTags(List tags) {
-  if (tags.isEmpty) {
-    _filteredTasks.clear();
-  } else {
-    _filteredTasks = _tasks.where((task) {
-      return tags.every((tag) => task.tags.contains(tag));
-    }).toList();
+  void filterTasksByTags(List tags) {
+    if (tags.isEmpty) {
+      _filteredTasks.clear();
+    } else {
+      _filteredTasks = _tasks.where((task) {
+        return tags.every((tag) => task.tags.contains(tag));
+      }).toList();
+    }
+    notifyListeners();
   }
-  notifyListeners();
-}
 
   void toggleSortByCreationDate() {
     _sortCriteria = SortCriteria.creationDate;
@@ -399,48 +410,45 @@ void filterTasksByTags(List tags) {
   }
 
   void sortTasks() {
-  List<Task> tasksToSort = filteredTasks.isNotEmpty ? _filteredTasks : _tasks;
-  
-  tasksToSort.sort((a, b) {
-    switch (sortCriteria) {
-      case SortCriteria.creationDate:
-        return _sortByDate(a.createdAt, b.createdAt);
-      case SortCriteria.editionDate:
-        return _sortByDate(a.updatedAt, b.updatedAt);
-      case SortCriteria.nameAZ:
-        return a.content.compareTo(b.content);
-      case SortCriteria.nameZA:
-        return b.content.compareTo(a.content);
-      default:
-        return 0;
+    List<Task> tasksToSort = filteredTasks.isNotEmpty ? _filteredTasks : _tasks;
+
+    tasksToSort.sort((a, b) {
+      switch (sortCriteria) {
+        case SortCriteria.creationDate:
+          return _sortByDate(a.createdAt, b.createdAt);
+        case SortCriteria.editionDate:
+          return _sortByDate(a.updatedAt, b.updatedAt);
+        case SortCriteria.nameAZ:
+          return a.content.compareTo(b.content);
+        case SortCriteria.nameZA:
+          return b.content.compareTo(a.content);
+        default:
+          return 0;
+      }
+    });
+
+    if (filteredTasks.isNotEmpty) {
+      _filteredTasks = tasksToSort;
+    } else {
+      _tasks = tasksToSort;
     }
-  });
 
-  if (filteredTasks.isNotEmpty) {
-    _filteredTasks = tasksToSort;
-  }else{
-    _tasks = tasksToSort;
+    notifyListeners();
   }
-
-  notifyListeners();
-}
 
   int _sortByDate(DateTime a, DateTime b) {
     return _oldToNew ? a.compareTo(b) : b.compareTo(a);
   }
 
-
-
-
   void removeTemporarilyAddedTags(String tag) {
     _temporarilyAddedTags.remove(tag);
     notifyListeners();
   }
-  void addTemporarilyAddedTags(String tag){
-    if(!_temporarilyAddedTags.contains(tag)){
+
+  void addTemporarilyAddedTags(String tag) {
+    if (!_temporarilyAddedTags.contains(tag)) {
       _temporarilyAddedTags.add(tag);
     }
     notifyListeners();
   }
-
 }
