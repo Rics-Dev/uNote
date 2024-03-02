@@ -10,22 +10,22 @@ import '../../providers/task_provider.dart';
 class TasksViewInboxPage extends StatelessWidget {
   const TasksViewInboxPage({
     Key? key,
-    required this.filteredTasks,
   }) : super(key: key);
-
-  final List<dynamic> filteredTasks;
 
   @override
   Widget build(BuildContext context) {
-    _filterNotDoneTasks(List filteredTasks) {
-      return filteredTasks.where((task) => !task.isDone).toList();
-    }
-    _filterDoneTasks(List filteredTasks) {
-      return filteredTasks.where((task) => task.isDone).toList();
-    }
+    final tasksAPI = context.watch<TasksAPI>();
+    final tasks = tasksAPI.tasks;
+    final selectedTags = tasksAPI.selectedTags;
+    List<Task> filteredTasks =
+        (selectedTags.isEmpty || tasksAPI.filteredTasks.isEmpty)
+            ? tasks
+            : tasksAPI.filteredTasks.isNotEmpty
+                ? tasksAPI.filteredTasks
+                : [];
 
-    final doneTasks = _filterDoneTasks(filteredTasks);
-    final notDoneTasks = _filterNotDoneTasks(filteredTasks);
+    final notDoneTasks = filteredTasks.where((task) => !task.isDone).toList();
+    final doneTasks = filteredTasks.where((task) => task.isDone).toList();
 
     return Expanded(
       child: filteredTasks.isEmpty

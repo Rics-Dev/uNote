@@ -123,10 +123,10 @@ class TasksAPI extends ChangeNotifier {
     });
     _tasks.add(newTask);
 
+  //  if (tags.isNotEmpty && _selectedTags.every((tag) => tags.contains(tag))) {
+  //   _filteredTasks.add(newTask);
+  // }
 
-    if(selectedTags.every((tag) => newTask.tags.contains(tag))){
-      _filteredTasks.add(newTask);
-    }
 
     final newTags = tags.map((tag) => tag).toList();
     for (var tag in newTags) {

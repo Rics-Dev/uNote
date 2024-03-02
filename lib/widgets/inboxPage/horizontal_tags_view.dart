@@ -8,19 +8,15 @@ import 'package:badges/badges.dart' as badges;
 class HorizontalTagsView extends StatelessWidget {
   const HorizontalTagsView({
     super.key,
-    required this.selectedTags,
-    required this.tags,
-    required this.context,
-    required this.tasksAPI,
   });
 
-  final List<String> selectedTags;
-  final List<String> tags;
-  final BuildContext context;
-  final TasksAPI tasksAPI;
 
   @override
   Widget build(BuildContext context) {
+    final tasksAPI = context.watch<TasksAPI>();
+    final tags = tasksAPI.tags;
+    final selectedTags = tasksAPI.selectedTags;
+
     final allTasks = tasksAPI.tasks;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
@@ -125,6 +121,7 @@ class HorizontalTagsView extends StatelessWidget {
   }
 
   Future<dynamic> deleteTag(BuildContext context, String tag) {
+    final tasksAPI = context.read<TasksAPI>();
     return showDialog(
       context: context,
       builder: (BuildContext context) {
