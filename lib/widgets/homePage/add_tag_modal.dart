@@ -14,6 +14,13 @@ class _AddTagViewState extends State<AddTagView> {
   final TextEditingController tagController = TextEditingController();
 
   @override
+  void dispose() {
+    // Dispose the TextEditingController when the widget is disposed
+    tagController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<String> tags = context.watch<TasksAPI>().tags;
     final searchedTags = context.watch<TasksAPI>().searchedTags;
@@ -66,7 +73,6 @@ class _AddTagViewState extends State<AddTagView> {
                       },
                       onSubmitted: (_) {
                         if (_.isNotEmpty) {
-                          // selectedTags.add(_);
                           context.read<TasksAPI>().temporarilyAddedTags.add(_);
                           tagController.clear();
                         }
@@ -85,7 +91,7 @@ class _AddTagViewState extends State<AddTagView> {
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 4.0),
                                   child: CheckboxListTile(
-                                    contentPadding: EdgeInsets.all(0),
+                                    contentPadding: const EdgeInsets.all(0),
                                     title: Text("#$tag"),
                                     checkboxShape: RoundedRectangleBorder(
                                         borderRadius:
@@ -93,13 +99,15 @@ class _AddTagViewState extends State<AddTagView> {
                                     value: temporarilyAddedTags.contains(tag),
                                     onChanged: (bool? newValue) {
                                       if (newValue != null) {
-                                        
-                                          if (newValue) {
-                                            context.read<TasksAPI>().addTemporarilyAddedTags(tag);
-                                          } else {
-                                            context.read<TasksAPI>().removeTemporarilyAddedTags(tag);
-                                          }
-
+                                        if (newValue) {
+                                          context
+                                              .read<TasksAPI>()
+                                              .addTemporarilyAddedTags(tag);
+                                        } else {
+                                          context
+                                              .read<TasksAPI>()
+                                              .removeTemporarilyAddedTags(tag);
+                                        }
                                       }
                                     },
                                     activeColor:

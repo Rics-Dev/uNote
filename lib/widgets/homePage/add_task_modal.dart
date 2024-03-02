@@ -18,32 +18,29 @@ class AddTaskView extends StatefulWidget {
 
 class _AddTaskViewState extends State<AddTaskView> {
   TextEditingController taskController = TextEditingController();
-  // bool isFavorite = false;
-  // List<String> tags = [];
 
-  // void setIsFavorite(bool value) {
-  //   setState(() {
-  //     isFavorite = value;
-  //   });
-  // }
+  @override
+  void dispose() {
+    // Dispose the TextEditingController when the widget is disposed
+    taskController.dispose();
+    super.dispose();
+  }
 
   void addTask(String newTask, List<String> temporarilyAddedTags) async {
     try {
-      await context.read<TasksAPI>().createTask(task: newTask, tags: temporarilyAddedTags);
+      await context
+          .read<TasksAPI>()
+          .createTask(task: newTask, tags: temporarilyAddedTags);
     } on AppwriteException catch (e) {
       showAlert(title: 'Error', text: e.message.toString());
     }
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
     final tasksAPI = context.watch<TasksAPI>();
     final temporarilyAddedTags = tasksAPI.temporarilyAddedTags;
 
-
-    
     return SafeArea(
       child: Padding(
         padding: MediaQuery.of(context).viewInsets, // Adjust for keyboard
@@ -92,7 +89,9 @@ class _AddTaskViewState extends State<AddTaskView> {
                             color: Color.fromARGB(255, 0, 73, 133),
                           ),
                         ),
-                  temporarilyAddedTags.isEmpty ? const SizedBox(width: 8) : const SizedBox(),
+                  temporarilyAddedTags.isEmpty
+                      ? const SizedBox(width: 8)
+                      : const SizedBox(),
                   Expanded(
                     // width: tags.isEmpty
                     //     ? MediaQuery.of(context).size.width * 0.53
@@ -115,7 +114,9 @@ class _AddTaskViewState extends State<AddTaskView> {
                               deleteIcon:
                                   const Icon(Icons.close_rounded, size: 18),
                               onDeleted: () {
-                                context.read<TasksAPI>().removeTemporarilyAddedTags(tag);
+                                context
+                                    .read<TasksAPI>()
+                                    .removeTemporarilyAddedTags(tag);
                                 // setState(() {
                                 //   tags.remove(tag);
                                 // });
@@ -152,9 +153,7 @@ class _AddTaskViewState extends State<AddTaskView> {
               const SizedBox(height: 10.0),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  
-                ],
+                children: [],
               ),
               Center(
                 child: ElevatedButton(
@@ -182,27 +181,13 @@ class _AddTaskViewState extends State<AddTaskView> {
     );
   }
 
-
   Future<dynamic> showAddTagDialog(context) {
     return showModalBottomSheet(
       context: context,
-      builder: (context) => AddTagView(),
+      builder: (context) => const AddTagView(),
       isScrollControlled: true,
     ).whenComplete(() => clearSearchedTags());
-
-    
-    // ).whenComplete(() => setState(() {
-    //       showAddTagDialog = !showAddTagDialog;
-    //     }));
-
-    // if (selectedTags != null) {
-      // Handle the selected tags here
-
-      // setState(() {
-      //   tags = selectedTags;
-      // });
-      // Add your logic to update the tags in the task model or wherever needed
-    }
+  }
 
   ToastificationItem toastEmptyTask(BuildContext context) {
     return toastification.show(
@@ -231,7 +216,7 @@ class _AddTaskViewState extends State<AddTaskView> {
           );
         });
   }
-  
+
   clearSearchedTags() {
     context.read<TasksAPI>().setSearchedTags(context.read<TasksAPI>().tags);
   }
