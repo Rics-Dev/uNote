@@ -72,7 +72,7 @@ class TasksViewInboxPage extends StatelessWidget {
       return buildTaskWidget(context, notDoneTasks[index], index);
     } else {
       return doneTasks.isNotEmpty
-          ? doneTasksList(context, doneTasks)
+          ? doneTasksList(context, doneTasks, index)
           : const SizedBox();
     }
   }
@@ -91,25 +91,43 @@ class TasksViewInboxPage extends StatelessWidget {
       },
       feedback: buildTaskCard(task),
       childWhenDragging: const SizedBox(),
-      child: buildDragTarget(context, task),
+      child: buildDragTarget(context, task, index),
     );
   }
 
-  Widget buildDragTarget(BuildContext context, Task task) {
-    return DragTarget(
-      builder: (context, incoming, rejected) {
-        return GestureDetector(
-          onTap: () {
-            showTaskDetails(context, task);
-          },
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
-            child: buildTaskContainer(context, task, incoming),
-          ),
-        );
-      },
-      // Drag target callbacks...
-    );
+  Widget buildDragTarget(BuildContext context, Task task, int index) {
+    if (task.isDone) {
+      return GestureDetector(
+        onTap: () {
+          showTaskDetails(context, task);
+        },
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
+          child: buildTaskContainer(context, task, []),
+        ),
+      );
+    } else {
+      return DragTarget(
+        builder: (context, incoming, rejected) {
+          return GestureDetector(
+            onTap: () {
+              showTaskDetails(context, task);
+            },
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
+              child: buildTaskContainer(context, task, incoming),
+            ),
+          );
+        },
+        onWillAccept: (data) => true,
+        onAccept: (data) {
+          final oldIndex = context.read<DragStateProvider>().originalIndex;
+          final newIndex = index;
+          context.read<TasksAPI>().updateTasksOrder(oldIndex, newIndex);
+        },
+        // Drag target callbacks...
+      );
+    }
   }
 
   Widget buildTaskContainer(
@@ -148,7 +166,14 @@ class TasksViewInboxPage extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          Icon(Icons.push_pin_outlined, color: Colors.grey[600]),
+          task.isDone
+              ? const SizedBox()
+              : GestureDetector(
+                  child: Icon(Icons.push_pin_outlined, color: Colors.grey[600]),
+                  onTap: () {
+                    // context.read<TasksAPI>().pinTask(task.id);
+                  },
+                ),
         ],
       ),
     );
@@ -164,33 +189,51 @@ class TasksViewInboxPage extends StatelessWidget {
     );
   }
 
-  Widget doneTasksList(BuildContext context, List<dynamic> doneTasks) {
+  Widget doneTasksList(
+      BuildContext context, List<dynamic> doneTasks, int index) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
       child: Card(
         child: Theme(
           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-          child: ExpansionTile(
-            backgroundColor: const Color(0xFFEEEDED),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            leading: SvgPicture.asset(
-              'assets/check-circle.svg',
-              width: 24,
-              height: 24,
-            ),
-            title: Text('Done tasks (${doneTasks.length})'),
-            children: [
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: doneTasks.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return buildTaskWidget(context, doneTasks[index], index);
-                },
-              ),
-            ],
+          child: DragTarget(
+            builder: (context, candidateData, rejectedData) {
+              return ExpansionTile(
+                maintainState: true,
+                collapsedBackgroundColor: candidateData.isNotEmpty
+                    ? Colors.blue[100]
+                    : const Color(0xFFEEEDED),
+                backgroundColor: candidateData.isNotEmpty
+                    ? Colors.blue[100]
+                    : const Color(0xFFEEEDED),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                collapsedShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                leading: SvgPicture.asset(
+                  'assets/check-circle.svg',
+                  width: 24,
+                  height: 24,
+                ),
+                title: Text('Done tasks (${doneTasks.length})'),
+                children: [
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: doneTasks.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return buildTaskWidget(context, doneTasks[index], index);
+                    },
+                  ),
+                ],
+              );
+            },
+            onWillAccept: (data) => true,
+            onAccept: (data) {
+              context.read<TasksAPI>().updateTask(data as String, isDone: true);
+            },
           ),
         ),
       ),
