@@ -13,7 +13,10 @@ class AddTaskView extends StatefulWidget {
   });
 
   @override
-  _AddTaskViewState createState() => _AddTaskViewState();
+  State<AddTaskView> createState() {
+    // Avoid using private types in public APIs.
+    return _AddTaskViewState();
+  }
 }
 
 class _AddTaskViewState extends State<AddTaskView> {

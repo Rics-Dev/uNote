@@ -16,8 +16,7 @@ class SortAndFilterView extends StatefulWidget {
 }
 
 class _SortAndFilterViewState extends State<SortAndFilterView> {
-  TextEditingController searchBar = TextEditingController(); 
-  
+  TextEditingController searchBar = TextEditingController();
 
   @override
   Widget build(BuildContext context) {

@@ -12,7 +12,7 @@ class SortView extends StatelessWidget {
   Widget build(BuildContext context) {
     final tasksAPI = context.watch<TasksAPI>();
     final oldToNew = tasksAPI.oldToNew;
-    
+
     SortCriteria sortCriteria = tasksAPI.sortCriteria;
 
     return SafeArea(
@@ -55,7 +55,7 @@ class SortView extends StatelessWidget {
               ),
               Column(
                 children: [
-                  Text('Old'),
+                  const Text('Old'),
                   IconButton.outlined(
                     onPressed: () {
                       tasksAPI.toggleNewToOld();
@@ -68,7 +68,7 @@ class SortView extends StatelessWidget {
                       color: const Color.fromARGB(255, 0, 73, 133),
                     ),
                   ),
-                  Text('New'),
+                  const Text('New'),
                 ],
               ),
               OutlinedButton(

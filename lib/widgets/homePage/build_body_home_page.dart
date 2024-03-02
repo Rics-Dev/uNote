@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../pages/inbox_page.dart';
 import '../../pages/list_page.dart';
-Widget buildBody(int _bottomNavIndex) {
-  switch (_bottomNavIndex) {
+
+Widget buildBody(int bottomNavIndex) {
+  switch (bottomNavIndex) {
     case 0:
-      return  InboxPage();
+      return const InboxPage();
     case 1:
-      return ListPage();
+      return const ListPage();
     default:
-      return  InboxPage();
+      return const InboxPage();
   }
 }
 // , List<Task> tasks

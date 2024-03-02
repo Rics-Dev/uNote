@@ -1,6 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart' as constants;
 
@@ -69,6 +69,7 @@ class AuthAPI extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   //not currently used
   Future<Session> signIn(
       {required String email, required String password}) async {
@@ -93,9 +94,13 @@ class AuthAPI extends ChangeNotifier {
         email: email,
       );
       result.then((response) {
-        print(response);
+        if (kDebugMode) {
+          print(response);
+        }
       }).catchError((error) {
-        print(error.response);
+        if (kDebugMode) {
+          print(error);
+        }
       });
     } finally {
       notifyListeners();

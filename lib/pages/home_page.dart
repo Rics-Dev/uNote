@@ -17,7 +17,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  
   bool deleteFloatingActionButton = false;
 
   bool addTaskDialogOpened = false;
@@ -30,9 +29,6 @@ class _HomePageState extends State<HomePage> {
     'Your inbox',
     'Your lists',
   ];
-
-
-
 
   void removeTask(Object? data) async {
     final removedTaskId = data as String?;
@@ -54,7 +50,6 @@ class _HomePageState extends State<HomePage> {
       builder: (context) => const AddTaskView(),
       isScrollControlled: true,
     );
-
   }
 
   Future<dynamic> _showCalendarView() {
@@ -68,7 +63,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -134,13 +128,13 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             ListTile(
-              title: Text('Item 1'),
+              title: const Text('Item 1'),
               onTap: () {
                 // Update UI based on drawer item selected
               },
             ),
             ListTile(
-              title: Text('Item 2'),
+              title: const Text('Item 2'),
               onTap: () {
                 // Update UI based on drawer item selected
               },
@@ -165,8 +159,8 @@ class _HomePageState extends State<HomePage> {
                 child: const Icon(Icons.delete_outline_rounded,
                     color: Colors.white, size: 50),
                 onPressed: () {
-                    _showAddTaskDialog(context);
-                }, 
+                  _showAddTaskDialog(context);
+                },
               )
             : FloatingActionButton(
                 shape: const CircleBorder(),
@@ -174,9 +168,8 @@ class _HomePageState extends State<HomePage> {
                 backgroundColor: Colors.red,
                 child: const Icon(Icons.delete_outline_rounded,
                     color: Colors.white, size: 38),
-
                 onPressed: () {
-                    _showAddTaskDialog(context);
+                  _showAddTaskDialog(context);
                 },
               )
         : FloatingActionButton(
@@ -185,7 +178,7 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: const Color.fromARGB(255, 0, 73, 133),
             child: const Icon(Icons.add_rounded, color: Colors.white, size: 38),
             onPressed: () {
-                _showAddTaskDialog(context);
+              _showAddTaskDialog(context);
             },
           );
   }

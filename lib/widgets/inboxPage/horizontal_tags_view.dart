@@ -10,7 +10,6 @@ class HorizontalTagsView extends StatelessWidget {
     super.key,
   });
 
-
   @override
   Widget build(BuildContext context) {
     final tasksAPI = context.watch<TasksAPI>();
@@ -135,7 +134,7 @@ class HorizontalTagsView extends StatelessWidget {
                     // Save changes
                     Navigator.pop(context);
                   },
-                  child: Text('Cancel'),
+                  child: const Text('Cancel'),
                 ),
                 ElevatedButton(
                     style: ButtonStyle(
@@ -151,6 +150,7 @@ class HorizontalTagsView extends StatelessWidget {
                       children: [
                         SvgPicture.asset(
                           'assets/trash-2.svg',
+                          // ignore: deprecated_member_use
                           color: Colors.white,
                         ),
                         const SizedBox(width: 5),

@@ -7,7 +7,9 @@ class AddTagView extends StatefulWidget {
   const AddTagView({super.key});
 
   @override
-  _AddTagViewState createState() => _AddTagViewState();
+  State<AddTagView> createState() {
+    return _AddTagViewState();
+  }
 }
 
 class _AddTagViewState extends State<AddTagView> {

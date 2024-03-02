@@ -25,7 +25,7 @@ class TasksAPI extends ChangeNotifier {
   List<Task> _filteredTasks = [];
   List<Task> _searchedTasks = [];
   final List<String> _selectedTags = [];
-  List<String> _temporarilyAddedTags = [];
+  final List<String> _temporarilyAddedTags = [];
   bool _oldToNew = true;
 
   SortCriteria _sortCriteria = SortCriteria.creationDate;
