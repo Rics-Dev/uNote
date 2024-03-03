@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../pages/home_page.dart';
 import '../pages/landing_page.dart';
-import '../providers/auth.dart';
+import '../providers/auth_provider.dart';
 
 Widget buildLandingPage(AuthStatus authStatus, Map<String, String> queryParameters, [String? userID]) {
   final userId = queryParameters['userId'] ?? '';

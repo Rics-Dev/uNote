@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth.dart';
+import '../providers/auth_provider.dart';
 import 'package:sign_button/sign_button.dart';
 
 class LandingPage extends StatefulWidget {

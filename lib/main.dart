@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'providers/drag_provider.dart';
 import 'router/router.dart';
-import 'providers/auth.dart';
+import 'providers/auth_provider.dart';
 import 'providers/task_provider.dart';
 
 void main() async {

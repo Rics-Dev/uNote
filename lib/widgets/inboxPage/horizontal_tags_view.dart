@@ -185,14 +185,6 @@ class HorizontalTagsView extends StatelessWidget {
                     );
                   }).toList(),
                 ),
-          // Spacer(),
-          // IconButton.outlined(
-          //   onPressed: () {},
-          //   icon: const Icon(
-          //     Icons.label_outline_rounded,
-          //     color: Color.fromARGB(255, 0, 73, 133),
-          //   ),
-          // ),
         ],
       ),
     );
