@@ -83,7 +83,7 @@ class TasksAPI extends ChangeNotifier {
 
       //Only fetch server data if local data is unavailable or if user requests it
       // if (_tasks.isEmpty) {
-        await _fetchServerData();
+      await _fetchServerData();
       // }
     } finally {
       notifyListeners();
@@ -146,8 +146,10 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _createLocalTask(
-      {required String task, required String id, }) async {
+  Future<void> _createLocalTask({
+    required String task,
+    required String id,
+  }) async {
     for (var tag in _temporarilyAddedTags) {
       if (!_tags.contains(tag)) {
         _tags.add(tag);
@@ -156,7 +158,7 @@ class TasksAPI extends ChangeNotifier {
     final newTask = Task(
       content: task,
       id: id,
-      userID : auth.userid,
+      userID: auth.userid,
       tags: _temporarilyAddedTags,
       isDone: false,
       createdAt: DateTime.now(),
@@ -173,7 +175,8 @@ class TasksAPI extends ChangeNotifier {
   }
 
   Future<void> _createServerTask({
-    required String task, required String id,
+    required String task,
+    required String id,
   }) async {
     await _createServerTags(temporarilyAddedTags);
     final newTaskData = {
@@ -310,22 +313,29 @@ class TasksAPI extends ChangeNotifier {
   }
 
   void deleteTag(String tag) async {
+    await _deleteLocalTag(tag);
+    await _deleteServerTag(tag);
+  }
+
+  Future<void> _deleteLocalTag(String tag) async {
     _tags.remove(tag);
     for (var task in _tasks) {
       if (task.tags.contains(tag)) {
-        // If the task contains the tag, remove it
+        // If the task contains the tag, remove it inside the task
         task.tags.remove(tag);
       }
     }
+    await _updateLocalStorage(_tasks, _tags);
     notifyListeners();
+  }
+
+  Future<void> _deleteServerTag(String tag) async {
     try {
       await databases.deleteDocument(
         databaseId: constants.appwriteDatabaseId,
         collectionId: constants.appwriteTagsCollectionId,
         documentId: tag,
       );
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setStringList('tags', _tags);
     } catch (e) {
       if (kDebugMode) {
         print('Error deleting tag: $e');

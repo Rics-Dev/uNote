@@ -8,7 +8,6 @@ class AddPriorityView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final temporarySelectedPriority = context.watch<TasksAPI>().temporarySelectedPriority;
 
     return SafeArea(
       child: Padding(
