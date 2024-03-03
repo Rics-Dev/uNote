@@ -1,10 +1,5 @@
 import 'dart:convert';
 
-enum Priority {
-  small,
-  medium,
-  high,
-}
 
 class Task {
   String content;
@@ -14,7 +9,7 @@ class Task {
   DateTime createdAt;
   DateTime updatedAt;
   DateTime? dueDate; // Nullable dueDate
-  Priority? priority; // Nullable priority
+  String? priority; // Nullable priority
 
   Task({
     required this.content,
@@ -40,9 +35,7 @@ class Task {
         dueDate: json["dueDate"] != null
             ? DateTime.parse(json["dueDate"])
             : null, // Parse dueDate from JSON or set to null if not present
-        priority: json["priority"] != null
-            ? Priority.values[json["priority"]]
-            : null, // Parse priority from JSON or set to null if not present
+        priority: json["priority"] ?? "",
       );
 
   String toJson() => json.encode(toMap());
@@ -56,7 +49,7 @@ class Task {
       "\u0024createdAt": createdAt.toIso8601String(),
       "\u0024updatedAt": updatedAt.toIso8601String(),
       "dueDate": dueDate?.toIso8601String(), // Convert dueDate to ISO 8601 string or set to null if not present
-      "priority": priority?.index, // Convert priority to index or set to null if not present
+      "priority": priority, // Convert priority to index or set to null if not present
     };
 
     return map;

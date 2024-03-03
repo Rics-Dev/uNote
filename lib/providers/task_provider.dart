@@ -118,7 +118,7 @@ class TasksAPI extends ChangeNotifier {
   //to create tasks and tags
   Future<void> createTask({
     required String task,
-    required List<String> tags,
+    required List<String> tags, String? priority,
   }) async {
     final List<Map<String, dynamic>> tagList =
         tags.map((tag) => {'tagname': tag}).toList();
@@ -131,7 +131,7 @@ class TasksAPI extends ChangeNotifier {
       '\u0024createdAt': DateTime.now().toIso8601String(),
       '\u0024updatedAt': DateTime.now().toIso8601String(),
       'dueDate': null,
-      'priority': null,
+      'priority': priority,
     });
     _tasks.add(newTask);
 
@@ -175,7 +175,7 @@ class TasksAPI extends ChangeNotifier {
           databaseId: constants.appwriteDatabaseId,
           collectionId: constants.appwriteTasksCollectionId,
           documentId: ID.unique(),
-          data: {'content': task, 'userID': auth.userid, 'tags': tagIds});
+          data: {'content': task, 'userID': auth.userid, 'tags': tagIds, 'priority': priority});
 
       final serverTask = Task.fromMap(document.data);
       _tasks.removeLast();

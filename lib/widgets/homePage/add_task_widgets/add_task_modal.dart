@@ -32,11 +32,11 @@ class _AddTaskViewState extends State<AddTaskView> {
     super.dispose();
   }
 
-  void addTask(String newTask, List<String> temporarilyAddedTags) async {
+  void addTask(String newTask, List<String> temporarilyAddedTags, String? temporarySelectedPriority) async {
     try {
       await context
           .read<TasksAPI>()
-          .createTask(task: newTask, tags: temporarilyAddedTags);
+          .createTask(task: newTask, tags: temporarilyAddedTags, priority: temporarySelectedPriority);
     } on AppwriteException catch (e) {
       showAlert(title: 'Error', text: e.message.toString());
     }
@@ -153,7 +153,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                     TextInputAction.done, // Dismiss keyboard on Done
                 onSubmitted: (_) {
                   if (taskController.text.isNotEmpty) {
-                    addTask(taskController.text, temporarilyAddedTags);
+                    addTask(taskController.text, temporarilyAddedTags, temporarySelectedPriority!);
                     context.read<TasksAPI>().temporarilyAddedTags.clear();
                     Navigator.pop(context, true);
                   } else {
@@ -212,7 +212,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (taskController.text.isNotEmpty) {
-                      addTask(taskController.text, temporarilyAddedTags);
+                      addTask(taskController.text, temporarilyAddedTags, temporarySelectedPriority!);
                       // context.read<TasksAPI>().removeAllTemporaryTags();
                       Navigator.pop(context, true);
                     } else {
