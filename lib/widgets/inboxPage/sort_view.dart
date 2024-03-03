@@ -138,6 +138,62 @@ class SortView extends StatelessWidget {
               )
             ],
           ),
+          const SizedBox(
+            height: 15,
+          ),
+          const Text('Filter by',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              OutlinedButton.icon(
+                icon: (const Icon(
+                  Icons.label_outline_rounded,
+                  color: Color.fromARGB(255, 0, 73, 133),
+                )),
+                onPressed: () {
+                  tasksAPI.toggleSortByNameAZ();
+                },
+                style: sortCriteria == SortCriteria.nameAZ
+                    ? ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color.fromARGB(255, 0, 73,
+                              133), // Change the text color when not selected
+                        ),
+                      )
+                    : null,
+                label: Text('Tags',
+                    style: TextStyle(
+                      color: sortCriteria == SortCriteria.nameAZ
+                          ? Colors.white
+                          : const Color.fromARGB(255, 0, 73, 133),
+                    )),
+              ),
+              OutlinedButton.icon(
+                icon: (const Icon(
+                  Icons.flag_outlined,
+                  color: Color.fromARGB(255, 0, 73, 133),
+                )),
+                onPressed: () {
+                  tasksAPI.toggleSortByNameZA();
+                },
+                style: sortCriteria == SortCriteria.nameZA
+                    ? ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color.fromARGB(255, 0, 73,
+                              133), // Change the text color when not selected
+                        ),
+                      )
+                    : null,
+                label: Text('Priority',
+                    style: TextStyle(
+                      color: sortCriteria == SortCriteria.nameZA
+                          ? Colors.white
+                          : const Color.fromARGB(255, 0, 73, 133),
+                    )),
+              )
+            ],
+          ),
           const Spacer(),
           Container(
             width: 100,
