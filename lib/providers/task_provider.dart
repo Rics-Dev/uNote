@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart' as constants;
 import '../models/tasks.dart';
 import 'auth_provider.dart';
+import 'package:uuid/uuid.dart';
 
 enum SortCriteria {
   creationDate,
@@ -25,6 +26,7 @@ class TasksAPI extends ChangeNotifier {
   late final Databases databases;
   final AuthAPI auth = AuthAPI();
   late SharedPreferences prefs;
+  var uuid = Uuid();
 
   List<Task> _tasks = [];
   List<String> _tags = [];
@@ -76,6 +78,13 @@ class TasksAPI extends ChangeNotifier {
     databases = Databases(client);
   }
 
+  Future<void> _updateLocalStorage(List<Task> tasks, List<String> tags) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(
+        'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
+    await prefs.setStringList('tags', tags);
+  }
+
   Future<void> fetchTasks() async {
     try {
       prefs = await SharedPreferences.getInstance();
@@ -88,6 +97,23 @@ class TasksAPI extends ChangeNotifier {
     } finally {
       notifyListeners();
     }
+  }
+
+  //to create tasks and tags
+  Future<void> createTask({required String taskContent}) async {
+    final taskId = uuid.v4();
+    await _createLocalTask(task: taskContent,taskId: taskId);
+    await _createServerTask(task: taskContent,taskId: taskId);
+    _temporarilyAddedTags = [];
+    _temporarySelectedPriority = null;
+    notifyListeners();
+  }
+
+  //to delete tasks
+  Future<void> deleteTask({required String taskId}) async {
+    final removedTask = await _deleteLocalTask(taskId: taskId);
+    await _deleteUnusedLocalTag(removedTask);
+    await _deleteServerTask(taskId: taskId);
   }
 
   Future<void> _fetchLocalData() async {
@@ -132,40 +158,25 @@ class TasksAPI extends ChangeNotifier {
     await _updateLocalStorage(_tasks, _tags);
   }
 
-  //to create tasks and tags
-  Future<void> createTask({
-    required String task,
-    required List<String> tags,
-    String? priority,
-  }) async {
-    var uniqueTaskId = ID.unique();
-    await _createLocalTask(task: task, id: uniqueTaskId);
-    await _createServerTask(task: task, id: uniqueTaskId);
-    _temporarilyAddedTags = [];
-    _temporarySelectedPriority = null;
-    notifyListeners();
-  }
-
   Future<void> _createLocalTask({
-    required String task,
-    required String id,
+    required String task, required String taskId,
   }) async {
     for (var tag in _temporarilyAddedTags) {
       if (!_tags.contains(tag)) {
         _tags.add(tag);
       }
     }
-    final newTask = Task(
-      content: task,
-      id: id,
-      userID: auth.userid,
-      tags: _temporarilyAddedTags,
-      isDone: false,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-      dueDate: null,
-      priority: temporarySelectedPriority,
-    );
+    final newTask = Task.fromMap({
+      'content': task,
+      '\u0024id': taskId,
+      'userID': auth.userid,
+      'tags': _temporarilyAddedTags,
+      'isDone': false,
+      '\u0024createdAt': DateTime.now().toIso8601String(),
+      '\u0024updatedAt': DateTime.now().toIso8601String(),
+      'dueDate': null,
+      'priority': temporarySelectedPriority,
+    });
     if (selectedTags.isNotEmpty || selectedPriority.isNotEmpty) {
       _filteredTasks.add(newTask);
     }
@@ -175,13 +186,11 @@ class TasksAPI extends ChangeNotifier {
   }
 
   Future<void> _createServerTask({
-    required String task,
-    required String id,
+    required String task, required String taskId,
   }) async {
     await _createServerTags(temporarilyAddedTags);
     final newTaskData = {
       'content': task,
-      '\u0024id': id,
       'userID': auth.userid,
       'tags': temporarilyAddedTags,
       'isDone': false,
@@ -194,9 +203,14 @@ class TasksAPI extends ChangeNotifier {
       await databases.createDocument(
         databaseId: constants.appwriteDatabaseId,
         collectionId: constants.appwriteTasksCollectionId,
-        documentId: ID.unique(),
+        documentId: taskId,
         data: newTaskData,
       );
+      // final serverTask = Task.fromMap(document.data);
+      // _tasks.removeLast();
+      // _tasks.add(serverTask);
+      notifyListeners();
+      await _updateLocalStorage(_tasks, _tags);
     } catch (e) {
       if (kDebugMode) {
         print('Error creating task: $e');
@@ -233,15 +247,7 @@ class TasksAPI extends ChangeNotifier {
     }
   }
 
-  Future<void> _updateLocalStorage(List<Task> tasks, List<String> tags) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(
-        'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
-    await prefs.setStringList('tags', tags);
-  }
-
-  //to delete tasks
-  Future<void> deleteTask({required String taskId}) async {
+  Future<Task?> _deleteLocalTask({required String taskId}) async {
     Task? removedTask;
     _tasks.removeWhere((task) {
       if (task.id == taskId) {
@@ -250,34 +256,15 @@ class TasksAPI extends ChangeNotifier {
       }
       return false;
     });
-    _filteredTasks.removeWhere((task) => task.id == taskId);
-    notifyListeners();
-
-    //after removing task remove unused tags
-    removeUnusedTag(removedTask);
-
-    try {
-      await databases.deleteDocument(
-          databaseId: constants.appwriteDatabaseId,
-          collectionId: constants.appwriteTasksCollectionId,
-          documentId: taskId);
-      notifyListeners();
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setStringList(
-          'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
-
-      prefs.setStringList('tags', _tags);
-    } catch (e) {
-      if (removedTask != null) {
-        _tasks.add(removedTask!);
-        notifyListeners();
-      }
-    } finally {
-      notifyListeners();
+    if (selectedTags.isNotEmpty || selectedPriority.isNotEmpty) {
+      _filteredTasks.removeWhere((task) => task.id == taskId);
     }
+    notifyListeners();
+    await _updateLocalStorage(_tasks, _tags);
+    return removedTask;
   }
 
-  void removeUnusedTag(Task? removedTask) async {
+  Future<void> _deleteUnusedLocalTag(Task? removedTask) async {
     if (removedTask != null && removedTask.tags.isNotEmpty) {
       final List<String> tagsToRemove = removedTask.tags
           .toList(); // Copy the list to avoid concurrent modification issues
@@ -290,24 +277,40 @@ class TasksAPI extends ChangeNotifier {
             break;
           }
         }
-
         // If the tag is not used by any other task, remove it
         if (!isTagUsed) {
           tags.remove(tagToRemove);
           clearSelectedTags();
           notifyListeners();
-          try {
-            await databases.deleteDocument(
-              databaseId: constants.appwriteDatabaseId,
-              collectionId: constants.appwriteTagsCollectionId,
-              documentId: tagToRemove,
-            );
-          } catch (e) {
-            if (kDebugMode) {
-              print('Error removing tag: $e');
-            }
-          }
+          _deleteUnusedServerTag(tagToRemove: tagToRemove);
         }
+      }
+    }
+  }
+
+  Future<void> _deleteUnusedServerTag({required String tagToRemove}) async {
+    try {
+      await databases.deleteDocument(
+        databaseId: constants.appwriteDatabaseId,
+        collectionId: constants.appwriteTagsCollectionId,
+        documentId: tagToRemove,
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error removing tag: $e');
+      }
+    }
+  }
+
+  Future<void> _deleteServerTask({required String taskId}) async {
+    try {
+      await databases.deleteDocument(
+          databaseId: constants.appwriteDatabaseId,
+          collectionId: constants.appwriteTasksCollectionId,
+          documentId: taskId);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error deleting task: $e');
       }
     }
   }
@@ -325,8 +328,8 @@ class TasksAPI extends ChangeNotifier {
         task.tags.remove(tag);
       }
     }
-    await _updateLocalStorage(_tasks, _tags);
     notifyListeners();
+    await _updateLocalStorage(_tasks, _tags);
   }
 
   Future<void> _deleteServerTag(String tag) async {

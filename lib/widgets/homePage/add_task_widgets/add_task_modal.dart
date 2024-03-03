@@ -36,7 +36,7 @@ class _AddTaskViewState extends State<AddTaskView> {
     try {
       await context
           .read<TasksAPI>()
-          .createTask(task: newTask, tags: temporarilyAddedTags, priority: temporarySelectedPriority);
+          .createTask(taskContent: newTask,);
     } on AppwriteException catch (e) {
       showAlert(title: 'Error', text: e.message.toString());
     }
