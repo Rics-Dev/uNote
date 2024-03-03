@@ -14,6 +14,11 @@ enum SortCriteria {
   nameZA,
 }
 
+enum FilterCriteria {
+  tags,
+  priority,
+}
+
 class TasksAPI extends ChangeNotifier {
   Client client = Client();
   late final Account account;
@@ -30,8 +35,11 @@ class TasksAPI extends ChangeNotifier {
   DateTime? _dueDate = null;
   bool _isTimeSet = false;
   String? _temporarySelectedPriority = null;
+  List<String> _priority = ['Low', 'Medium', 'High'];
+  List<String> _selectedPriority = [];
 
   SortCriteria _sortCriteria = SortCriteria.creationDate;
+  FilterCriteria _filterCriteria = FilterCriteria.tags;
 
   List<Task> get tasks => _tasks;
   List<String> get tags => _tags;
@@ -42,9 +50,12 @@ class TasksAPI extends ChangeNotifier {
   List<String> get temporarilyAddedTags => _temporarilyAddedTags;
   bool get oldToNew => _oldToNew;
   SortCriteria get sortCriteria => _sortCriteria;
+  FilterCriteria get filterCriteria => _filterCriteria;
   DateTime? get dueDate => _dueDate;
   bool get isTimeSet => _isTimeSet;
   String? get temporarySelectedPriority => _temporarySelectedPriority;
+  List<String> get priority => _priority;
+  List<String> get selectedPriority => _selectedPriority;
 
   TasksAPI(
       {String endpoint = constants.appwriteEndpoint,
@@ -118,7 +129,8 @@ class TasksAPI extends ChangeNotifier {
   //to create tasks and tags
   Future<void> createTask({
     required String task,
-    required List<String> tags, String? priority,
+    required List<String> tags,
+    String? priority,
   }) async {
     final List<Map<String, dynamic>> tagList =
         tags.map((tag) => {'tagname': tag}).toList();
@@ -175,7 +187,12 @@ class TasksAPI extends ChangeNotifier {
           databaseId: constants.appwriteDatabaseId,
           collectionId: constants.appwriteTasksCollectionId,
           documentId: ID.unique(),
-          data: {'content': task, 'userID': auth.userid, 'tags': tagIds, 'priority': priority});
+          data: {
+            'content': task,
+            'userID': auth.userid,
+            'tags': tagIds,
+            'priority': priority
+          });
 
       final serverTask = Task.fromMap(document.data);
       _tasks.removeLast();
@@ -354,6 +371,16 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleFilterByTags() {
+    _filterCriteria = FilterCriteria.tags;
+    notifyListeners();
+  }
+
+  void toggleFilterByPriority() {
+    _filterCriteria = FilterCriteria.priority;
+    notifyListeners();
+  }
+
   //when selecting tags in the inbox page to filter
   void toggleTagSelection(String tag) {
     if (_selectedTags.contains(tag)) {
@@ -367,6 +394,8 @@ class TasksAPI extends ChangeNotifier {
     filterTasksByTags(selectedTags);
     notifyListeners();
   }
+
+
 
   void clearSelectedTags() {
     _selectedTags.clear();
@@ -384,6 +413,37 @@ class TasksAPI extends ChangeNotifier {
         return tags.every((tag) => task.tags.contains(tag));
       }).toList();
     }
+    notifyListeners();
+  }
+
+    void togglePrioritySelection(String priority) {
+    if (_selectedPriority.contains(priority)) {
+      _selectedPriority.remove(priority);
+    } else {
+      _selectedPriority.add(priority);
+    }
+    if (_selectedPriority.isEmpty) {
+      _filteredTasks.clear();
+    }
+    filterTasksByPriority(_selectedPriority);
+    notifyListeners();
+  }
+
+  void filterTasksByPriority(List priority) {
+    if (priority.isEmpty) {
+      _filteredTasks.clear();
+    } else {
+      _filteredTasks = _tasks.where((task) {
+        return priority.every((priority) => task.priority == priority);
+      }).toList();
+    }
+    notifyListeners();
+  }
+
+    void clearSelectedPriority() {
+    _selectedPriority.clear();
+    // _filteredTasks = tasks;
+    _filteredTasks.clear();
     notifyListeners();
   }
 

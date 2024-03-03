@@ -14,12 +14,18 @@ class HorizontalTagsView extends StatelessWidget {
     final tasksAPI = context.watch<TasksAPI>();
     final tags = tasksAPI.tags;
     final selectedTags = tasksAPI.selectedTags;
+    final selectedPriority = tasksAPI.selectedPriority;
 
     final allTasks = tasksAPI.tasks;
+    final filterCriteria = tasksAPI.filterCriteria;
+    final priority = tasksAPI.priority;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
       child: Row(
+        mainAxisAlignment: filterCriteria == FilterCriteria.priority
+            ? MainAxisAlignment.center
+            : MainAxisAlignment.start,
         children: [
           selectedTags.isNotEmpty
               ? GestureDetector(
@@ -39,79 +45,146 @@ class HorizontalTagsView extends StatelessWidget {
                       )),
                 )
               : const SizedBox(),
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: tags.map((tag) {
-                  final isSelected = selectedTags.contains(tag);
-                  return badges.Badge(
-                    badgeStyle: const badges.BadgeStyle(
-                        badgeColor: Color.fromARGB(255, 0, 73, 133)),
-                    position: badges.BadgePosition.topEnd(top: -5, end: 0),
-                    badgeContent: Text(
-                      allTasks
-                          .where((task) => task.tags.contains(tag))
-                          .length
-                          .toString(),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: GestureDetector(
-                        onLongPress: () {
-                          // Show a confirmation dialog
-                          deleteTag(context, tag);
-                        },
-                        onTap: () {
-                          tasksAPI.toggleTagSelection(tag);
-                        },
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            tasksAPI.toggleTagSelection(tag);
-                          },
-                          icon: Icon(
-                            Icons.label_outline_rounded,
-                            size: 18,
-                            color: isSelected
-                                ? Colors.white
-                                : const Color.fromARGB(255, 0, 73, 133),
+          filterCriteria == FilterCriteria.tags
+              ? Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                        children: tags.map((tag) {
+                      final isSelected = selectedTags.contains(tag);
+                      return badges.Badge(
+                        badgeStyle: const badges.BadgeStyle(
+                            badgeColor: Color.fromARGB(255, 0, 73, 133)),
+                        position: badges.BadgePosition.topEnd(top: -5, end: 0),
+                        badgeContent: Text(
+                          allTasks
+                              .where((task) => task.tags.contains(tag))
+                              .length
+                              .toString(),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: GestureDetector(
+                            onLongPress: () {
+                              // Show a confirmation dialog
+                              deleteTag(context, tag);
+                            },
+                            onTap: () {
+                              tasksAPI.toggleTagSelection(tag);
+                            },
+                            child: OutlinedButton.icon(
+                              onPressed: () {
+                                tasksAPI.toggleTagSelection(tag);
+                              },
+                              icon: Icon(
+                                Icons.label_outline_rounded,
+                                size: 18,
+                                color: isSelected
+                                    ? Colors.white
+                                    : const Color.fromARGB(255, 0, 73, 133),
+                              ),
+                              label: Text(
+                                tag,
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? Colors.white
+                                      : const Color.fromARGB(255, 0, 73, 133),
+                                ),
+                              ),
+                              style: ButtonStyle(
+                                padding: MaterialStateProperty.all<
+                                    EdgeInsetsGeometry>(
+                                  const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical:
+                                          4), // Adjust the padding as needed
+                                ),
+                                backgroundColor: isSelected
+                                    ? MaterialStateProperty.all<Color>(
+                                        const Color.fromARGB(255, 0, 73, 133))
+                                    : MaterialStateProperty.all<Color>(
+                                        Colors.transparent),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
-                          label: Text(
-                            tag,
-                            style: TextStyle(
+                        ),
+                      );
+                    }).toList()),
+                  ),
+                )
+              //filter by Priority
+              : Row(
+                  children: priority.map((priority) {
+                    final isSelected = selectedPriority.contains(priority);
+                    return badges.Badge(
+                      badgeStyle: const badges.BadgeStyle(
+                          badgeColor: Color.fromARGB(255, 0, 73, 133)),
+                      position: badges.BadgePosition.topEnd(top: -5, end: 0),
+                      badgeContent: Text(
+                        allTasks
+                            .where((task) => task.priority!.contains(priority))
+                            .length
+                            .toString(),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            tasksAPI.togglePrioritySelection(priority);
+                          },
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              tasksAPI.togglePrioritySelection(priority);
+                            },
+                            icon: Icon(
+                              Icons.flag_outlined,
+                              size: 18,
                               color: isSelected
                                   ? Colors.white
                                   : const Color.fromARGB(255, 0, 73, 133),
                             ),
-                          ),
-                          style: ButtonStyle(
-                            padding:
-                                MaterialStateProperty.all<EdgeInsetsGeometry>(
-                              const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 4), // Adjust the padding as needed
+                            label: Text(
+                              priority,
+                              style: TextStyle(
+                                color: isSelected
+                                    ? Colors.white
+                                    : const Color.fromARGB(255, 0, 73, 133),
+                              ),
                             ),
-                            backgroundColor: isSelected
-                                ? MaterialStateProperty.all<Color>(
-                                    const Color.fromARGB(255, 0, 73, 133))
-                                : MaterialStateProperty.all<Color>(
-                                    Colors.transparent),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
+                            style: ButtonStyle(
+                              padding:
+                                  MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical:
+                                        4), // Adjust the padding as needed
+                              ),
+                              backgroundColor: isSelected
+                                  ? MaterialStateProperty.all<Color>(
+                                      const Color.fromARGB(255, 0, 73, 133))
+                                  : MaterialStateProperty.all<Color>(
+                                      Colors.transparent),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
+                    );
+                  }).toList(),
+                ),
           // Spacer(),
           // IconButton.outlined(
           //   onPressed: () {},

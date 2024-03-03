@@ -14,6 +14,7 @@ class SortView extends StatelessWidget {
     final oldToNew = tasksAPI.oldToNew;
 
     SortCriteria sortCriteria = tasksAPI.sortCriteria;
+    FilterCriteria filterCriteria = tasksAPI.filterCriteria;
 
     return SafeArea(
         child: SizedBox(
@@ -147,14 +148,16 @@ class SortView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               OutlinedButton.icon(
-                icon: (const Icon(
+                icon: (Icon(
                   Icons.label_outline_rounded,
-                  color: Color.fromARGB(255, 0, 73, 133),
+                  color: filterCriteria == FilterCriteria.tags
+                      ? Colors.white
+                      : const Color.fromARGB(255, 0, 73, 133),
                 )),
                 onPressed: () {
-                  tasksAPI.toggleSortByNameAZ();
+                  tasksAPI.toggleFilterByTags();
                 },
-                style: sortCriteria == SortCriteria.nameAZ
+                style: filterCriteria == FilterCriteria.tags
                     ? ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                           const Color.fromARGB(255, 0, 73,
@@ -164,20 +167,22 @@ class SortView extends StatelessWidget {
                     : null,
                 label: Text('Tags',
                     style: TextStyle(
-                      color: sortCriteria == SortCriteria.nameAZ
+                      color: filterCriteria == FilterCriteria.tags
                           ? Colors.white
                           : const Color.fromARGB(255, 0, 73, 133),
                     )),
               ),
               OutlinedButton.icon(
-                icon: (const Icon(
+                icon: (Icon(
                   Icons.flag_outlined,
-                  color: Color.fromARGB(255, 0, 73, 133),
+                  color: filterCriteria == FilterCriteria.priority
+                      ? Colors.white
+                      : const Color.fromARGB(255, 0, 73, 133),
                 )),
                 onPressed: () {
-                  tasksAPI.toggleSortByNameZA();
+                  tasksAPI.toggleFilterByPriority();
                 },
-                style: sortCriteria == SortCriteria.nameZA
+                style: filterCriteria == FilterCriteria.priority
                     ? ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                           const Color.fromARGB(255, 0, 73,
@@ -187,7 +192,7 @@ class SortView extends StatelessWidget {
                     : null,
                 label: Text('Priority',
                     style: TextStyle(
-                      color: sortCriteria == SortCriteria.nameZA
+                      color: filterCriteria == FilterCriteria.priority
                           ? Colors.white
                           : const Color.fromARGB(255, 0, 73, 133),
                     )),
