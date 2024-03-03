@@ -29,14 +29,16 @@ class TasksAPI extends ChangeNotifier {
   List<String> _searchedTags = [];
   List<Task> _filteredTasks = [];
   List<Task> _searchedTasks = [];
+  bool _isSearchingTasks = false;
   final List<String> _selectedTags = [];
   final List<String> _temporarilyAddedTags = [];
   bool _oldToNew = true;
-  DateTime? _dueDate = null;
+  DateTime? _dueDate;
   bool _isTimeSet = false;
-  String? _temporarySelectedPriority = null;
-  List<String> _priority = ['Low', 'Medium', 'High'];
-  List<String> _selectedPriority = [];
+  String? _temporarySelectedPriority;
+  final List<String> _priority = ['Low', 'Medium', 'High'];
+  final List<String> _selectedPriority = [];
+  
 
   SortCriteria _sortCriteria = SortCriteria.creationDate;
   FilterCriteria _filterCriteria = FilterCriteria.tags;
@@ -46,6 +48,7 @@ class TasksAPI extends ChangeNotifier {
   List<String> get searchedTags => _searchedTags;
   List<Task> get filteredTasks => _filteredTasks;
   List<Task> get searchedTasks => _searchedTasks;
+  bool get isSearchingTasks => _isSearchingTasks;
   List<String> get selectedTags => _selectedTags;
   List<String> get temporarilyAddedTags => _temporarilyAddedTags;
   bool get oldToNew => _oldToNew;
@@ -364,10 +367,15 @@ class TasksAPI extends ChangeNotifier {
   }
 
   void setSearchedTasks(List<Task> searchedTasks) {
+    _isSearchingTasks = true;
     if (searchedTasks.isEmpty) {
       _searchedTasks.clear();
     }
     _searchedTasks = searchedTasks;
+    notifyListeners();
+  }
+  void setIsSearching(bool bool) {
+    _isSearchingTasks = bool;
     notifyListeners();
   }
 
@@ -534,4 +542,6 @@ class TasksAPI extends ChangeNotifier {
     _temporarySelectedPriority = s;
     notifyListeners();
   }
+
+  
 }

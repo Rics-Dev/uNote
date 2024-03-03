@@ -153,7 +153,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                     TextInputAction.done, // Dismiss keyboard on Done
                 onSubmitted: (_) {
                   if (taskController.text.isNotEmpty) {
-                    addTask(taskController.text, temporarilyAddedTags, temporarySelectedPriority!);
+                    addTask(taskController.text, temporarilyAddedTags, temporarySelectedPriority);
                     context.read<TasksAPI>().temporarilyAddedTags.clear();
                     Navigator.pop(context, true);
                   } else {
@@ -212,7 +212,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (taskController.text.isNotEmpty) {
-                      addTask(taskController.text, temporarilyAddedTags, temporarySelectedPriority!);
+                      addTask(taskController.text, temporarilyAddedTags, temporarySelectedPriority);
                       // context.read<TasksAPI>().removeAllTemporaryTags();
                       Navigator.pop(context, true);
                     } else {

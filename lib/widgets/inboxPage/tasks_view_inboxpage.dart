@@ -25,13 +25,28 @@ class TasksViewInboxPage extends StatelessWidget {
     //             ? tasksAPI.filteredTasks
     //             : [];
 
+    // final tasksAPI = context.watch<TasksAPI>();
+    // List<Task> tasks = tasksAPI.tasks;
+
+    // if (tasksAPI.filteredTasks.isNotEmpty || (tasksAPI.filteredTasks.isEmpty && tasksAPI.selectedPriority.isNotEmpty) || (tasksAPI.filteredTasks.isEmpty && tasksAPI.selectedTags.isNotEmpty)) {
+    //   tasks = tasksAPI.filteredTasks;
+    // }
+    // if (tasksAPI.searchedTasks.isNotEmpty) {
+    //   tasks = tasksAPI.searchedTasks;
+    // }
+
     final tasksAPI = context.watch<TasksAPI>();
-    List<Task> tasks = tasksAPI.tasks;
-    if (tasksAPI.filteredTasks.isNotEmpty) {
-      tasks = tasksAPI.filteredTasks;
-    }
-    if (tasksAPI.searchedTasks.isNotEmpty) {
+    List<Task> tasks = [];
+
+    if (tasksAPI.isSearchingTasks) {
       tasks = tasksAPI.searchedTasks;
+    } else if (tasksAPI.filteredTasks.isNotEmpty ||
+        (tasksAPI.filteredTasks.isEmpty &&
+            tasksAPI.selectedPriority.isNotEmpty) ||
+        (tasksAPI.filteredTasks.isEmpty && tasksAPI.selectedTags.isNotEmpty)) {
+      tasks = tasksAPI.filteredTasks;
+    } else {
+      tasks = tasksAPI.tasks;
     }
 
     final notDoneTasks = tasks.where((task) => !task.isDone).toList();
