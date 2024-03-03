@@ -4,6 +4,7 @@ import 'dart:convert';
 class Task {
   String content;
   String id;
+  String userID;
   List<String> tags;
   bool isDone;
   DateTime createdAt;
@@ -14,12 +15,13 @@ class Task {
   Task({
     required this.content,
     required this.id,
+    required  this.userID,
     this.tags = const [],
     this.isDone = false,
     required this.createdAt,
     required this.updatedAt,
     this.dueDate, // Nullable dueDate
-    this.priority, // Nullable priority
+    this.priority,  // Nullable priority
   });
 
   factory Task.fromJson(String str) => Task.fromMap(json.decode(str));
@@ -27,6 +29,7 @@ class Task {
   factory Task.fromMap(Map<String, dynamic> json) => Task(
         content: json["content"],
         id: json["\u0024id"] ?? "",
+        userID: json["userID"] ?? "",
         tags: List<String>.from(
             json["tags"].map((x) => x is Map ? x["tagname"] : x)),
         isDone: json["isDone"],
@@ -44,6 +47,7 @@ class Task {
     final map = {
       "content": content,
       "\u0024id": id,
+      "userID": userID,
       "tags": tags,
       "isDone": isDone,
       "\u0024createdAt": createdAt.toIso8601String(),

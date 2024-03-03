@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart' as constants;
 import '../models/tasks.dart';
-import 'auth.dart';
+import 'auth_provider.dart';
 
 enum SortCriteria {
   creationDate,
@@ -24,6 +24,8 @@ class TasksAPI extends ChangeNotifier {
   late final Account account;
   late final Databases databases;
   final AuthAPI auth = AuthAPI();
+  late SharedPreferences prefs;
+
   List<Task> _tasks = [];
   List<String> _tags = [];
   List<String> _searchedTags = [];
@@ -31,14 +33,13 @@ class TasksAPI extends ChangeNotifier {
   List<Task> _searchedTasks = [];
   bool _isSearchingTasks = false;
   final List<String> _selectedTags = [];
-  final List<String> _temporarilyAddedTags = [];
+  List<String> _temporarilyAddedTags = [];
   bool _oldToNew = true;
   DateTime? _dueDate;
   bool _isTimeSet = false;
   String? _temporarySelectedPriority;
   final List<String> _priority = ['Low', 'Medium', 'High'];
   final List<String> _selectedPriority = [];
-  
 
   SortCriteria _sortCriteria = SortCriteria.creationDate;
   FilterCriteria _filterCriteria = FilterCriteria.tags;
@@ -75,58 +76,60 @@ class TasksAPI extends ChangeNotifier {
     databases = Databases(client);
   }
 
-  //for fetching tasks
-  void fetchTasks() async {
+  Future<void> fetchTasks() async {
     try {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      // await prefs.remove('tasks');
-      final cachedTasks = prefs.getStringList('tasks');
-      final cachedTags = prefs.getStringList('tags');
-      if (cachedTasks != null) {
-        _tasks = cachedTasks
-            .map((jsonString) => Task.fromJson(json.decode(jsonString)))
-            .toList();
-        // _filteredTasks = _tasks;
-        notifyListeners();
-      }
-      if (cachedTags != null) {
-        _tags = cachedTags;
-        notifyListeners();
-      }
+      prefs = await SharedPreferences.getInstance();
+      await _fetchLocalData();
 
-      if (auth.status == AuthStatus.uninitialized) {
-        await auth.loadUser();
-      }
-      final serverTasks = await databases.listDocuments(
-        databaseId: constants.appwriteDatabaseId,
-        collectionId: constants.appwriteTasksCollectionId,
-        queries: [
-          Query.equal("userID", [auth.userid])
-        ],
-      );
-      final serverTasksResults =
-          serverTasks.documents.map((e) => Task.fromMap(e.data)).toList();
-      _tasks = serverTasksResults;
-      prefs.setStringList(
-          'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
-      notifyListeners();
-      final serverTags = await databases.listDocuments(
-        databaseId: constants.appwriteDatabaseId,
-        collectionId: constants.appwriteTagsCollectionId,
-      );
-      final serverTagsResults = serverTags.documents
-          .map((e) => e.data['tagname'].toString())
-          .toList();
-      _tags = serverTagsResults;
-
-      prefs.setStringList('tags', tags);
-
-      _searchedTags = _tags;
-      // _filteredTasks = _tasks;
-      notifyListeners();
+      //Only fetch server data if local data is unavailable or if user requests it
+      // if (_tasks.isEmpty) {
+        await _fetchServerData();
+      // }
     } finally {
       notifyListeners();
     }
+  }
+
+  Future<void> _fetchLocalData() async {
+    final cachedTasks = prefs.getStringList('tasks');
+    final cachedTags = prefs.getStringList('tags');
+    // await prefs.clear();
+
+    if (cachedTasks != null) {
+      _tasks = cachedTasks
+          .map((jsonString) => Task.fromJson(json.decode(jsonString)))
+          .toList();
+    }
+
+    if (cachedTags != null) {
+      _tags = cachedTags;
+    }
+    notifyListeners();
+  }
+
+  Future<void> _fetchServerData() async {
+    if (auth.status == AuthStatus.uninitialized) {
+      await auth.loadUser();
+    }
+
+    final serverTasks = await databases.listDocuments(
+      databaseId: constants.appwriteDatabaseId,
+      collectionId: constants.appwriteTasksCollectionId,
+      queries: [
+        Query.equal("userID", [auth.userid])
+      ],
+    );
+
+    _tasks = serverTasks.documents.map((e) => Task.fromMap(e.data)).toList();
+
+    final serverTags = await databases.listDocuments(
+      databaseId: constants.appwriteDatabaseId,
+      collectionId: constants.appwriteTagsCollectionId,
+    );
+    _tags =
+        serverTags.documents.map((e) => e.data['tagname'].toString()).toList();
+
+    await _updateLocalStorage(_tasks, _tags);
   }
 
   //to create tasks and tags
@@ -135,36 +138,74 @@ class TasksAPI extends ChangeNotifier {
     required List<String> tags,
     String? priority,
   }) async {
-    final List<Map<String, dynamic>> tagList =
-        tags.map((tag) => {'tagname': tag}).toList();
-    List<String> tagIds = [];
-    final newTask = Task.fromMap({
-      'content': task,
-      'userID': auth.userid,
-      'tags': tagList,
-      'isDone': false,
-      '\u0024createdAt': DateTime.now().toIso8601String(),
-      '\u0024updatedAt': DateTime.now().toIso8601String(),
-      'dueDate': null,
-      'priority': priority,
-    });
-    _tasks.add(newTask);
+    var uniqueTaskId = ID.unique();
+    await _createLocalTask(task: task, id: uniqueTaskId);
+    await _createServerTask(task: task, id: uniqueTaskId);
+    _temporarilyAddedTags = [];
+    _temporarySelectedPriority = null;
+    notifyListeners();
+  }
 
-    if (tags.isNotEmpty && _selectedTags.any((tag) => tags.contains(tag))) {
-      _filteredTasks.add(newTask);
-    }
-
-    final newTags = tags.map((tag) => tag).toList();
-    for (var tag in newTags) {
+  Future<void> _createLocalTask(
+      {required String task, required String id, }) async {
+    for (var tag in _temporarilyAddedTags) {
       if (!_tags.contains(tag)) {
         _tags.add(tag);
       }
     }
+    final newTask = Task(
+      content: task,
+      id: id,
+      userID : auth.userid,
+      tags: _temporarilyAddedTags,
+      isDone: false,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      dueDate: null,
+      priority: temporarySelectedPriority,
+    );
+    if (selectedTags.isNotEmpty || selectedPriority.isNotEmpty) {
+      _filteredTasks.add(newTask);
+    }
+    _tasks.add(newTask);
     notifyListeners();
+    await _updateLocalStorage(_tasks, _tags);
+  }
+
+  Future<void> _createServerTask({
+    required String task, required String id,
+  }) async {
+    await _createServerTags(temporarilyAddedTags);
+    final newTaskData = {
+      'content': task,
+      '\u0024id': id,
+      'userID': auth.userid,
+      'tags': temporarilyAddedTags,
+      'isDone': false,
+      '\u0024createdAt': DateTime.now().toIso8601String(),
+      '\u0024updatedAt': DateTime.now().toIso8601String(),
+      'dueDate': null,
+      'priority': temporarySelectedPriority,
+    };
     try {
-      //creating tags when creating a task
-      for (var tag in tags) {
-        // Check if the tag already exists
+      await databases.createDocument(
+        databaseId: constants.appwriteDatabaseId,
+        collectionId: constants.appwriteTasksCollectionId,
+        documentId: ID.unique(),
+        data: newTaskData,
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error creating task: $e');
+      }
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> _createServerTags(List<String> tags) async {
+    for (var tag in tags) {
+      try {
         final existingTagDocument = await databases.listDocuments(
           databaseId: constants.appwriteDatabaseId,
           collectionId: constants.appwriteTagsCollectionId,
@@ -172,51 +213,28 @@ class TasksAPI extends ChangeNotifier {
             Query.equal("tagname", [tag])
           ],
         );
-        if (existingTagDocument.total != 0) {
-          tagIds.addAll(
-              existingTagDocument.documents.map((doc) => doc.data['\u0024id']));
-        } else {
-          // Create the tag if it doesn't exist
-          final tagDocument = await databases.createDocument(
+        //when temporary added tag doesnt exists we create it in database
+        if (existingTagDocument.total == 0) {
+          await databases.createDocument(
             databaseId: constants.appwriteDatabaseId,
             collectionId: constants.appwriteTagsCollectionId,
             documentId: tag,
             data: {'tagname': tag},
           );
-          tagIds.add(tagDocument.data['\u0024id']);
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error creating tag: $e');
         }
       }
-      final document = await databases.createDocument(
-          databaseId: constants.appwriteDatabaseId,
-          collectionId: constants.appwriteTasksCollectionId,
-          documentId: ID.unique(),
-          data: {
-            'content': task,
-            'userID': auth.userid,
-            'tags': tagIds,
-            'priority': priority
-          });
-
-      final serverTask = Task.fromMap(document.data);
-      _tasks.removeLast();
-      _tasks.add(serverTask);
-
-      notifyListeners();
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setStringList(
-          'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
-      prefs.setStringList('tags', _tags);
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error creating task: $e');
-      }
-      _tasks.removeLast();
-      notifyListeners();
-    } finally {
-      //remove temporarilly added tags after creating a task
-      _temporarilyAddedTags.clear();
-      notifyListeners();
     }
+  }
+
+  Future<void> _updateLocalStorage(List<Task> tasks, List<String> tags) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(
+        'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
+    await prefs.setStringList('tags', tags);
   }
 
   //to delete tasks
@@ -374,6 +392,7 @@ class TasksAPI extends ChangeNotifier {
     _searchedTasks = searchedTasks;
     notifyListeners();
   }
+
   void setIsSearching(bool bool) {
     _isSearchingTasks = bool;
     notifyListeners();
@@ -403,8 +422,6 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-
-
   void clearSelectedTags() {
     _selectedTags.clear();
     // _filteredTasks = tasks;
@@ -424,7 +441,7 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-    void togglePrioritySelection(String priority) {
+  void togglePrioritySelection(String priority) {
     if (_selectedPriority.contains(priority)) {
       _selectedPriority.remove(priority);
     } else {
@@ -448,7 +465,7 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-    void clearSelectedPriority() {
+  void clearSelectedPriority() {
     _selectedPriority.clear();
     // _filteredTasks = tasks;
     _filteredTasks.clear();
@@ -542,6 +559,63 @@ class TasksAPI extends ChangeNotifier {
     _temporarySelectedPriority = s;
     notifyListeners();
   }
-
-  
 }
+
+
+
+
+
+
+//for fetching tasks
+  // void fetchTasks() async {
+  //   try {
+  //     final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     // await prefs.remove('tasks');
+  //     final cachedTasks = prefs.getStringList('tasks');
+  //     final cachedTags = prefs.getStringList('tags');
+  //     if (cachedTasks != null) {
+  //       _tasks = cachedTasks
+  //           .map((jsonString) => Task.fromJson(json.decode(jsonString)))
+  //           .toList();
+  //       // _filteredTasks = _tasks;
+  //       notifyListeners();
+  //     }
+  //     if (cachedTags != null) {
+  //       _tags = cachedTags;
+  //       notifyListeners();
+  //     }
+
+  //     if (auth.status == AuthStatus.uninitialized) {
+  //       await auth.loadUser();
+  //     }
+  //     final serverTasks = await databases.listDocuments(
+  //       databaseId: constants.appwriteDatabaseId,
+  //       collectionId: constants.appwriteTasksCollectionId,
+  //       queries: [
+  //         Query.equal("userID", [auth.userid])
+  //       ],
+  //     );
+  //     final serverTasksResults =
+  //         serverTasks.documents.map((e) => Task.fromMap(e.data)).toList();
+  //     _tasks = serverTasksResults;
+  //     prefs.setStringList(
+  //         'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
+  //     notifyListeners();
+  //     final serverTags = await databases.listDocuments(
+  //       databaseId: constants.appwriteDatabaseId,
+  //       collectionId: constants.appwriteTagsCollectionId,
+  //     );
+  //     final serverTagsResults = serverTags.documents
+  //         .map((e) => e.data['tagname'].toString())
+  //         .toList();
+  //     _tags = serverTagsResults;
+
+  //     prefs.setStringList('tags', tags);
+
+  //     _searchedTags = _tags;
+  //     // _filteredTasks = _tasks;
+  //     notifyListeners();
+  //   } finally {
+  //     notifyListeners();
+  //   }
+  // }

@@ -129,7 +129,8 @@ class HorizontalTagsView extends StatelessWidget {
                       position: badges.BadgePosition.topEnd(top: -5, end: 0),
                       badgeContent: Text(
                         allTasks
-                            .where((task) => task.priority!.contains(priority))
+                            .where((task) =>
+                                task.priority?.contains(priority) ?? false)
                             .length
                             .toString(),
                         style: const TextStyle(color: Colors.white),
