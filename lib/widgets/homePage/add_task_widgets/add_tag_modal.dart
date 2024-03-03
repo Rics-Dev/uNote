@@ -30,104 +30,104 @@ class _AddTagViewState extends State<AddTagView> {
 
     tags = searchedTags.isNotEmpty ? searchedTags : tags;
 
-    return Wrap(
-      children: [
-        Center(
-          child: Padding(
-            padding: MediaQuery.of(context).viewInsets,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(20.0, 10, 20.0, 20.0),
-              height: MediaQuery.of(context).size.height * 0.50,
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 40,
-                    child: TextField(
-                      controller: tagController,
-                      decoration: const InputDecoration(
-                        labelText: '# Add Tag or select already existing ones',
-                        border: OutlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.done,
-                      onChanged: (String value) {
-                        if (RegExp(r'^[a-zA-Z_][a-zA-Z0-9_\-\.]*$')
-                            .hasMatch(value)) {
-                          // Only add value if it matches the allowed pattern
-                          setState(() {
-                            tagController.text = value;
-                            tagController.selection =
-                                TextSelection.fromPosition(TextPosition(
-                                    offset: tagController.text.length));
-                          });
-                        } else {
-                          // Remove invalid characters
-                          setState(() {
-                            tagController.text = tagController.text
-                                .replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
-                            tagController.selection =
-                                TextSelection.fromPosition(TextPosition(
-                                    offset: tagController.text.length));
-                          });
-                        }
-                        searchTags(tagController
-                            .text); // Call searchTags with the updated value
-                      },
-                      onSubmitted: (_) {
-                        if (_.isNotEmpty) {
-                          context.read<TasksAPI>().addTemporarilyAddedTags(_);
-                          tagController.clear();
-                        }
-                        Navigator.pop(context);
-                      },
+    return SafeArea(
+      child: Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.90,
+          height: MediaQuery.of(context).size.height * 0.40,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: SizedBox(
+                  
+                  height: 40,
+                  child: TextField(
+                    controller: tagController,
+                    decoration: const InputDecoration(
+                      labelText: '# Add Tag or select already existing ones',
+                      border: OutlineInputBorder(),
                     ),
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.done,
+                    onChanged: (String value) {
+                      if (RegExp(r'^[a-zA-Z_][a-zA-Z0-9_\-\.]*$')
+                          .hasMatch(value)) {
+                        // Only add value if it matches the allowed pattern
+                        setState(() {
+                          tagController.text = value;
+                          tagController.selection =
+                              TextSelection.fromPosition(TextPosition(
+                                  offset: tagController.text.length));
+                        });
+                      } else {
+                        // Remove invalid characters
+                        setState(() {
+                          tagController.text = tagController.text
+                              .replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+                          tagController.selection =
+                              TextSelection.fromPosition(TextPosition(
+                                  offset: tagController.text.length));
+                        });
+                      }
+                      searchTags(tagController
+                          .text); // Call searchTags with the updated value
+                    },
+                    onSubmitted: (_) {
+                      if (_.isNotEmpty) {
+                        context.read<TasksAPI>().addTemporarilyAddedTags(_);
+                        tagController.clear();
+                      }
+                      Navigator.pop(context);
+                    },
                   ),
-                  const SizedBox(height: 10.0),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: tags.isEmpty
-                            ? [const Text('Add a new tag')]
-                            : tags.map((tag) {
-                                return Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 4.0),
-                                  child: CheckboxListTile(
-                                    contentPadding: const EdgeInsets.all(0),
-                                    title: Text("#$tag"),
-                                    checkboxShape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                    value: temporarilyAddedTags.contains(tag),
-                                    onChanged: (bool? newValue) {
-                                      if (newValue != null) {
-                                        if (newValue) {
-                                          context
-                                              .read<TasksAPI>()
-                                              .addTemporarilyAddedTags(tag);
-                                        } else {
-                                          context
-                                              .read<TasksAPI>()
-                                              .removeTemporarilyAddedTags(tag);
-                                        }
-                                      }
-                                    },
-                                    activeColor:
-                                        const Color.fromARGB(255, 0, 73, 133),
-                                    controlAffinity:
-                                        ListTileControlAffinity.leading,
-                                  ),
-                                );
-                              }).toList(),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+              const SizedBox(height: 10.0),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: tags.isEmpty
+                        ? [const Text('Add a new tag')]
+                        : tags.map((tag) {
+                            return Container(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 4.0),
+                              child: CheckboxListTile(
+                                contentPadding: const EdgeInsets.all(0),
+                                title: Text("#$tag"),
+                                checkboxShape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(15)),
+                                value: temporarilyAddedTags.contains(tag),
+                                onChanged: (bool? newValue) {
+                                  if (newValue != null) {
+                                    if (newValue) {
+                                      context
+                                          .read<TasksAPI>()
+                                          .addTemporarilyAddedTags(tag);
+                                    } else {
+                                      context
+                                          .read<TasksAPI>()
+                                          .removeTemporarilyAddedTags(tag);
+                                    }
+                                  }
+                                },
+                                activeColor:
+                                    const Color.fromARGB(255, 0, 73, 133),
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                              ),
+                            );
+                          }).toList(),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 

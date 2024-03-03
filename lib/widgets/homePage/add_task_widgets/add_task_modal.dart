@@ -6,6 +6,7 @@ import '../../../providers/task_provider.dart';
 import 'package:toastification/toastification.dart';
 
 import 'add_date.dart';
+import 'add_priority.dart';
 import 'add_tag_modal.dart';
 import 'package:intl/intl.dart';
 
@@ -48,13 +49,16 @@ class _AddTaskViewState extends State<AddTaskView> {
     final dueDate = tasksAPI.dueDate;
      String? formattedDate = dueDate != null ? DateFormat('EEEE, MMM d, y').format(dueDate) : null;
 
+    final temporarySelectedPriority = tasksAPI.temporarySelectedPriority;
+    
     return SafeArea(
       child: Padding(
         padding: MediaQuery.of(context).viewInsets, // Adjust for keyboard
         child: Container(
           padding: const EdgeInsets.all(8.0),
+          width: MediaQuery.of(context).size.width * 0.95,
           height: MediaQuery.of(context).size.height * 0.35,
-          width: double.infinity,
+          // width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -181,6 +185,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                           ),
                           label: Text(formattedDate!),
                         ),
+                  temporarySelectedPriority == null ?
                   IconButton.outlined(
                     onPressed: () {
                       showAddPriorityDialog(context);
@@ -189,6 +194,16 @@ class _AddTaskViewState extends State<AddTaskView> {
                       Icons.flag_outlined,
                       color: Color.fromARGB(255, 0, 73, 133),
                     ),
+                  ) : 
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      showAddPriorityDialog(context);
+                    },
+                    icon: const Icon(
+                      Icons.flag_outlined,
+                      color: Color.fromARGB(255, 0, 73, 133),
+                    ),
+                    label: Text(temporarySelectedPriority),
                   ),
                 ],
               ),
@@ -239,7 +254,7 @@ class _AddTaskViewState extends State<AddTaskView> {
   Future<dynamic> showAddPriorityDialog(context) {
     return showModalBottomSheet(
       context: context,
-      builder: (context) => const AddTagView(),
+      builder: (context) => const AddPriorityView(),
       isScrollControlled: true,
     ).whenComplete(() => clearSearchedTags());
   }

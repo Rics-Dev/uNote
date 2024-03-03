@@ -29,6 +29,7 @@ class TasksAPI extends ChangeNotifier {
   bool _oldToNew = true;
   DateTime? _dueDate = null;
   bool _isTimeSet = false;
+  String? _temporarySelectedPriority = null;
 
   SortCriteria _sortCriteria = SortCriteria.creationDate;
 
@@ -43,6 +44,7 @@ class TasksAPI extends ChangeNotifier {
   SortCriteria get sortCriteria => _sortCriteria;
   DateTime? get dueDate => _dueDate;
   bool get isTimeSet => _isTimeSet;
+  String? get temporarySelectedPriority => _temporarySelectedPriority;
 
   TasksAPI(
       {String endpoint = constants.appwriteEndpoint,
@@ -465,6 +467,11 @@ class TasksAPI extends ChangeNotifier {
 
   void setTimeSet(bool bool) {
     _isTimeSet = bool;
+    notifyListeners();
+  }
+
+  void setTemporarySelectedPriority(String? s) {
+    _temporarySelectedPriority = s;
     notifyListeners();
   }
 }

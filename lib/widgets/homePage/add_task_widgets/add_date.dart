@@ -44,6 +44,7 @@ class _AddDueDateViewState extends State<AddDueDateView> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.90,
           height: MediaQuery.of(context).size.height * 0.7,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
