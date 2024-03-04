@@ -28,7 +28,7 @@ class TasksAPI extends ChangeNotifier {
   late final Databases databases;
   final AuthAPI auth = AuthAPI();
   late SharedPreferences prefs;
-  var uuid = Uuid();
+  var uuid =const Uuid();
 
   List<Task> _tasks = [];
   List<String> _tags = [];
@@ -192,7 +192,7 @@ class TasksAPI extends ChangeNotifier {
       'isDone': false,
       '\u0024createdAt': DateTime.now().toIso8601String(),
       '\u0024updatedAt': DateTime.now().toIso8601String(),
-      'dueDate': null,
+      'dueDate': dueDate?.toIso8601String(),
       'priority': temporarySelectedPriority,
     });
     if (selectedTags.isNotEmpty || selectedPriority.isNotEmpty) {
@@ -217,7 +217,7 @@ class TasksAPI extends ChangeNotifier {
       'isDone': false,
       '\u0024createdAt': DateTime.now().toIso8601String(),
       '\u0024updatedAt': DateTime.now().toIso8601String(),
-      'dueDate': null,
+      'dueDate': dueDate?.toIso8601String(),
       'priority': temporarySelectedPriority,
     };
     try {
@@ -581,18 +581,22 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setDueDate(DateTime? selectedDay) {
+
+ // priority management part
+  void setTemporarySelectedPriority(String? s) {
+    _temporarySelectedPriority = s;
+    notifyListeners();
+  }
+
+
+  //part to set due date
+    void setDueDate(DateTime? selectedDay) {
     _dueDate = selectedDay;
     notifyListeners();
   }
 
   void setTimeSet(bool bool) {
     _isTimeSet = bool;
-    notifyListeners();
-  }
-
-  void setTemporarySelectedPriority(String? s) {
-    _temporarySelectedPriority = s;
     notifyListeners();
   }
 }

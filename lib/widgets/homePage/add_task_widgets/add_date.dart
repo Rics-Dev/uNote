@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-
 import '../../../providers/task_provider.dart';
 import 'package:intl/intl.dart';
 
 class AddDueDateView extends StatefulWidget {
-  const AddDueDateView({super.key});
+  const AddDueDateView({Key? key}) : super(key: key);
 
   @override
   State<AddDueDateView> createState() => _AddDueDateViewState();
@@ -14,31 +13,51 @@ class AddDueDateView extends StatefulWidget {
 
 class _AddDueDateViewState extends State<AddDueDateView> {
   CalendarFormat calendarFormat = CalendarFormat.month;
-
   DateTime? startRange = DateTime.now();
   DateTime? endRange = DateTime.now();
-
   DateTime today = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
-
-  // DateTime selectedDayAndTime = DateTime(
-  //   today.year,
-  //   today.month,
-  //   today.day,
-  //   selectedTime.hour,
-  //   selectedTime.minute,
-  // );
-
   bool isTimeSelected = false;
-  
+
+
+  void selectTime(BuildContext context) async {
+    final TimeOfDay? timeOfDay = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+      initialEntryMode: TimePickerEntryMode.dial,
+    );
+    if (timeOfDay != null) {
+      setState(() {
+        selectedTime = timeOfDay;
+      });
+      if (context.mounted) {
+        context.read<TasksAPI>().setTimeSet(true);
+        context.read<TasksAPI>().setDueDate(
+              DateTime(
+                context.read<TasksAPI>().dueDate?.year == null
+                    ? today.year
+                    : context.read<TasksAPI>().dueDate!.year,
+                context.read<TasksAPI>().dueDate?.month == null
+                    ? today.month
+                    : context.read<TasksAPI>().dueDate!.month,
+                context.read<TasksAPI>().dueDate?.day == null
+                    ? today.day
+                    : context.read<TasksAPI>().dueDate!.day,
+                selectedTime.hour,
+                selectedTime.minute,
+              ),
+            );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final dueDate = context.watch<TasksAPI>().dueDate;
     final isTimeSet = context.watch<TasksAPI>().isTimeSet;
     DateTime today = dueDate ?? DateTime.now();
-    String? formattedTime = dueDate != null ? DateFormat('HH:mm').format(dueDate) : null;
-    
+    String? formattedTime =
+        dueDate != null ? DateFormat('HH:mm').format(dueDate) : null;
 
     return SafeArea(
       child: Padding(
@@ -48,8 +67,6 @@ class _AddDueDateViewState extends State<AddDueDateView> {
           height: MediaQuery.of(context).size.height * 0.7,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
-            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            // crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Container(
                 width: 100,
@@ -95,8 +112,6 @@ class _AddDueDateViewState extends State<AddDueDateView> {
                 firstDay: DateTime.utc(2010, 10, 16),
                 lastDay: DateTime.utc(2100, 3, 14),
                 focusedDay: today,
-                // rangeStartDay: startRange,
-                // rangeEndDay: endRange,
                 calendarFormat: calendarFormat,
                 startingDayOfWeek: StartingDayOfWeek.sunday,
                 calendarStyle: const CalendarStyle(
@@ -119,21 +134,24 @@ class _AddDueDateViewState extends State<AddDueDateView> {
                 },
                 onDaySelected: (selectedDay, focusedDay) {
                   setState(() {
-                    today = selectedDay;
+                    today = DateTime(
+                        selectedDay.year, selectedDay.month, selectedDay.day);
                   });
-                  context.read<TasksAPI>().setDueDate(selectedDay);
+                  context.read<TasksAPI>().setDueDate(
+                        DateTime(
+                          selectedDay.year,
+                          selectedDay.month,
+                          selectedDay.day,
+                          selectedTime.hour,
+                          selectedTime.minute,
+                        ),
+                      );
                 },
-                // onRangeSelected: (start, end, focusedDay) {
-                //   setState(() {
-                //     startRange = start;
-                //     endRange = end;
-                //   });
-                // },
               ),
               const SizedBox(height: 40),
               GestureDetector(
                 onTap: () {
-                  selectTime();
+                  selectTime(context);
                 },
                 child: isTimeSet == false
                     ? const Icon(
@@ -143,7 +161,7 @@ class _AddDueDateViewState extends State<AddDueDateView> {
                       )
                     : OutlinedButton.icon(
                         onPressed: () {
-                          selectTime();
+                          selectTime(context);
                         },
                         icon: const Icon(
                           Icons.access_time_rounded,
@@ -158,28 +176,5 @@ class _AddDueDateViewState extends State<AddDueDateView> {
         ),
       ),
     );
-  }
-
-  void selectTime() async {
-    final TimeOfDay? timeOfDay = await showTimePicker(
-      context: context,
-      initialTime: selectedTime,
-      initialEntryMode: TimePickerEntryMode.dial,
-    );
-    if (timeOfDay != null) {
-      setState(() {
-        selectedTime = timeOfDay;
-      });
-      context.read<TasksAPI>().setTimeSet(true);
-      context.read<TasksAPI>().setDueDate(
-            DateTime(
-              today.year,
-              today.month,
-              today.day,
-              selectedTime.hour,
-              selectedTime.minute,
-            ),
-          );
-    }
   }
 }

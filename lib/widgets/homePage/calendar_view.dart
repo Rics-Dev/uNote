@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+import '../../providers/task_provider.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView({super.key});
@@ -16,6 +19,16 @@ class _CalendarViewState extends State<CalendarView> {
 
   @override
   Widget build(BuildContext context) {
+    final tasksAPI = context.watch<TasksAPI>();
+    final tasks = tasksAPI.tasks;
+// Filter tasks with due date equals today
+    final todayTasks = tasks
+        .where((task) =>
+            task.dueDate?.year == today.year &&
+            task.dueDate?.month == today.month &&
+            task.dueDate?.day == today.day)
+        .toList();
+
     return SafeArea(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -75,12 +88,6 @@ class _CalendarViewState extends State<CalendarView> {
                 today = selectedDay;
               });
             },
-            // onRangeSelected: (start, end, focusedDay) {
-            //   setState(() {
-            //     startRange = start;
-            //     endRange = end;
-            //   });
-            // },
           ),
           const SizedBox(height: 8),
           Padding(
@@ -97,6 +104,31 @@ class _CalendarViewState extends State<CalendarView> {
               ),
             ),
           ),
+          todayTasks.isEmpty
+              ? const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "No tasks due today",
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontSize: 20.0,
+                    ),
+                  ),
+                )
+              : SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  child: ListView.builder(
+                    itemCount: todayTasks.length,
+                    itemBuilder: (context, index) {
+                      final task = todayTasks[index];
+                      return ListTile(
+                        title: Text(task.content),
+                        // subtitle: Text(task.description),
+                        // Add more details or actions if needed
+                      );
+                    },
+                  ),
+                ),
         ],
       ),
     );
