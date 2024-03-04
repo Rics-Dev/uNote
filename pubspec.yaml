@@ -59,8 +59,7 @@ dependencies:
   uuid: ^4.3.3
   encrypt: ^5.0.3
   crypto: ^3.0.3
-  cryptography_flutter: ^2.3.2
-  cryptography: ^2.7.0
+  pointycastle: ^3.7.4
   # flutter_launcher_icons: "^0.13.1"
 
 dev_dependencies:

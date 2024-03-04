@@ -103,7 +103,6 @@ class TasksAPI extends ChangeNotifier {
 
   //to create tasks and tags
   Future<void> createTask({required String taskContent}) async {
-
     final taskId = uuid.v4();
     await _createLocalTask(task: taskContent, taskId: taskId);
     await _createServerTask(task: taskContent, taskId: taskId);
@@ -154,8 +153,7 @@ class TasksAPI extends ChangeNotifier {
       final encryptedContent = document.data["content"];
 
       // Decrypt the content
-      final decryptedContent =
-          await encryptData.decryptString(encryptedContent);
+      final decryptedContent = await encryptData.decryptString(encryptedContent);
 
       // Create the Task object with decrypted content
       return Task.fromMap({
