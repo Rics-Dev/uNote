@@ -148,19 +148,22 @@ class TasksAPI extends ChangeNotifier {
       ],
     );
 
-    _tasks = await Future.wait(serverTasks.documents.map((document) async {
-      // Get the encrypted content
-      final encryptedContent = document.data["content"];
+    _tasks = serverTasks.documents.map((e) => Task.fromMap(e.data)).toList();
 
-      // Decrypt the content
-      final decryptedContent = await encryptData.decryptString(encryptedContent);
+    //to decrypt tasks
+    // _tasks = await Future.wait(serverTasks.documents.map((document) async {
+    //   // Get the encrypted content
+    //   final encryptedContent = document.data["content"];
 
-      // Create the Task object with decrypted content
-      return Task.fromMap({
-        ...document.data, // Copy other fields
-        "content": decryptedContent,
-      });
-    }).toList());
+    //   // Decrypt the content
+    //   final decryptedContent = await encryptData.decryptString(encryptedContent);
+
+    //   // Create the Task object with decrypted content
+    //   return Task.fromMap({
+    //     ...document.data, // Copy other fields
+    //     "content": decryptedContent,
+    //   });
+    // }).toList());
 
     final serverTags = await databases.listDocuments(
       databaseId: constants.appwriteDatabaseId,
@@ -205,9 +208,10 @@ class TasksAPI extends ChangeNotifier {
     required String taskId,
   }) async {
     await _createServerTags(temporarilyAddedTags);
-    final encryptedTask = await encryptData.encryptString(task);
+    //to encrypt task
+    // final encryptedTask = await encryptData.encryptString(task);
     final newTaskData = {
-      'content': encryptedTask,
+      'content': task,
       'userID': auth.userid,
       'tags': temporarilyAddedTags,
       'isDone': false,
