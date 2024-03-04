@@ -108,6 +108,7 @@ class TasksAPI extends ChangeNotifier {
     await _createServerTask(task: taskContent, taskId: taskId);
     _temporarilyAddedTags = [];
     _temporarySelectedPriority = null;
+    _dueDate = null;
     notifyListeners();
   }
 

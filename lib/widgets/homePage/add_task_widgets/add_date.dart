@@ -142,8 +142,6 @@ class _AddDueDateViewState extends State<AddDueDateView> {
                           selectedDay.year,
                           selectedDay.month,
                           selectedDay.day,
-                          selectedTime.hour,
-                          selectedTime.minute,
                         ),
                       );
                 },
