@@ -4,6 +4,7 @@ import 'package:appwrite/appwrite.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart' as constants;
+import '../encrypt.dart';
 import '../models/tasks.dart';
 import 'auth_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -21,6 +22,7 @@ enum FilterCriteria {
 }
 
 class TasksAPI extends ChangeNotifier {
+  final encryptData = EncryptData();
   Client client = Client();
   late final Account account;
   late final Databases databases;
@@ -101,9 +103,10 @@ class TasksAPI extends ChangeNotifier {
 
   //to create tasks and tags
   Future<void> createTask({required String taskContent}) async {
+
     final taskId = uuid.v4();
-    await _createLocalTask(task: taskContent,taskId: taskId);
-    await _createServerTask(task: taskContent,taskId: taskId);
+    await _createLocalTask(task: taskContent, taskId: taskId);
+    await _createServerTask(task: taskContent, taskId: taskId);
     _temporarilyAddedTags = [];
     _temporarySelectedPriority = null;
     notifyListeners();
@@ -146,7 +149,20 @@ class TasksAPI extends ChangeNotifier {
       ],
     );
 
-    _tasks = serverTasks.documents.map((e) => Task.fromMap(e.data)).toList();
+    _tasks = await Future.wait(serverTasks.documents.map((document) async {
+      // Get the encrypted content
+      final encryptedContent = document.data["content"];
+
+      // Decrypt the content
+      final decryptedContent =
+          await encryptData.decryptString(encryptedContent);
+
+      // Create the Task object with decrypted content
+      return Task.fromMap({
+        ...document.data, // Copy other fields
+        "content": decryptedContent,
+      });
+    }).toList());
 
     final serverTags = await databases.listDocuments(
       databaseId: constants.appwriteDatabaseId,
@@ -159,7 +175,8 @@ class TasksAPI extends ChangeNotifier {
   }
 
   Future<void> _createLocalTask({
-    required String task, required String taskId,
+    required String task,
+    required String taskId,
   }) async {
     for (var tag in _temporarilyAddedTags) {
       if (!_tags.contains(tag)) {
@@ -186,11 +203,13 @@ class TasksAPI extends ChangeNotifier {
   }
 
   Future<void> _createServerTask({
-    required String task, required String taskId,
+    required String task,
+    required String taskId,
   }) async {
     await _createServerTags(temporarilyAddedTags);
+    final encryptedTask = await encryptData.encryptString(task);
     final newTaskData = {
-      'content': task,
+      'content': encryptedTask,
       'userID': auth.userid,
       'tags': temporarilyAddedTags,
       'isDone': false,
@@ -347,40 +366,42 @@ class TasksAPI extends ChangeNotifier {
   }
 
   //to update tasks (for now only when it's done)
-  void updateTask(String id, {required bool isDone}) async {
-    final taskIndex = _tasks.indexWhere((task) => task.id == id);
-    final task = _tasks.firstWhere((task) => task.id == id);
-    task.isDone = isDone;
+  void updateTask({required String taskId, required bool isDone}) async {
+    await _updateLocalTask(taskId: taskId, isDone: isDone);
+    await _updateServerTask(taskId: taskId, isDone: isDone);
+  }
+
+  Future<void> _updateLocalTask(
+      {required String taskId, required bool isDone}) async {
+    final int index = _tasks.indexWhere((task) => task.id == taskId);
+    _tasks[index].isDone = isDone;
+    notifyListeners();
+    // final taskIndex = _tasks.indexWhere((task) => task.id == taskId);
+    // final task = _tasks.firstWhere((task) => task.id == taskId);
+    // task.isDone = isDone;
 
     // if (isDone) {
     //   _tasks.removeAt(taskIndex);
     //   _tasks.add(task);
     // }
+  }
 
-    notifyListeners();
+  Future<void> _updateServerTask(
+      {required String taskId, required bool isDone}) async {
     try {
       await databases.updateDocument(
         databaseId: constants.appwriteDatabaseId,
         collectionId: constants.appwriteTasksCollectionId,
-        documentId: id,
+        documentId: taskId,
         data: {'isDone': isDone},
       );
-      notifyListeners();
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setStringList(
-          'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
     } catch (e) {
       if (kDebugMode) {
         print('Error updating task: $e');
       }
-      // If an error occurs, revert the task's state
-      task.isDone = !isDone;
-      if (isDone) {
-        _tasks.removeLast();
-        _tasks.insert(taskIndex, task);
-      }
-      notifyListeners();
-      rethrow;
+      // final taskIndex = _tasks.indexWhere((task) => task.id == taskId);
+      // _tasks[taskIndex].isDone = !isDone;
+      // notifyListeners();
     }
   }
 

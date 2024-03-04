@@ -57,6 +57,10 @@ dependencies:
   searchbar_animation: ^0.0.4
   dropdown_button2: ^2.3.9
   uuid: ^4.3.3
+  encrypt: ^5.0.3
+  crypto: ^3.0.3
+  cryptography_flutter: ^2.3.2
+  cryptography: ^2.7.0
   # flutter_launcher_icons: "^0.13.1"
 
 dev_dependencies:

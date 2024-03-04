@@ -164,7 +164,7 @@ class TasksViewInboxPage extends StatelessWidget {
             ),
             style: MSHCheckboxStyle.fillScaleColor,
             onChanged: (selected) {
-              context.read<TasksAPI>().updateTask(task.id, isDone: selected);
+              context.read<TasksAPI>().updateTask(taskId: task.id, isDone: selected);
             },
           ),
           const SizedBox(width: 10),
@@ -247,7 +247,7 @@ class TasksViewInboxPage extends StatelessWidget {
             },
             onWillAccept: (data) => true,
             onAccept: (data) {
-              context.read<TasksAPI>().updateTask(data as String, isDone: true);
+              context.read<TasksAPI>().updateTask(taskId: data as String, isDone: true);
             },
           ),
         ),
