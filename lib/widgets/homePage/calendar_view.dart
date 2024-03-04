@@ -28,8 +28,8 @@ class _CalendarViewState extends State<CalendarView> {
             task.dueDate?.month == today.month &&
             task.dueDate?.day == today.day)
         .toList();
-        
-  todayTasks.sort((a, b) => a.dueDate!.compareTo(b.dueDate!));
+
+    todayTasks.sort((a, b) => a.dueDate!.compareTo(b.dueDate!));
 
     return SafeArea(
       child: Column(
@@ -125,8 +125,11 @@ class _CalendarViewState extends State<CalendarView> {
                       final task = todayTasks[index];
                       return ListTile(
                         title: Text(task.content),
-                        subtitle: Text(
-                            "${task.dueDate!.hour.toString().padLeft(2, '0')}:${task.dueDate!.minute.toString().padLeft(2, '0')}"),
+                        subtitle: task.dueDate!.hour != 0 &&
+                                task.dueDate!.minute != 0
+                            ? Text(
+                                "${task.dueDate!.hour.toString().padLeft(2, '0')}:${task.dueDate!.minute.toString().padLeft(2, '0')}")
+                            : null,
                         // Add more details or actions if needed
                       );
                     },
