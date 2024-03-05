@@ -4,7 +4,7 @@ import 'package:appwrite/appwrite.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart' as constants;
-import '../encrypt.dart';
+// import '../encrypt.dart';
 import '../models/tasks.dart';
 import 'auth_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -22,7 +22,7 @@ enum FilterCriteria {
 }
 
 class TasksAPI extends ChangeNotifier {
-  final encryptData = EncryptData();
+  // final encryptData = EncryptData();
   Client client = Client();
   late final Account account;
   late final Databases databases;

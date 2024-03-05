@@ -41,7 +41,6 @@ dependencies:
   sign_button: ^2.0.6
   provider: ^6.1.1
   google_fonts: ^6.1.0
-  uni_links: ^0.5.1
   animated_bottom_navigation_bar: ^1.3.3
   font_awesome_flutter: ^10.7.0
   shared_preferences: ^2.2.2
@@ -49,17 +48,13 @@ dependencies:
   table_calendar: ^3.1.0
   flutter_chat_bubble: ^2.0.2
   msh_checkbox: ^2.0.1
-  sqflite: ^2.3.2
-  sqflite_common_ffi_web: ">=0.1.0-dev.1"
   toastification: ^1.2.1
   badges: ^3.1.2
   anim_search_bar: ^2.0.3
   searchbar_animation: ^0.0.4
   dropdown_button2: ^2.3.9
   uuid: ^4.3.3
-  encrypt: ^5.0.3
-  crypto: ^3.0.3
-  pointycastle: ^3.7.4
+  # encrypt: ^5.0.3
   # flutter_launcher_icons: "^0.13.1"
 
 dev_dependencies:
