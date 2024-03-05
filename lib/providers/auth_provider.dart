@@ -1,6 +1,7 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart' as constants;
 
@@ -13,8 +14,11 @@ enum AuthStatus {
 class AuthAPI extends ChangeNotifier {
   Client client = Client();
   late final Account account;
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
 
   late User _currentUser;
+  String? _localUserName = '';
+  String? _localUserEmail = '';
 
   AuthStatus _status = AuthStatus.uninitialized;
 
@@ -24,6 +28,9 @@ class AuthAPI extends ChangeNotifier {
   String? get username => _currentUser.name;
   String? get email => _currentUser.email;
   String get userid => _currentUser.$id;
+  String? get localUserName => _localUserName;
+  String? get localUserEmail => _localUserEmail;
+
 
   // Constructor
   AuthAPI() {
@@ -41,12 +48,17 @@ class AuthAPI extends ChangeNotifier {
   }
 
   loadUser() async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     try {
+      _localUserName = prefs.getString('userName');
+      _localUserEmail = prefs.getString('userEmail');
       final user = await account.get();
       _status = AuthStatus.authenticated;
       _currentUser = user;
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('userID', _currentUser.$id);
+      await secureStorage.write(key: 'userID', value: _currentUser.$id);
+      await prefs.setString('userEmail', _currentUser.email);
+      await prefs.setString('userName', _currentUser.name);
     } catch (e) {
       _status = AuthStatus.unauthenticated;
     } finally {

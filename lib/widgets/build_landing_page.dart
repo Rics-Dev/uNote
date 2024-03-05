@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../pages/home_page.dart';
 import '../pages/landing_page.dart';
 import '../providers/auth_provider.dart';
@@ -6,6 +7,7 @@ import '../providers/auth_provider.dart';
 Widget buildLandingPage(AuthStatus authStatus, Map<String, String> queryParameters, [String? userID]) {
   final userId = queryParameters['userId'] ?? '';
   final secret = queryParameters['secret'] ?? '';
+
 
   if (userID != null) {
     return const HomePage();

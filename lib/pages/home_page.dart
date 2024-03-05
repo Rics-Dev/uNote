@@ -1,13 +1,16 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:utask/providers/task_provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
+import '../providers/auth_provider.dart';
 import '../providers/drag_provider.dart';
 import '../widgets/homePage/add_task_widgets/add_task_modal.dart';
 import '../widgets/homePage/build_body_home_page.dart';
 import '../widgets/homePage/calendar_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,6 +20,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   bool deleteFloatingActionButton = false;
 
   bool addTaskDialogOpened = false;
@@ -66,6 +70,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final userName = context.watch<AuthAPI>().localUserName;
+    final userEmail = context.watch<AuthAPI>().localUserEmail;
+    bool keyboardIsOpened = MediaQuery.of(context).viewInsets.bottom != 0.0;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(appBarTitles[_bottomNavIndex]),
@@ -78,15 +86,17 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      floatingActionButton: DragTarget(
-          builder: (context, incoming, rejected) {
-            return floatingActionButton(context, incoming.isNotEmpty);
-          },
-          onWillAcceptWithDetails: (data) => true,
-          onAcceptWithDetails: (data) {
-            removeTask(data);
-            // tasks.remove(data);
-          }),
+      floatingActionButton: keyboardIsOpened
+          ? null
+          : DragTarget(
+              builder: (context, incoming, rejected) {
+                return floatingActionButton(context, incoming.isNotEmpty);
+              },
+              onWillAcceptWithDetails: (data) => true,
+              onAcceptWithDetails: (data) {
+                removeTask(data);
+                // tasks.remove(data);
+              }),
       extendBody: true,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: AnimatedBottomNavigationBar(
@@ -115,13 +125,10 @@ class _HomePageState extends State<HomePage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
+            DrawerHeader(
               child: Text(
-                'user',
-                style: TextStyle(
+                userName ?? 'User',
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                 ),

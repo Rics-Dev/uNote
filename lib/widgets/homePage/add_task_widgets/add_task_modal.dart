@@ -248,6 +248,7 @@ class _AddTaskViewState extends State<AddTaskView> {
       context: context,
       builder: (context) => const AddDueDateView(),
       isScrollControlled: true,
+      useSafeArea: true,
     ).whenComplete(() => clearSearchedTags());
   }
 

@@ -19,7 +19,6 @@ class _AddDueDateViewState extends State<AddDueDateView> {
   TimeOfDay selectedTime = TimeOfDay.now();
   bool isTimeSelected = false;
 
-
   void selectTime(BuildContext context) async {
     final TimeOfDay? timeOfDay = await showTimePicker(
       context: context,
@@ -64,7 +63,7 @@ class _AddDueDateViewState extends State<AddDueDateView> {
         padding: const EdgeInsets.all(8.0),
         child: SizedBox(
           width: MediaQuery.of(context).size.width * 0.90,
-          height: MediaQuery.of(context).size.height * 0.75,
+          height: MediaQuery.of(context).size.height * 0.8,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
@@ -149,16 +148,15 @@ class _AddDueDateViewState extends State<AddDueDateView> {
               const SizedBox(height: 40),
               isTimeSet == false
                   ? IconButton.outlined(
-                    icon:const Icon(
-                      Icons.access_time_rounded,
-                      color: Color.fromARGB(255, 0, 73, 133),
-                      size: 40,
-                    ),
-                    onPressed: () {
-                      selectTime(context);
-                    },
-                  ) 
-                  
+                      icon: const Icon(
+                        Icons.access_time_rounded,
+                        color: Color.fromARGB(255, 0, 73, 133),
+                        size: 40,
+                      ),
+                      onPressed: () {
+                        selectTime(context);
+                      },
+                    )
                   : OutlinedButton.icon(
                       onPressed: () {
                         selectTime(context);
