@@ -67,7 +67,7 @@ class _LandingPageState extends State<LandingPage> {
     try {
       final AuthAPI appwrite = context.read<AuthAPI>();
       await appwrite.verifyMagicURLSession(userId: userId, secret: secret);
-      if (context.mounted) context.go('/');
+      if (context.mounted){ context.go('/');}
     } on AppwriteException catch (e) {
       setState(() {});
       // if (context.mounted) Navigator.pop(context);

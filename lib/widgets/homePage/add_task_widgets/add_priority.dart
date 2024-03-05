@@ -64,16 +64,12 @@ class AddPriorityView extends StatelessWidget {
               const Spacer(),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
-                child: IconButton.outlined(
+                child: OutlinedButton(
                   onPressed: () {
                     context.read<TasksAPI>().setTemporarySelectedPriority(null);
                     Navigator.pop(context);
                   },
-                  icon: const Icon(
-                    Icons.close,
-                    color: Color.fromARGB(255, 0, 73, 133),
-                    size: 30,
-                  ),
+                  child: const Text('Clear'),
                 ),
               ),
             ],

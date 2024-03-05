@@ -134,8 +134,8 @@ class TasksViewInboxPage extends StatelessWidget {
             ),
           );
         },
-        onWillAccept: (data) => true,
-        onAccept: (data) {
+        onWillAcceptWithDetails: (data) => true,
+        onAcceptWithDetails: (data) {
           final oldIndex = context.read<DragStateProvider>().originalIndex;
           final newIndex = index;
           context.read<TasksAPI>().updateTasksOrder(oldIndex, newIndex);
@@ -245,8 +245,8 @@ class TasksViewInboxPage extends StatelessWidget {
                 ],
               );
             },
-            onWillAccept: (data) => true,
-            onAccept: (data) {
+            onWillAcceptWithDetails: (data) => true,
+            onAcceptWithDetails: (data) {
               context.read<TasksAPI>().updateTask(taskId: data as String, isDone: true);
             },
           ),

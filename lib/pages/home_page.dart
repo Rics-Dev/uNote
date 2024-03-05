@@ -82,8 +82,8 @@ class _HomePageState extends State<HomePage> {
           builder: (context, incoming, rejected) {
             return floatingActionButton(context, incoming.isNotEmpty);
           },
-          onWillAccept: (data) => true,
-          onAccept: (data) {
+          onWillAcceptWithDetails: (data) => true,
+          onAcceptWithDetails: (data) {
             removeTask(data);
             // tasks.remove(data);
           }),

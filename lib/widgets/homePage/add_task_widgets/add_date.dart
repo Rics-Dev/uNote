@@ -64,7 +64,7 @@ class _AddDueDateViewState extends State<AddDueDateView> {
         padding: const EdgeInsets.all(8.0),
         child: SizedBox(
           width: MediaQuery.of(context).size.width * 0.90,
-          height: MediaQuery.of(context).size.height * 0.7,
+          height: MediaQuery.of(context).size.height * 0.75,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
@@ -147,28 +147,29 @@ class _AddDueDateViewState extends State<AddDueDateView> {
                 },
               ),
               const SizedBox(height: 40),
-              GestureDetector(
-                onTap: () {
-                  selectTime(context);
-                },
-                child: isTimeSet == false
-                    ? const Icon(
+              isTimeSet == false
+                  ? IconButton.outlined(
+                    icon:const Icon(
+                      Icons.access_time_rounded,
+                      color: Color.fromARGB(255, 0, 73, 133),
+                      size: 40,
+                    ),
+                    onPressed: () {
+                      selectTime(context);
+                    },
+                  ) 
+                  
+                  : OutlinedButton.icon(
+                      onPressed: () {
+                        selectTime(context);
+                      },
+                      icon: const Icon(
                         Icons.access_time_rounded,
                         color: Color.fromARGB(255, 0, 73, 133),
-                        size: 40,
-                      )
-                    : OutlinedButton.icon(
-                        onPressed: () {
-                          selectTime(context);
-                        },
-                        icon: const Icon(
-                          Icons.access_time_rounded,
-                          color: Color.fromARGB(255, 0, 73, 133),
-                          size: 30,
-                        ),
-                        label: Text(formattedTime!),
+                        size: 30,
                       ),
-              )
+                      label: Text(formattedTime!),
+                    )
             ],
           ),
         ),
