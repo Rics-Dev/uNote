@@ -1,4 +1,4 @@
-package com.example.utask
+package com.ricsdev.utask
 
 import io.flutter.embedding.android.FlutterActivity
 
