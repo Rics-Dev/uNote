@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../models/tasks.dart';
 import '../../providers/task_provider.dart';
 
 class CalendarView extends StatefulWidget {
@@ -30,11 +31,19 @@ class _CalendarViewState extends State<CalendarView> {
         .toList();
 
     todayTasks.sort((a, b) => a.dueDate!.compareTo(b.dueDate!));
+    List<Task> getEvents(DateTime day) {
+      return tasks
+          .where((task) =>
+              task.dueDate?.year == day.year &&
+              task.dueDate?.month == day.month &&
+              task.dueDate?.day == day.day)
+          .toList();
+    }
 
     return SafeArea(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           const SizedBox(height: 16),
           Stack(
@@ -60,6 +69,9 @@ class _CalendarViewState extends State<CalendarView> {
           ),
           const SizedBox(height: 16),
           TableCalendar(
+            eventLoader: (day) {
+              return getEvents(day);
+            },
             firstDay: DateTime.utc(2010, 10, 16),
             lastDay: DateTime.utc(2100, 3, 14),
             focusedDay: today,
@@ -108,17 +120,19 @@ class _CalendarViewState extends State<CalendarView> {
           ),
           todayTasks.isEmpty
               ? const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    "No tasks due today",
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      fontSize: 20.0,
+                  padding: EdgeInsets.all(16.0),
+                  child: Center(
+                    child: Text(
+                      "No tasks due today",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontSize: 16.0,
+                      ),
                     ),
                   ),
                 )
               : SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.3,
+                  height: MediaQuery.of(context).size.height * 0.25,
                   child: ListView.builder(
                     itemCount: todayTasks.length,
                     itemBuilder: (context, index) {
@@ -135,6 +149,20 @@ class _CalendarViewState extends State<CalendarView> {
                     },
                   ),
                 ),
+          const SizedBox(
+            height: 20,
+          ),
+          Container(
+            width: 100,
+            height: 5,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
         ],
       ),
     );

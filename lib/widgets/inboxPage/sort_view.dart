@@ -142,63 +142,9 @@ class SortView extends StatelessWidget {
           const SizedBox(
             height: 15,
           ),
-          const Text('Filter by',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              OutlinedButton.icon(
-                icon: (Icon(
-                  Icons.label_outline_rounded,
-                  color: filterCriteria == FilterCriteria.tags
-                      ? Colors.white
-                      : const Color.fromARGB(255, 0, 73, 133),
-                )),
-                onPressed: () {
-                  tasksAPI.toggleFilterByTags();
-                },
-                style: filterCriteria == FilterCriteria.tags
-                    ? ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          const Color.fromARGB(255, 0, 73,
-                              133), // Change the text color when not selected
-                        ),
-                      )
-                    : null,
-                label: Text('Tags',
-                    style: TextStyle(
-                      color: filterCriteria == FilterCriteria.tags
-                          ? Colors.white
-                          : const Color.fromARGB(255, 0, 73, 133),
-                    )),
-              ),
-              OutlinedButton.icon(
-                icon: (Icon(
-                  Icons.flag_outlined,
-                  color: filterCriteria == FilterCriteria.priority
-                      ? Colors.white
-                      : const Color.fromARGB(255, 0, 73, 133),
-                )),
-                onPressed: () {
-                  tasksAPI.toggleFilterByPriority();
-                },
-                style: filterCriteria == FilterCriteria.priority
-                    ? ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          const Color.fromARGB(255, 0, 73,
-                              133), // Change the text color when not selected
-                        ),
-                      )
-                    : null,
-                label: Text('Priority',
-                    style: TextStyle(
-                      color: filterCriteria == FilterCriteria.priority
-                          ? Colors.white
-                          : const Color.fromARGB(255, 0, 73, 133),
-                    )),
-              )
-            ],
-          ),
+          // const Text('Filter by',
+          //     style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
+          
           const Spacer(),
           Container(
             width: 100,
@@ -210,9 +156,67 @@ class SortView extends StatelessWidget {
           ),
           const SizedBox(
             height: 5,
-          )
+          ),
         ],
       ),
     ));
   }
 }
+
+
+
+// Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //   children: [
+          //     OutlinedButton.icon(
+          //       icon: (Icon(
+          //         Icons.label_outline_rounded,
+          //         color: filterCriteria == FilterCriteria.tags
+          //             ? Colors.white
+          //             : const Color.fromARGB(255, 0, 73, 133),
+          //       )),
+          //       onPressed: () {
+          //         tasksAPI.toggleFilterByTags();
+          //       },
+          //       style: filterCriteria == FilterCriteria.tags
+          //           ? ButtonStyle(
+          //               backgroundColor: MaterialStateProperty.all<Color>(
+          //                 const Color.fromARGB(255, 0, 73,
+          //                     133), // Change the text color when not selected
+          //               ),
+          //             )
+          //           : null,
+          //       label: Text('Tags',
+          //           style: TextStyle(
+          //             color: filterCriteria == FilterCriteria.tags
+          //                 ? Colors.white
+          //                 : const Color.fromARGB(255, 0, 73, 133),
+          //           )),
+          //     ),
+          //     OutlinedButton.icon(
+          //       icon: (Icon(
+          //         Icons.flag_outlined,
+          //         color: filterCriteria == FilterCriteria.priority
+          //             ? Colors.white
+          //             : const Color.fromARGB(255, 0, 73, 133),
+          //       )),
+          //       onPressed: () {
+          //         tasksAPI.toggleFilterByPriority();
+          //       },
+          //       style: filterCriteria == FilterCriteria.priority
+          //           ? ButtonStyle(
+          //               backgroundColor: MaterialStateProperty.all<Color>(
+          //                 const Color.fromARGB(255, 0, 73,
+          //                     133), // Change the text color when not selected
+          //               ),
+          //             )
+          //           : null,
+          //       label: Text('Priority',
+          //           style: TextStyle(
+          //             color: filterCriteria == FilterCriteria.priority
+          //                 ? Colors.white
+          //                 : const Color.fromARGB(255, 0, 73, 133),
+          //           )),
+          //     )
+          //   ],
+          // ),

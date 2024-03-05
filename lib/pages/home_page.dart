@@ -10,7 +10,6 @@ import '../providers/drag_provider.dart';
 import '../widgets/homePage/add_task_widgets/add_task_modal.dart';
 import '../widgets/homePage/build_body_home_page.dart';
 import '../widgets/homePage/calendar_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -71,7 +70,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final userName = context.watch<AuthAPI>().localUserName;
-    final userEmail = context.watch<AuthAPI>().localUserEmail;
+    // final userEmail = context.watch<AuthAPI>().localUserEmail;
     bool keyboardIsOpened = MediaQuery.of(context).viewInsets.bottom != 0.0;
 
     return Scaffold(

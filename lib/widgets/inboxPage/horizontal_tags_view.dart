@@ -17,14 +17,14 @@ class HorizontalTagsView extends StatelessWidget {
     final selectedPriority = tasksAPI.selectedPriority;
 
     final allTasks = tasksAPI.tasks;
-    final filterCriteria = tasksAPI.filterCriteria;
+    FilterCriteria filterCriteria = tasksAPI.filterCriteria;
     final priority = tasksAPI.priority;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
       child: Row(
         mainAxisAlignment: filterCriteria == FilterCriteria.priority
-            ? MainAxisAlignment.center
+            ? MainAxisAlignment.spaceBetween
             : MainAxisAlignment.start,
         children: [
           selectedTags.isNotEmpty
@@ -186,6 +186,20 @@ class HorizontalTagsView extends StatelessWidget {
                     );
                   }).toList(),
                 ),
+          IconButton.outlined(
+            color: const Color.fromARGB(255, 0, 73, 133),
+            icon: Icon(
+              filterCriteria == FilterCriteria.tags
+                  ? Icons.flag_outlined
+                  : Icons.label_outline_rounded,
+              color: const Color.fromARGB(255, 0, 73, 133),
+            ),
+            onPressed: () {
+              filterCriteria == FilterCriteria.tags
+                  ? tasksAPI.toggleFilterByPriority()
+                  : tasksAPI.toggleFilterByTags();
+            },
+          ),
         ],
       ),
     );
