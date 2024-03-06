@@ -5,7 +5,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:utask/providers/task_provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
-import '../models/tasks.dart';
 import '../providers/auth_provider.dart';
 import '../providers/drag_provider.dart';
 import '../widgets/homePage/add_task_widgets/add_task_modal.dart';

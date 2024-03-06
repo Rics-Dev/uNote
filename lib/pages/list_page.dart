@@ -86,6 +86,7 @@ class _ListPageState extends State<ListPage> {
               itemCount: context.watch<ListsAPI>().lists.length,
               itemBuilder: (context, index) {
                 return ExpansionTile(
+                  initiallyExpanded: true,
                   title: Text(context.watch<ListsAPI>().lists[index].listName),
                   children: [
                     ListView.builder(
