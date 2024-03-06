@@ -8,9 +8,9 @@ Widget buildLandingPage(AuthStatus authStatus, Map<String, String> queryParamete
   final secret = queryParameters['secret'] ?? '';
 
 
-  if (userID != null) {
-    return const HomePage();
-  } 
+  // if (userID != null) {
+  //   return const HomePage();
+  // } 
 
   if (userId.isNotEmpty && secret.isNotEmpty) {
     return LandingPage(userId: userId, secret: secret);

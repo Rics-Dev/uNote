@@ -151,7 +151,7 @@ class AuthAPI extends ChangeNotifier {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('userID', _currentUser.$id);
       return session;
-    } finally {
+    } finally {  
       notifyListeners();
     }
   }
@@ -160,6 +160,8 @@ class AuthAPI extends ChangeNotifier {
     try {
       await account.deleteSession(sessionId: 'current');
       _status = AuthStatus.unauthenticated;
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.remove('userID');
     } finally {
       notifyListeners();
     }

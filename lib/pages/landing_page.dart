@@ -80,7 +80,7 @@ class _LandingPageState extends State<LandingPage> {
     try {
       final AuthAPI appwrite = context.read<AuthAPI>();
       await appwrite.signInWithProvider(provider: provider);
-      setState(() {});
+      context.go('/');
     } on AppwriteException catch (e) {
       setState(() {});
       showAlert(title: 'Login failed', text: e.message.toString());

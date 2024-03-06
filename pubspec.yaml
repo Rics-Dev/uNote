@@ -57,6 +57,7 @@ dependencies:
   intl: ^0.19.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  pull_down_button: ^0.9.3
   # encrypt: ^5.0.3
   # flutter_launcher_icons: "^0.13.1"
 
