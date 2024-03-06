@@ -247,7 +247,8 @@ class TasksViewInboxPage extends StatelessWidget {
             },
             onWillAcceptWithDetails: (data) => true,
             onAcceptWithDetails: (data) {
-              context.read<TasksAPI>().updateTask(taskId: data as String, isDone: true);
+              final draggableData = data.data;
+              context.read<TasksAPI>().updateTask(taskId: draggableData as String, isDone: true);
             },
           ),
         ),

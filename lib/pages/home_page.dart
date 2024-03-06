@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:utask/providers/task_provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
+import '../models/tasks.dart';
 import '../providers/auth_provider.dart';
 import '../providers/drag_provider.dart';
 import '../widgets/homePage/add_task_widgets/add_task_modal.dart';
@@ -33,19 +34,14 @@ class _HomePageState extends State<HomePage> {
     'Your lists',
   ];
 
-  void removeTask(Object? data) async {
-    final removedTaskId = data as String?;
-    if (removedTaskId != null) {
-      try {
-        await context.read<TasksAPI>().deleteTask(taskId: removedTaskId);
-        // showSuccessDelete();
-      } on AppwriteException catch (e) {
-        showAlert(title: 'Error', text: e.message.toString());
-      }
-    } else {
-      showAlert(title: 'Error', text: 'An error occured');
+  void removeTask(String taskId) async {
+    try {
+      await context.read<TasksAPI>().deleteTask(taskId: taskId);
+      // showSuccessDelete();
+    } on AppwriteException catch (e) {
+      showAlert(title: 'Error', text: e.message.toString());
     }
-  }
+    }
 
   Future<dynamic> _showAddTaskDialog(BuildContext context) {
     return showModalBottomSheet(
@@ -92,9 +88,9 @@ class _HomePageState extends State<HomePage> {
                 return floatingActionButton(context, incoming.isNotEmpty);
               },
               onWillAcceptWithDetails: (data) => true,
-              onAcceptWithDetails: (data) {
-                removeTask(data);
-                // tasks.remove(data);
+              onAcceptWithDetails: (DragTargetDetails<Object> data) {
+                final draggableData = data.data;
+                  removeTask(draggableData as String);
               }),
       extendBody: true,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
