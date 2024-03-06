@@ -14,7 +14,6 @@ class ListPage extends StatefulWidget {
 class _ListPageState extends State<ListPage> {
   final TextEditingController listController = TextEditingController();
 
-
   @override
   void dispose() {
     listController.dispose();
@@ -22,8 +21,8 @@ class _ListPageState extends State<ListPage> {
   }
 
   void addList(String listName) async {
-    final existingListDocument = await
-        context.read<ListsAPI>().verifyExistingList(listName);
+    final existingListDocument =
+        await context.read<ListsAPI>().verifyExistingList(listName);
     if (existingListDocument == 0) {
       context.read<ListsAPI>().createList(listName);
       listController.clear();
@@ -41,10 +40,10 @@ class _ListPageState extends State<ListPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Center(
       child: Column(
         children: [
-          const Text('Your list content goes here'),
           const SizedBox(height: 40),
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.80,
@@ -82,6 +81,29 @@ class _ListPageState extends State<ListPage> {
               ),
             ),
           ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: context.watch<ListsAPI>().lists.length,
+              itemBuilder: (context, index) {
+                return ExpansionTile(
+                  title: Text(context.watch<ListsAPI>().lists[index].listName),
+                  children: [
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: context.watch<ListsAPI>().lists[index].tasks.length,
+                      itemBuilder: (context, taskIndex) {
+                        return ListTile(
+                          title: Text(
+                            context.watch<ListsAPI>().lists[index].tasks[taskIndex].content,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                );
+              },
+            ),
+          )
         ],
       ),
     );

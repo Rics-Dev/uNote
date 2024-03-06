@@ -1,6 +1,8 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart' as constants;
+import '../models/lists.dart';
+import '../models/tasks.dart';
 import 'auth_provider.dart';
 import 'task_provider.dart';
 
@@ -10,6 +12,7 @@ class ListsAPI extends ChangeNotifier {
   late final Databases databases;
   final AuthAPI auth = AuthAPI();
   final TasksAPI tasksAPI = TasksAPI();
+  List<ListItem> lists = [];
 
   ListsAPI(
       {String endpoint = constants.appwriteEndpoint,
@@ -21,6 +24,7 @@ class ListsAPI extends ChangeNotifier {
     client.setEndpoint(endpoint).setProject(projectId).setSelfSigned();
     account = Account(client);
     databases = Databases(client);
+    fetchLists();
   }
 
   Future<void> createList(String listName) async {
@@ -43,5 +47,14 @@ class ListsAPI extends ChangeNotifier {
       ],
     );
     return existingListDocument.total;
+  }
+
+  void fetchLists() async {
+    final serverLists = await databases.listDocuments(
+      databaseId: constants.appwriteDatabaseId,
+      collectionId: constants.appwriteListsCollectionId,
+    );
+    lists = serverLists.documents.map((e) => ListItem.fromMap(e.data)).toList();
+    notifyListeners();
   }
 }
