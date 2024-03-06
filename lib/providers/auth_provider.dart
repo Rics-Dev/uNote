@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart' as constants;
+import '../constants.dart';
 
 enum AuthStatus {
   uninitialized,
@@ -12,6 +13,7 @@ enum AuthStatus {
 }
 
 class AuthAPI extends ChangeNotifier {
+  final appwriteConfig = AppwriteConfig();
   Client client = Client();
   late final Account account;
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
@@ -31,7 +33,6 @@ class AuthAPI extends ChangeNotifier {
   String? get localUserName => _localUserName;
   String? get localUserEmail => _localUserEmail;
 
-
   // Constructor
   AuthAPI() {
     init();
@@ -48,7 +49,7 @@ class AuthAPI extends ChangeNotifier {
   }
 
   loadUser() async {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     try {
       _localUserName = prefs.getString('userName');
@@ -139,7 +140,12 @@ class AuthAPI extends ChangeNotifier {
   signInWithProvider({required String provider}) async {
     notifyListeners();
     try {
-      final session = await account.createOAuth2Session(provider: provider);
+      final session = await account.createOAuth2Session(
+        provider: provider,
+        // success: 'http://localhost:54011/auth.html',
+        // failure: "${appwriteConfig.callback}/${appwriteConfig.host}/auth/oauth2/failure",
+        // success: "${appwriteConfig.callback}/${appwriteConfig.host}/auth/oauth2/success"
+      );
       _currentUser = await account.get();
       _status = AuthStatus.authenticated;
       final SharedPreferences prefs = await SharedPreferences.getInstance();

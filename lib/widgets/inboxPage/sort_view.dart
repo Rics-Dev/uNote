@@ -14,7 +14,6 @@ class SortView extends StatelessWidget {
     final oldToNew = tasksAPI.oldToNew;
 
     SortCriteria sortCriteria = tasksAPI.sortCriteria;
-    FilterCriteria filterCriteria = tasksAPI.filterCriteria;
 
     return SafeArea(
         child: SizedBox(

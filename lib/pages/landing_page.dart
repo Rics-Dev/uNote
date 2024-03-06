@@ -175,7 +175,7 @@ class _LandingPageState extends State<LandingPage> {
 
                           width: 130,
                           onPressed: () {
-                            signInWithProvider('microsoft');
+                            signInWithProvider('github');
                           },
                         ),
                       ],

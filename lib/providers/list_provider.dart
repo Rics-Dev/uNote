@@ -30,7 +30,7 @@ class ListsAPI extends ChangeNotifier {
       documentId: ID.unique(),
       data: {'listname': listName},
     );
-    print(response.data);
+    // print(response.data);
     notifyListeners();
   }
 
