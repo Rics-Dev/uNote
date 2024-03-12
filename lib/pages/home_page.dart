@@ -8,6 +8,7 @@ import 'package:utask/providers/task_provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
 import '../providers/auth_provider.dart';
 import '../providers/drag_provider.dart';
+import '../widgets/app_drawer.dart';
 import '../widgets/homePage/add_task_widgets/add_task_modal.dart';
 import '../widgets/homePage/build_body_home_page.dart';
 import '../widgets/homePage/calendar_view.dart';
@@ -66,8 +67,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final userName = context.watch<AuthAPI>().localUserName;
-    final userEmail = context.watch<AuthAPI>().localUserEmail;
     bool keyboardIsOpened = MediaQuery.of(context).viewInsets.bottom != 0.0;
 
     return Scaffold(
@@ -117,121 +116,7 @@ class _HomePageState extends State<HomePage> {
           }
           //other params
           ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            GestureDetector(
-              onTap: () async {
-                await showPullDownMenu(
-                    context: context,
-                    items: [
-                      PullDownMenuItem(
-                        title: 'Disconnect',
-                        onTap: () {
-                          context.read<AuthAPI>().signOut();
-                          context.go('/landingPage');
-                        },
-                        icon: Icons.logout,
-                        isDestructive: true,
-                        iconColor: Colors.red,
-                      ),
-                    ],
-                    position: const Rect.fromLTWH(50, 25, 100, 100));
-              },
-              child: Container(
-                height: 125,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3), // Adjust the offset as needed
-                    ),
-                  ],
-                ),
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
-                  child: Center(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min, // Add this line
-                      children: [
-                        CircleAvatar(
-                          radius: 30, // Increased from 22 to 24
-                          // backgroundColor: const Color.fromARGB(255, 0, 73, 133),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: const Offset(
-                                      0, 3), // Adjust the offset as needed
-                                ),
-                              ],
-                            ),
-                            child: CircleAvatar(
-                              radius: 25,
-                              backgroundColor: Colors.white,
-                              child: Text(
-                                (userName?.isNotEmpty ?? false)
-                                    ? userName![0].toUpperCase()
-                                    : 'U',
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 0, 73, 133),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min, // Add this line
-                          children: [
-                            Text(
-                              userName ?? 'User',
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              userEmail ?? 'Email',
-                              style: const TextStyle(
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            ListTile(
-              title: const Text('Item 1'),
-              onTap: () {
-                // Update UI based on drawer item selected
-              },
-            ),
-            ListTile(
-              title: const Text('Item 2'),
-              onTap: () {
-                // Update UI based on drawer item selected
-              },
-            ),
-            // Add more ListTile widgets for additional items as needed
-          ],
-        ),
-      ),
+      drawer: const AppDrawer(),
       body: buildBody(_bottomNavIndex),
     );
   }
@@ -290,6 +175,8 @@ class _HomePageState extends State<HomePage> {
         });
   }
 }
+
+
 
 // if (task.auth.status == AuthStatus.uninitialized) {
 //   await task.auth.loadUser();

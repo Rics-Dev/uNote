@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../pages/landing_page.dart';
+import '../pages/pomodoro_page.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/build_landing_page.dart';
 
@@ -14,6 +15,12 @@ GoRouter buildRouter([String? userID]) {
         builder: (BuildContext context, GoRouterState state) {
           final value = context.watch<AuthAPI>().status;
           return buildLandingPage(value, state.uri.queryParameters, userID);
+        },
+      ),
+      GoRoute(
+        path: '/pomodoro',
+        builder: (BuildContext context, GoRouterState state) {
+          return const PomodoroPage();
         },
       ),
       GoRoute(
