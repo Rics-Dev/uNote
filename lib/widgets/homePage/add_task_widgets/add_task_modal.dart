@@ -1,6 +1,7 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:utask/widgets/homePage/add_task_widgets/add_tast_to_list.dart';
 
 import '../../../providers/task_provider.dart';
 import 'package:toastification/toastification.dart';
@@ -32,11 +33,12 @@ class _AddTaskViewState extends State<AddTaskView> {
     super.dispose();
   }
 
-  void addTask(String newTask, List<String> temporarilyAddedTags, String? temporarySelectedPriority) async {
+  void addTask(String newTask, List<String> temporarilyAddedTags,
+      String? temporarySelectedPriority) async {
     try {
-      await context
-          .read<TasksAPI>()
-          .createTask(taskContent: newTask,);
+      await context.read<TasksAPI>().createTask(
+            taskContent: newTask,
+          );
     } on AppwriteException catch (e) {
       showAlert(title: 'Error', text: e.message.toString());
     }
@@ -47,10 +49,11 @@ class _AddTaskViewState extends State<AddTaskView> {
     final tasksAPI = context.watch<TasksAPI>();
     final temporarilyAddedTags = tasksAPI.temporarilyAddedTags;
     final dueDate = tasksAPI.dueDate;
-     String? formattedDate = dueDate != null ? DateFormat('EEEE, MMM d, y').format(dueDate) : null;
+    String? formattedDate =
+        dueDate != null ? DateFormat('EEEE, MMM d, y').format(dueDate) : null;
 
     final temporarySelectedPriority = tasksAPI.temporarySelectedPriority;
-    
+
     return SafeArea(
       child: Padding(
         padding: MediaQuery.of(context).viewInsets, // Adjust for keyboard
@@ -153,7 +156,8 @@ class _AddTaskViewState extends State<AddTaskView> {
                     TextInputAction.done, // Dismiss keyboard on Done
                 onSubmitted: (_) {
                   if (taskController.text.isNotEmpty) {
-                    addTask(taskController.text, temporarilyAddedTags, temporarySelectedPriority);
+                    addTask(taskController.text, temporarilyAddedTags,
+                        temporarySelectedPriority);
                     context.read<TasksAPI>().temporarilyAddedTags.clear();
                     Navigator.pop(context, true);
                   } else {
@@ -185,26 +189,35 @@ class _AddTaskViewState extends State<AddTaskView> {
                           ),
                           label: Text(formattedDate!),
                         ),
-                  temporarySelectedPriority == null ?
                   IconButton.outlined(
                     onPressed: () {
-                      showAddPriorityDialog(context);
+                      showAddListDialog(context);
                     },
                     icon: const Icon(
-                      Icons.flag_outlined,
+                      Icons.format_list_bulleted_rounded,
                       color: Color.fromARGB(255, 0, 73, 133),
                     ),
-                  ) : 
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      showAddPriorityDialog(context);
-                    },
-                    icon: const Icon(
-                      Icons.flag_outlined,
-                      color: Color.fromARGB(255, 0, 73, 133),
-                    ),
-                    label: Text(temporarySelectedPriority),
                   ),
+                  temporarySelectedPriority == null
+                      ? IconButton.outlined(
+                          onPressed: () {
+                            showAddPriorityDialog(context);
+                          },
+                          icon: const Icon(
+                            Icons.flag_outlined,
+                            color: Color.fromARGB(255, 0, 73, 133),
+                          ),
+                        )
+                      : OutlinedButton.icon(
+                          onPressed: () {
+                            showAddPriorityDialog(context);
+                          },
+                          icon: const Icon(
+                            Icons.flag_outlined,
+                            color: Color.fromARGB(255, 0, 73, 133),
+                          ),
+                          label: Text(temporarySelectedPriority),
+                        ),
                 ],
               ),
               const SizedBox(height: 20.0),
@@ -212,7 +225,8 @@ class _AddTaskViewState extends State<AddTaskView> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (taskController.text.isNotEmpty) {
-                      addTask(taskController.text, temporarilyAddedTags, temporarySelectedPriority);
+                      addTask(taskController.text, temporarilyAddedTags,
+                          temporarySelectedPriority);
                       // context.read<TasksAPI>().removeAllTemporaryTags();
                       Navigator.pop(context, true);
                     } else {
@@ -239,6 +253,14 @@ class _AddTaskViewState extends State<AddTaskView> {
     return showModalBottomSheet(
       context: context,
       builder: (context) => const AddTagView(),
+      isScrollControlled: true,
+    ).whenComplete(() => clearSearchedTags());
+  }
+
+    Future<dynamic> showAddListDialog(context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) => const AddTaskToListView(),
       isScrollControlled: true,
     ).whenComplete(() => clearSearchedTags());
   }

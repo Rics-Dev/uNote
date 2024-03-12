@@ -2,17 +2,14 @@ import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:utask/providers/task_provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
-import '../providers/auth_provider.dart';
 import '../providers/drag_provider.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/homePage/add_task_widgets/add_task_modal.dart';
 import '../widgets/homePage/build_body_home_page.dart';
 import '../widgets/homePage/calendar_view.dart';
-import 'package:pull_down_button/pull_down_button.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
