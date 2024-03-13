@@ -39,7 +39,9 @@ class ListsAPI extends ChangeNotifier {
     try {
       prefs = await SharedPreferences.getInstance();
       await fetchLocalLists();
-      await fetchServerLists();
+      if(auth.status == AuthStatus.authenticated){
+        await fetchServerLists();
+      }
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -72,7 +74,10 @@ class ListsAPI extends ChangeNotifier {
   Future<void> createList(String listName) async {
     final listId = uuid.v4();
     await createLocalList(listName: listName,listId:  listId);
-    await createServerList(listName: listName,listId:  listId);
+    if(auth.status == AuthStatus.authenticated){
+      await createServerList(listName: listName,listId:  listId);
+    }
+    
   }
 
   Future<void> createLocalList({required String listName, required String listId} ) async {
@@ -98,6 +103,21 @@ class ListsAPI extends ChangeNotifier {
   }
 
   Future<int> verifyExistingList(String listName) async {
+    if (auth.status == AuthStatus.authenticated) {
+      return await verifyServerExistingList(listName);
+    } else {
+      return await verifyLocalExistingList(listName);
+    }
+  }
+
+
+  Future<int> verifyLocalExistingList(String listName) async {
+    final existingList = _lists.where((list) => list.listName == listName);
+    return existingList.length;
+  }
+
+
+  Future<int> verifyServerExistingList(String listName) async {
     final existingListDocument = await databases.listDocuments(
       databaseId: constants.appwriteDatabaseId,
       collectionId: constants.appwriteListsCollectionId,

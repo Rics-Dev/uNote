@@ -12,9 +12,10 @@ Widget buildLandingPage(AuthStatus authStatus, Map<String, String> queryParamete
   //   return const HomePage();
   // } 
 
-  if (userId.isNotEmpty && secret.isNotEmpty) {
-    return LandingPage(userId: userId, secret: secret);
-  }
+  //for email only login
+  // if (userId.isNotEmpty && secret.isNotEmpty) {
+  //   return LandingPage(userId: userId, secret: secret);
+  // }
 
   switch (authStatus) {
     case AuthStatus.uninitialized:

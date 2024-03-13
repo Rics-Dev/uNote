@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../pages/home_page.dart';
 import '../pages/landing_page.dart';
 import '../pages/pomodoro_page.dart';
 import '../providers/auth_provider.dart';
@@ -14,7 +15,8 @@ GoRouter buildRouter([String? userID]) {
         path: '/',
         builder: (BuildContext context, GoRouterState state) {
           final value = context.watch<AuthAPI>().status;
-          return buildLandingPage(value, state.uri.queryParameters, userID);
+          // return buildLandingPage(value, state.uri.queryParameters, userID);
+          return const HomePage();
         },
       ),
       GoRoute(
@@ -29,16 +31,16 @@ GoRouter buildRouter([String? userID]) {
           return const LandingPage(userId: '', secret: '');
         },
       ),
-      GoRoute(
-        path: '/auth/magic-url',
-        builder: (BuildContext context, GoRouterState state) {
-          return buildLandingPage(
-            AuthStatus.uninitialized,
-            state.uri.queryParameters,
-            userID,
-          );
-        },
-      ),
+      // GoRoute(
+      //   path: '/auth/magic-url',
+      //   builder: (BuildContext context, GoRouterState state) {
+      //     return buildLandingPage(
+      //       AuthStatus.uninitialized,
+      //       state.uri.queryParameters,
+      //       userID,
+      //     );
+      //   },
+      // ),
     ],
   );
 }
