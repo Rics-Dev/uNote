@@ -37,7 +37,7 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
           ),
           SearchBarAnimation(
             durationInMilliSeconds: 500,
-            searchBoxWidth: 300,
+            searchBoxWidth: MediaQuery.of(context).size.width * 0.8,
             isOriginalAnimation: false,
             isSearchBoxOnRightSide: true,
             buttonBorderColour: Colors.black,
