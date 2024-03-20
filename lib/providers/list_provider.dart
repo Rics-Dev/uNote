@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import '../constants.dart' as constants;
 import '../models/lists.dart';
-import '../models/tasks.dart';
 import 'auth_provider.dart';
 import 'task_provider.dart';
 

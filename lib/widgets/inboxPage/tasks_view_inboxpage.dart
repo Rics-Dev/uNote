@@ -14,26 +14,6 @@ class TasksViewInboxPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final selectedTags = tasksAPI.selectedTags;
-
-    // final filteredTasks = tasksAPI.filteredTasks;
-
-    // List<Task> filteredTasks =
-    //     (selectedTags.isEmpty || tasksAPI.filteredTasks.isEmpty)
-    //         ? tasks
-    //         : tasksAPI.filteredTasks.isNotEmpty
-    //             ? tasksAPI.filteredTasks
-    //             : [];
-
-    // final tasksAPI = context.watch<TasksAPI>();
-    // List<Task> tasks = tasksAPI.tasks;
-
-    // if (tasksAPI.filteredTasks.isNotEmpty || (tasksAPI.filteredTasks.isEmpty && tasksAPI.selectedPriority.isNotEmpty) || (tasksAPI.filteredTasks.isEmpty && tasksAPI.selectedTags.isNotEmpty)) {
-    //   tasks = tasksAPI.filteredTasks;
-    // }
-    // if (tasksAPI.searchedTasks.isNotEmpty) {
-    //   tasks = tasksAPI.searchedTasks;
-    // }
 
     final tasksAPI = context.watch<TasksAPI>();
     List<Task> tasks = [];
@@ -145,6 +125,7 @@ class TasksViewInboxPage extends StatelessWidget {
     }
   }
 
+  //each task container
   Widget buildTaskContainer(
       BuildContext context, Task task, List<Object?> incoming) {
     return Container(
@@ -164,7 +145,9 @@ class TasksViewInboxPage extends StatelessWidget {
             ),
             style: MSHCheckboxStyle.fillScaleColor,
             onChanged: (selected) {
-              context.read<TasksAPI>().updateTask(taskId: task.id, isDone: selected);
+              context
+                  .read<TasksAPI>()
+                  .updateTask(taskId: task.id, isDone: selected);
             },
           ),
           const SizedBox(width: 10),
@@ -180,15 +163,16 @@ class TasksViewInboxPage extends StatelessWidget {
               ),
             ),
           ),
-          const Spacer(),
-          task.isDone
-              ? const SizedBox()
-              : GestureDetector(
-                  child: Icon(Icons.push_pin_outlined, color: Colors.grey[600]),
-                  onTap: () {
-                    // context.read<TasksAPI>().pinTask(task.id);
-                  },
-                ),
+          //pin button
+          // const Spacer(),
+          // task.isDone
+          //     ? const SizedBox()
+          //     : GestureDetector(
+          //         child: Icon(Icons.push_pin_outlined, color: Colors.grey[600]),
+          //         onTap: () {
+          //           // context.read<TasksAPI>().pinTask(task.id);
+          //         },
+          //       ),
         ],
       ),
     );
@@ -248,7 +232,9 @@ class TasksViewInboxPage extends StatelessWidget {
             onWillAcceptWithDetails: (data) => true,
             onAcceptWithDetails: (data) {
               final draggableData = data.data;
-              context.read<TasksAPI>().updateTask(taskId: draggableData as String, isDone: true);
+              context
+                  .read<TasksAPI>()
+                  .updateTask(taskId: draggableData as String, isDone: true);
             },
           ),
         ),
