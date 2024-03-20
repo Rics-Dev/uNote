@@ -68,6 +68,12 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
+        // leading: IconButton(
+        //   icon: const Icon(Icons.calendar_month_rounded),
+        //   onPressed: () {
+        //     _showCalendarView();
+        //   },
+        // ),
         title: Text(appBarTitles[_bottomNavIndex]),
         actions: <Widget>[
           IconButton(
@@ -113,7 +119,7 @@ class _HomePageState extends State<HomePage> {
           }
           //other params
           ),
-      drawer: const AppDrawer(),
+      // drawer: const AppDrawer(),
       body: buildBody(_bottomNavIndex),
     );
   }
