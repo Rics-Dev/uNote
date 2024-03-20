@@ -58,7 +58,7 @@ class _AddTaskViewState extends State<AddTaskView> {
       child: Padding(
         padding: MediaQuery.of(context).viewInsets, // Adjust for keyboard
         child: Container(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(12.0),
           width: MediaQuery.of(context).size.width * 0.95,
           // height: MediaQuery.of(context).size.height * 0.35,
           // width: double.infinity,
