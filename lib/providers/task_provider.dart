@@ -28,7 +28,7 @@ class TasksAPI extends ChangeNotifier {
   late final Databases databases;
   final AuthAPI auth = AuthAPI();
   late SharedPreferences prefs;
-  var uuid =const Uuid();
+  var uuid = const Uuid();
 
   List<Task> _tasks = [];
   List<String> _tags = [];
@@ -94,7 +94,7 @@ class TasksAPI extends ChangeNotifier {
 
       //Only fetch server data if local data is unavailable or if user requests it
       // if (_tasks.isEmpty) {
-      if(auth.status == AuthStatus.authenticated){
+      if (auth.status == AuthStatus.authenticated) {
         await _fetchServerData();
       }
       // }
@@ -107,9 +107,13 @@ class TasksAPI extends ChangeNotifier {
   Future<void> createTask({required String taskContent}) async {
     final taskId = uuid.v4();
     await _createLocalTask(task: taskContent, taskId: taskId);
-    if(auth.status == AuthStatus.authenticated){
+
+
+    if (auth.status == AuthStatus.authenticated) {
       await _createServerTask(task: taskContent, taskId: taskId);
     }
+
+
     _temporarilyAddedTags = [];
     _temporarySelectedPriority = null;
     _dueDate = null;
@@ -120,7 +124,7 @@ class TasksAPI extends ChangeNotifier {
   Future<void> deleteTask({required String taskId}) async {
     final removedTask = await _deleteLocalTask(taskId: taskId);
     await _deleteUnusedLocalTag(removedTask);
-    if(auth.status == AuthStatus.authenticated){
+    if (auth.status == AuthStatus.authenticated) {
       await _deleteServerTask(taskId: taskId);
     }
   }
@@ -310,7 +314,7 @@ class TasksAPI extends ChangeNotifier {
           tags.remove(tagToRemove);
           clearSelectedTags();
           notifyListeners();
-          if(auth.status == AuthStatus.authenticated){
+          if (auth.status == AuthStatus.authenticated) {
             _deleteUnusedServerTag(tagToRemove: tagToRemove);
           }
         }
@@ -347,10 +351,9 @@ class TasksAPI extends ChangeNotifier {
 
   void deleteTag(String tag) async {
     await _deleteLocalTag(tag);
-    if(auth.status == AuthStatus.authenticated){
+    if (auth.status == AuthStatus.authenticated) {
       await _deleteServerTag(tag);
     }
-    
   }
 
   Future<void> _deleteLocalTag(String tag) async {
@@ -382,10 +385,9 @@ class TasksAPI extends ChangeNotifier {
   //to update tasks (for now only when it's done)
   void updateTask({required String taskId, required bool isDone}) async {
     await _updateLocalTask(taskId: taskId, isDone: isDone);
-    if(auth.status == AuthStatus.authenticated){
+    if (auth.status == AuthStatus.authenticated) {
       await _updateServerTask(taskId: taskId, isDone: isDone);
     }
-    
   }
 
   Future<void> _updateLocalTask(
@@ -596,16 +598,14 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-
- // priority management part
+  // priority management part
   void setTemporarySelectedPriority(String? s) {
     _temporarySelectedPriority = s;
     notifyListeners();
   }
 
-
   //part to set due date
-    void setDueDate(DateTime? selectedDay) {
+  void setDueDate(DateTime? selectedDay) {
     _dueDate = selectedDay;
     notifyListeners();
   }
