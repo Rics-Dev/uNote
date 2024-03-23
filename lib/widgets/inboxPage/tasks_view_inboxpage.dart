@@ -14,7 +14,6 @@ class TasksViewInboxPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final tasksAPI = context.watch<TasksAPI>();
     List<Task> tasks = [];
 
@@ -131,7 +130,7 @@ class TasksViewInboxPage extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: incoming.isNotEmpty ? Colors.blue[100] : Colors.blue[50],
+        color: incoming.isNotEmpty ? Colors.blue[100] : const Color(0xFFF7F7F7),
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.all(16),

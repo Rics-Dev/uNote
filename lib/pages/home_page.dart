@@ -124,30 +124,41 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  FloatingActionButton floatingActionButton(
-      BuildContext context, bool isNotEmpty) {
+  Widget floatingActionButton(BuildContext context, bool isNotEmpty) {
     final isDragging = Provider.of<DragStateProvider>(context).isDragging;
     return isDragging
         ? isNotEmpty
-            ? FloatingActionButton.large(
-                shape: const CircleBorder(),
-                tooltip: 'add task',
-                backgroundColor: Colors.red,
-                child: const Icon(Icons.delete_outline_rounded,
-                    color: Colors.white, size: 50),
-                onPressed: () {
-                  _showAddTaskDialog(context);
-                },
+            ? AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut, // Animation curve
+                width: 80, // Animated width
+                height: 80,
+                child: FloatingActionButton.large(
+                  shape: const CircleBorder(),
+                  tooltip: 'remove task',
+                  backgroundColor: Colors.red,
+                  child: const Icon(Icons.delete_outline_rounded,
+                      color: Colors.white, size: 38),
+                  onPressed: () {
+                    _showAddTaskDialog(context);
+                  },
+                ),
               )
-            : FloatingActionButton(
-                shape: const CircleBorder(),
-                tooltip: 'add task',
-                backgroundColor: Colors.red,
-                child: const Icon(Icons.delete_outline_rounded,
-                    color: Colors.white, size: 38),
-                onPressed: () {
-                  _showAddTaskDialog(context);
-                },
+            : AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut, // Animation curve
+                width: 60, // Animated width
+                height: 60,
+                child: FloatingActionButton(
+                  shape: const CircleBorder(),
+                  tooltip: 'remove task',
+                  backgroundColor: Colors.red,
+                  child: const Icon(Icons.delete_outline_rounded,
+                      color: Colors.white, size: 38),
+                  onPressed: () {
+                    _showAddTaskDialog(context);
+                  },
+                ),
               )
         : FloatingActionButton(
             shape: const CircleBorder(),
