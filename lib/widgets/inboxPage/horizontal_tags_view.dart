@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:utask/providers/taskProvider.dart';
 import '../../providers/task_provider.dart';
 import 'package:badges/badges.dart' as badges;
 
@@ -12,7 +13,9 @@ class HorizontalTagsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tasksAPI = context.watch<TasksAPI>();
-    final tags = tasksAPI.tags;
+    final tasksProvider = context.watch<TasksProvider>();
+
+    final tags = tasksProvider.tags;
     final selectedTags = tasksAPI.selectedTags;
     final selectedPriority = tasksAPI.selectedPriority;
 
@@ -57,10 +60,7 @@ class HorizontalTagsView extends StatelessWidget {
                             badgeColor: Color.fromARGB(255, 0, 73, 133)),
                         position: badges.BadgePosition.topEnd(top: -5, end: 0),
                         badgeContent: Text(
-                          allTasks
-                              .where((task) => task.tags.contains(tag))
-                              .length
-                              .toString(),
+                          tag.numberOfTasks.toString(),
                           style: const TextStyle(color: Colors.white),
                         ),
                         child: Padding(
@@ -68,14 +68,14 @@ class HorizontalTagsView extends StatelessWidget {
                           child: GestureDetector(
                             onLongPress: () {
                               // Show a confirmation dialog
-                              deleteTag(context, tag);
+                              // deleteTag(context, tag);
                             },
                             onTap: () {
-                              tasksAPI.toggleTagSelection(tag);
+                              // tasksAPI.toggleTagSelection(tag);
                             },
                             child: OutlinedButton.icon(
                               onPressed: () {
-                                tasksAPI.toggleTagSelection(tag);
+                                // tasksAPI.toggleTagSelection(tag);
                               },
                               icon: Icon(
                                 Icons.label_outline_rounded,
@@ -85,7 +85,7 @@ class HorizontalTagsView extends StatelessWidget {
                                     : const Color.fromARGB(255, 0, 73, 133),
                               ),
                               label: Text(
-                                tag,
+                                tag.name,
                                 style: TextStyle(
                                   color: isSelected
                                       ? Colors.white
@@ -256,3 +256,9 @@ class HorizontalTagsView extends StatelessWidget {
     );
   }
 }
+
+
+                          // allTasks
+                          //     .where((task) => task.tags.contains(tag))
+                          //     .length
+                          //     .toString(),

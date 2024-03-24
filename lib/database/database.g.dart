@@ -635,7 +635,7 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
+      'id', aliasedName, true,
       hasAutoIncrement: true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
@@ -650,8 +650,16 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  static const VerificationMeta _numberOfTasksMeta =
+      const VerificationMeta('numberOfTasks');
   @override
-  List<GeneratedColumn> get $columns => [id, name];
+  late final GeneratedColumn<int> numberOfTasks = GeneratedColumn<int>(
+      'number_of_tasks', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(1));
+  @override
+  List<GeneratedColumn> get $columns => [id, name, numberOfTasks];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -671,6 +679,12 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
+    if (data.containsKey('number_of_tasks')) {
+      context.handle(
+          _numberOfTasksMeta,
+          numberOfTasks.isAcceptableOrUnknown(
+              data['number_of_tasks']!, _numberOfTasksMeta));
+    }
     return context;
   }
 
@@ -681,9 +695,11 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Tag(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}id']),
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      numberOfTasks: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}number_of_tasks'])!,
     );
   }
 
@@ -694,21 +710,26 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
 }
 
 class Tag extends DataClass implements Insertable<Tag> {
-  final int id;
+  final int? id;
   final String name;
-  const Tag({required this.id, required this.name});
+  final int numberOfTasks;
+  const Tag({this.id, required this.name, required this.numberOfTasks});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
     map['name'] = Variable<String>(name);
+    map['number_of_tasks'] = Variable<int>(numberOfTasks);
     return map;
   }
 
   TagsCompanion toCompanion(bool nullToAbsent) {
     return TagsCompanion(
-      id: Value(id),
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       name: Value(name),
+      numberOfTasks: Value(numberOfTasks),
     );
   }
 
@@ -716,65 +737,83 @@ class Tag extends DataClass implements Insertable<Tag> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Tag(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<int?>(json['id']),
       name: serializer.fromJson<String>(json['name']),
+      numberOfTasks: serializer.fromJson<int>(json['numberOfTasks']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<int?>(id),
       'name': serializer.toJson<String>(name),
+      'numberOfTasks': serializer.toJson<int>(numberOfTasks),
     };
   }
 
-  Tag copyWith({int? id, String? name}) => Tag(
-        id: id ?? this.id,
+  Tag copyWith(
+          {Value<int?> id = const Value.absent(),
+          String? name,
+          int? numberOfTasks}) =>
+      Tag(
+        id: id.present ? id.value : this.id,
         name: name ?? this.name,
+        numberOfTasks: numberOfTasks ?? this.numberOfTasks,
       );
   @override
   String toString() {
     return (StringBuffer('Tag(')
           ..write('id: $id, ')
-          ..write('name: $name')
+          ..write('name: $name, ')
+          ..write('numberOfTasks: $numberOfTasks')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name);
+  int get hashCode => Object.hash(id, name, numberOfTasks);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Tag && other.id == this.id && other.name == this.name);
+      (other is Tag &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.numberOfTasks == this.numberOfTasks);
 }
 
 class TagsCompanion extends UpdateCompanion<Tag> {
-  final Value<int> id;
+  final Value<int?> id;
   final Value<String> name;
+  final Value<int> numberOfTasks;
   const TagsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
+    this.numberOfTasks = const Value.absent(),
   });
   TagsCompanion.insert({
     this.id = const Value.absent(),
     required String name,
+    this.numberOfTasks = const Value.absent(),
   }) : name = Value(name);
   static Insertable<Tag> custom({
     Expression<int>? id,
     Expression<String>? name,
+    Expression<int>? numberOfTasks,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
+      if (numberOfTasks != null) 'number_of_tasks': numberOfTasks,
     });
   }
 
-  TagsCompanion copyWith({Value<int>? id, Value<String>? name}) {
+  TagsCompanion copyWith(
+      {Value<int?>? id, Value<String>? name, Value<int>? numberOfTasks}) {
     return TagsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
+      numberOfTasks: numberOfTasks ?? this.numberOfTasks,
     );
   }
 
@@ -787,6 +826,9 @@ class TagsCompanion extends UpdateCompanion<Tag> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
+    if (numberOfTasks.present) {
+      map['number_of_tasks'] = Variable<int>(numberOfTasks.value);
+    }
     return map;
   }
 
@@ -794,7 +836,8 @@ class TagsCompanion extends UpdateCompanion<Tag> {
   String toString() {
     return (StringBuffer('TagsCompanion(')
           ..write('id: $id, ')
-          ..write('name: $name')
+          ..write('name: $name, ')
+          ..write('numberOfTasks: $numberOfTasks')
           ..write(')'))
         .toString();
   }
@@ -843,7 +886,7 @@ class $TaskTagTable extends TaskTag with TableInfo<$TaskTagTable, TaskTagData> {
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => const {};
+  Set<GeneratedColumn> get $primaryKey => {taskId, tagId};
   @override
   TaskTagData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';

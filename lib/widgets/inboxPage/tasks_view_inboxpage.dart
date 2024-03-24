@@ -3,8 +3,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/tasks.dart';
+// import '../../models/tasks.dart';
+import '../../database/database.dart';
 import '../../providers/drag_provider.dart';
+import '../../providers/taskProvider.dart';
 import '../../providers/task_provider.dart';
 
 class TasksViewInboxPage extends StatelessWidget {
@@ -14,19 +16,23 @@ class TasksViewInboxPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tasksAPI = context.watch<TasksAPI>();
+    // final tasksAPI = context.watch<TasksAPI>();
+    final tasksAPI = context.watch<TasksProvider>();
+
     List<Task> tasks = [];
 
-    if (tasksAPI.isSearchingTasks) {
-      tasks = tasksAPI.searchedTasks;
-    } else if (tasksAPI.filteredTasks.isNotEmpty ||
-        (tasksAPI.filteredTasks.isEmpty &&
-            tasksAPI.selectedPriority.isNotEmpty) ||
-        (tasksAPI.filteredTasks.isEmpty && tasksAPI.selectedTags.isNotEmpty)) {
-      tasks = tasksAPI.filteredTasks;
-    } else {
-      tasks = tasksAPI.tasks;
-    }
+    // if (tasksAPI.isSearchingTasks) {
+    //   tasks = tasksAPI.searchedTasks;
+    // } else if (tasksAPI.filteredTasks.isNotEmpty ||
+    //     (tasksAPI.filteredTasks.isEmpty &&
+    //         tasksAPI.selectedPriority.isNotEmpty) ||
+    //     (tasksAPI.filteredTasks.isEmpty && tasksAPI.selectedTags.isNotEmpty)) {
+    //   tasks = tasksAPI.filteredTasks;
+    // } else {
+    //   tasks = tasksAPI.tasks;
+    // }
+
+    tasks = tasksAPI.tasks;
 
     final notDoneTasks = tasks.where((task) => !task.isDone).toList();
     final doneTasks = tasks.where((task) => task.isDone).toList();
@@ -144,15 +150,15 @@ class TasksViewInboxPage extends StatelessWidget {
             ),
             style: MSHCheckboxStyle.fillScaleColor,
             onChanged: (selected) {
-              context
-                  .read<TasksAPI>()
-                  .updateTask(taskId: task.id, isDone: selected);
+              // context
+              //     .read<TasksAPI>()
+              //     .updateTask(taskId: task.id, isDone: selected);
             },
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              task.content,
+              task.name,
               style: TextStyle(
                 fontSize: 14,
                 decoration: task.isDone
@@ -182,7 +188,7 @@ class TasksViewInboxPage extends StatelessWidget {
       color: Colors.blue[100],
       child: Container(
         padding: const EdgeInsets.all(10),
-        child: Text(task.content),
+        child: Text(task.name),
       ),
     );
   }
@@ -263,7 +269,7 @@ class TasksViewInboxPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    initialValue: task.content,
+                    initialValue: task.name,
                     decoration: const InputDecoration(
                       labelText: 'Task Name',
                       border: OutlineInputBorder(),
