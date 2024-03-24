@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'database/objectbox.dart';
 import 'providers/drag_provider.dart';
 import 'providers/list_provider.dart';
+import 'providers/taskProvider.dart';
 import 'router/router.dart';
 import 'providers/task_provider.dart';
 
+late ObjectBox objectbox;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  const FlutterSecureStorage secureStorage = FlutterSecureStorage();
-  String? userID = await secureStorage.read(key: 'userID');
-  final GoRouter router = buildRouter(userID);
+  objectbox = await ObjectBox.create();
+  final GoRouter router = buildRouter();
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<TasksAPI>(create: (context) => TasksAPI()),
+      ChangeNotifierProvider<TasksProvider>(create: (context) => TasksProvider()),
       ChangeNotifierProvider<ListsAPI>(create: (context) => ListsAPI()),
       ChangeNotifierProvider<DragStateProvider>(
           create: (context) => DragStateProvider()),

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/tasks.dart';
 import '../../providers/drag_provider.dart';
+import '../../providers/taskProvider.dart';
 import '../../providers/task_provider.dart';
 
 class TasksViewInboxPage extends StatelessWidget {
@@ -15,6 +16,7 @@ class TasksViewInboxPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tasksAPI = context.watch<TasksAPI>();
+    final tasksProvider = context.watch<TasksProvider>();
     List<Task> tasks = [];
 
     if (tasksAPI.isSearchingTasks) {

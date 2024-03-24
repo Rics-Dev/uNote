@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../pages/home_page.dart';
 import '../pages/pomodoro_page.dart';
 
-GoRouter buildRouter([String? userID]) {
+GoRouter buildRouter() {
   return GoRouter(
     routes: [
       GoRoute(
