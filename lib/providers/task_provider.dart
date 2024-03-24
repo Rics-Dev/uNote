@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/tasks.dart';
-import 'auth_provider.dart';
 import 'package:uuid/uuid.dart';
 
 enum SortCriteria {

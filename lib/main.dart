@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 import 'providers/drag_provider.dart';
 import 'providers/list_provider.dart';
 import 'router/router.dart';
-import 'providers/auth_provider.dart';
 import 'providers/task_provider.dart';
 
 void main() async {
@@ -16,7 +14,6 @@ void main() async {
   final GoRouter router = buildRouter(userID);
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider<AuthAPI>(create: (context) => AuthAPI()),
       ChangeNotifierProvider<TasksAPI>(create: (context) => TasksAPI()),
       ChangeNotifierProvider<ListsAPI>(create: (context) => ListsAPI()),
       ChangeNotifierProvider<DragStateProvider>(

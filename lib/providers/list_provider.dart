@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import '../constants.dart' as constants;
 import '../models/lists.dart';
-import 'auth_provider.dart';
 import 'task_provider.dart';
 
 class ListsAPI extends ChangeNotifier {
@@ -15,7 +14,6 @@ class ListsAPI extends ChangeNotifier {
   Client client = Client();
   late final Account account;
   late final Databases databases;
-  final AuthAPI auth = AuthAPI();
   final TasksAPI tasksAPI = TasksAPI();
   List<ListItem> _lists = [];
 
@@ -38,9 +36,6 @@ class ListsAPI extends ChangeNotifier {
     try {
       prefs = await SharedPreferences.getInstance();
       await fetchLocalLists();
-      if(auth.status == AuthStatus.authenticated){
-        await fetchServerLists();
-      }
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -73,9 +68,6 @@ class ListsAPI extends ChangeNotifier {
   Future<void> createList(String listName) async {
     final listId = uuid.v4();
     await createLocalList(listName: listName,listId:  listId);
-    if(auth.status == AuthStatus.authenticated){
-      await createServerList(listName: listName,listId:  listId);
-    }
     
   }
 
@@ -102,11 +94,8 @@ class ListsAPI extends ChangeNotifier {
   }
 
   Future<int> verifyExistingList(String listName) async {
-    if (auth.status == AuthStatus.authenticated) {
-      return await verifyServerExistingList(listName);
-    } else {
+
       return await verifyLocalExistingList(listName);
-    }
   }
 
 
