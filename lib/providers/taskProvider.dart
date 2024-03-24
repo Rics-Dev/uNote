@@ -44,29 +44,31 @@ class TasksProvider extends ChangeNotifier {
   Future<void> createTask({required String taskContent}) async {
     final uniqueTags = <Tag>[];
     // Add unique tags to the _tags list
-    for (var tag in _temporarilyAddedTags) {
-      if (!_tags.contains(tag)) {
-        _tags.add(tag);
-        uniqueTags.add(tag);
+    for (var tpTag in _temporarilyAddedTags) {
+      if (!_tags.any((tag) => tag.name == tpTag.name)) {
+        _tags.add(tpTag);
+        uniqueTags.add(tpTag);
       }
     }
 
     // Insert unique tags into the tags table
+
     await database.batch((batch) {
       batch.insertAll(
         database.tags,
-        uniqueTags
-            .map((tag) => TagsCompanion(
-                name: Value(tag.name)))
-            .toList(),
+        uniqueTags.map((tag) => TagsCompanion(name: Value(tag.name))).toList(),
       );
     });
 
-    for (final tag in temporarilyAddedTags) {
+    for (var tag in tags) {
       database.update(database.tags)
-        ..where((t) => t.name.equals(tag.name))
+        ..where((t) =>
+            t.name.isIn(_temporarilyAddedTags.map((e) => e.name).toList()))
         ..write(TagsCompanion(numberOfTasks: Value(tag.numberOfTasks + 1)));
     }
+
+    _tags.clear();
+    _tags.addAll(await database.select(database.tags).get());
 
     // Insert the new task into the tasks table
     final newTaskCompanion = TasksCompanion(
@@ -84,7 +86,6 @@ class TasksProvider extends ChangeNotifier {
           ..where((t) =>
               t.name.isIn(_temporarilyAddedTags.map((e) => e.name).toList())))
         .get();
-    _tags.addAll(insertedTags);
 
     // Associate the new task with the selected tags in the TaskTag table
     for (final tag in insertedTags) {
@@ -117,7 +118,7 @@ class TasksProvider extends ChangeNotifier {
       final newTag = Tag(
         id: null,
         name: tag,
-        numberOfTasks: 0,
+        numberOfTasks: 1,
       );
       _temporarilyAddedTags.add(newTag);
     }
