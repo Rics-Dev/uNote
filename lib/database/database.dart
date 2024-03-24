@@ -23,17 +23,20 @@ class Tasks extends Table {
 }
 
 class Tags extends Table {
-  IntColumn get id => integer().autoIncrement().nullable()();
+  // IntColumn get id => integer().autoIncrement().nullable()();
   TextColumn get name => text().withLength(min: 1, max: 50).unique()();
   IntColumn get numberOfTasks => integer().withDefault(const Constant(1))();
+
+  @override
+  Set<Column> get primaryKey => {name};
 }
 
 class TaskTag extends Table {
   IntColumn get taskId => integer()();
-  IntColumn get tagId => integer()();
+  TextColumn get tagName => text()();
 
   @override
-  Set<Column> get primaryKey => {taskId, tagId};
+  Set<Column> get primaryKey => {taskId, tagName};
 }
 
 class TaskLists extends Table {

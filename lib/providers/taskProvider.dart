@@ -51,20 +51,12 @@ class TasksProvider extends ChangeNotifier {
       }
     }
 
-    // Insert unique tags into the tags table
-
-    await database.batch((batch) {
-      batch.insertAll(
-        database.tags,
-        uniqueTags.map((tag) => TagsCompanion(name: Value(tag.name))).toList(),
-      );
-    });
-
-    for (var tag in tags) {
-      database.update(database.tags)
-        ..where((t) =>
-            t.name.isIn(_temporarilyAddedTags.map((e) => e.name).toList()))
-        ..write(TagsCompanion(numberOfTasks: Value(tag.numberOfTasks + 1)));
+    for (final tag in _tags) {
+      await database.into(database.tags).insert(
+          TagsCompanion(
+            name: Value(tag.name),
+          ),
+          onConflict: DoUpdate((old) => TagsCompanion.custom(numberOfTasks: old.numberOfTasks + const Constant(1)),));
     }
 
     _tags.clear();
@@ -89,12 +81,12 @@ class TasksProvider extends ChangeNotifier {
 
     // Associate the new task with the selected tags in the TaskTag table
     for (final tag in insertedTags) {
-      final tagId = tag.id;
-      if (tagId != null) {
+      final tagName = tag.name;
+      if (tagName != null) {
         await database.into(database.taskTag).insert(
               TaskTagCompanion(
                 taskId: Value(newTask.id),
-                tagId: Value(tagId),
+                tagName: Value(tagName),
               ),
             );
       }
@@ -116,7 +108,6 @@ class TasksProvider extends ChangeNotifier {
   void addTemporarilyAddedTags(String tag) {
     if (!_temporarilyAddedTags.contains(tag)) {
       final newTag = Tag(
-        id: null,
         name: tag,
         numberOfTasks: 1,
       );
@@ -130,18 +121,12 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+
+}
+
   // Future<int> getTaskCountsForTags(int? id) async {
   //   final count = await (database.select(database.taskTag)
   //         ..where((t) => t.tagId.equals(id!)))
   //       .get();
   //   return count.length;
   // }
-}
-
-    // final newTask = Task(
-    //   id: const Value.absent(), // Let the database generate the ID automatically
-    //   name: taskContent,
-    //   isDone: false, // Assuming a new task is not done by default
-    //   createdAt: DateTime.now(), // Set the createdAt time to the current timestamp
-    //   updatedAt: DateTime.now(), // Set the updatedAt time to the current timestamp
-    // );
