@@ -1,10 +1,7 @@
 import 'dart:convert';
 
-import 'package:appwrite/appwrite.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../constants.dart' as constants;
-// import '../encrypt.dart';
 import '../models/tasks.dart';
 import 'auth_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -22,11 +19,6 @@ enum FilterCriteria {
 }
 
 class TasksAPI extends ChangeNotifier {
-  // final encryptData = EncryptData();
-  Client client = Client();
-  late final Account account;
-  late final Databases databases;
-  final AuthAPI auth = AuthAPI();
   late SharedPreferences prefs;
   var uuid = const Uuid();
 
@@ -65,20 +57,10 @@ class TasksAPI extends ChangeNotifier {
   List<String> get priority => _priority;
   List<String> get selectedPriority => _selectedPriority;
 
-  TasksAPI(
-      {String endpoint = constants.appwriteEndpoint,
-      String projectId = constants.appwriteProjectId}) {
-    init(endpoint, projectId);
+  TasksAPI() {
     fetchTasks();
   }
 
-  void init(String endpoint, String projectId) {
-    client =
-        Client().setEndpoint(endpoint).setProject(projectId).setSelfSigned();
-
-    account = Account(client);
-    databases = Databases(client);
-  }
 
   Future<void> _updateLocalStorage(List<Task> tasks, List<String> tags) async {
     final prefs = await SharedPreferences.getInstance();
@@ -91,13 +73,6 @@ class TasksAPI extends ChangeNotifier {
     try {
       prefs = await SharedPreferences.getInstance();
       await _fetchLocalData();
-
-      //Only fetch server data if local data is unavailable or if user requests it
-      // if (_tasks.isEmpty) {
-      if (auth.status == AuthStatus.authenticated) {
-        await _fetchServerData();
-      }
-      // }
     } finally {
       notifyListeners();
     }
@@ -107,11 +82,6 @@ class TasksAPI extends ChangeNotifier {
   Future<void> createTask({required String taskContent}) async {
     final taskId = uuid.v4();
     await _createLocalTask(task: taskContent, taskId: taskId);
-
-
-    if (auth.status == AuthStatus.authenticated) {
-      await _createServerTask(task: taskContent, taskId: taskId);
-    }
 
 
     _temporarilyAddedTags = [];
@@ -124,9 +94,6 @@ class TasksAPI extends ChangeNotifier {
   Future<void> deleteTask({required String taskId}) async {
     final removedTask = await _deleteLocalTask(taskId: taskId);
     await _deleteUnusedLocalTag(removedTask);
-    if (auth.status == AuthStatus.authenticated) {
-      await _deleteServerTask(taskId: taskId);
-    }
   }
 
   Future<void> _fetchLocalData() async {
@@ -146,45 +113,6 @@ class TasksAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _fetchServerData() async {
-    if (auth.status == AuthStatus.uninitialized) {
-      await auth.loadUser();
-    }
-
-    final serverTasks = await databases.listDocuments(
-      databaseId: constants.appwriteDatabaseId,
-      collectionId: constants.appwriteTasksCollectionId,
-      queries: [
-        Query.equal("userID", [auth.userid])
-      ],
-    );
-
-    _tasks = serverTasks.documents.map((e) => Task.fromMap(e.data)).toList();
-
-    //to decrypt tasks
-    // _tasks = await Future.wait(serverTasks.documents.map((document) async {
-    //   // Get the encrypted content
-    //   final encryptedContent = document.data["content"];
-
-    //   // Decrypt the content
-    //   final decryptedContent = await encryptData.decryptString(encryptedContent);
-
-    //   // Create the Task object with decrypted content
-    //   return Task.fromMap({
-    //     ...document.data, // Copy other fields
-    //     "content": decryptedContent,
-    //   });
-    // }).toList());
-
-    final serverTags = await databases.listDocuments(
-      databaseId: constants.appwriteDatabaseId,
-      collectionId: constants.appwriteTagsCollectionId,
-    );
-    _tags =
-        serverTags.documents.map((e) => e.data['tagname'].toString()).toList();
-
-    await _updateLocalStorage(_tasks, _tags);
-  }
 
   Future<void> _createLocalTask({
     required String task,
@@ -198,7 +126,6 @@ class TasksAPI extends ChangeNotifier {
     final newTask = Task.fromMap({
       'content': task,
       '\u0024id': taskId,
-      'userID': auth.status == AuthStatus.authenticated ? auth.userid : 'local',
       'tags': _temporarilyAddedTags,
       'isDone': false,
       '\u0024createdAt': DateTime.now().toIso8601String(),
@@ -214,70 +141,8 @@ class TasksAPI extends ChangeNotifier {
     await _updateLocalStorage(_tasks, _tags);
   }
 
-  Future<void> _createServerTask({
-    required String task,
-    required String taskId,
-  }) async {
-    await _createServerTags(temporarilyAddedTags);
-    //to encrypt task
-    // final encryptedTask = await encryptData.encryptString(task);
-    final newTaskData = {
-      'content': task,
-      'userID': auth.userid,
-      'tags': temporarilyAddedTags,
-      'isDone': false,
-      '\u0024createdAt': DateTime.now().toIso8601String(),
-      '\u0024updatedAt': DateTime.now().toIso8601String(),
-      'dueDate': dueDate?.toIso8601String(),
-      'priority': temporarySelectedPriority,
-    };
-    try {
-      await databases.createDocument(
-        databaseId: constants.appwriteDatabaseId,
-        collectionId: constants.appwriteTasksCollectionId,
-        documentId: taskId,
-        data: newTaskData,
-      );
-      // final serverTask = Task.fromMap(document.data);
-      // _tasks.removeLast();
-      // _tasks.add(serverTask);
-      notifyListeners();
-      await _updateLocalStorage(_tasks, _tags);
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error creating task: $e');
-      }
-    } finally {
-      notifyListeners();
-    }
-  }
 
-  Future<void> _createServerTags(List<String> tags) async {
-    for (var tag in tags) {
-      try {
-        final existingTagDocument = await databases.listDocuments(
-          databaseId: constants.appwriteDatabaseId,
-          collectionId: constants.appwriteTagsCollectionId,
-          queries: [
-            Query.equal("tagname", [tag])
-          ],
-        );
-        //when temporary added tag doesnt exists we create it in database
-        if (existingTagDocument.total == 0) {
-          await databases.createDocument(
-            databaseId: constants.appwriteDatabaseId,
-            collectionId: constants.appwriteTagsCollectionId,
-            documentId: tag,
-            data: {'tagname': tag},
-          );
-        }
-      } catch (e) {
-        if (kDebugMode) {
-          print('Error creating tag: $e');
-        }
-      }
-    }
-  }
+
 
   Future<Task?> _deleteLocalTask({required String taskId}) async {
     Task? removedTask;
@@ -314,46 +179,16 @@ class TasksAPI extends ChangeNotifier {
           tags.remove(tagToRemove);
           clearSelectedTags();
           notifyListeners();
-          if (auth.status == AuthStatus.authenticated) {
-            _deleteUnusedServerTag(tagToRemove: tagToRemove);
-          }
         }
       }
     }
   }
 
-  Future<void> _deleteUnusedServerTag({required String tagToRemove}) async {
-    try {
-      await databases.deleteDocument(
-        databaseId: constants.appwriteDatabaseId,
-        collectionId: constants.appwriteTagsCollectionId,
-        documentId: tagToRemove,
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error removing tag: $e');
-      }
-    }
-  }
 
-  Future<void> _deleteServerTask({required String taskId}) async {
-    try {
-      await databases.deleteDocument(
-          databaseId: constants.appwriteDatabaseId,
-          collectionId: constants.appwriteTasksCollectionId,
-          documentId: taskId);
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error deleting task: $e');
-      }
-    }
-  }
+
 
   void deleteTag(String tag) async {
     await _deleteLocalTag(tag);
-    if (auth.status == AuthStatus.authenticated) {
-      await _deleteServerTag(tag);
-    }
   }
 
   Future<void> _deleteLocalTag(String tag) async {
@@ -368,26 +203,10 @@ class TasksAPI extends ChangeNotifier {
     await _updateLocalStorage(_tasks, _tags);
   }
 
-  Future<void> _deleteServerTag(String tag) async {
-    try {
-      await databases.deleteDocument(
-        databaseId: constants.appwriteDatabaseId,
-        collectionId: constants.appwriteTagsCollectionId,
-        documentId: tag,
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error deleting tag: $e');
-      }
-    }
-  }
 
   //to update tasks (for now only when it's done)
   void updateTask({required String taskId, required bool isDone}) async {
     await _updateLocalTask(taskId: taskId, isDone: isDone);
-    if (auth.status == AuthStatus.authenticated) {
-      await _updateServerTask(taskId: taskId, isDone: isDone);
-    }
   }
 
   Future<void> _updateLocalTask(
@@ -395,34 +214,8 @@ class TasksAPI extends ChangeNotifier {
     final int index = _tasks.indexWhere((task) => task.id == taskId);
     _tasks[index].isDone = isDone;
     notifyListeners();
-    // final taskIndex = _tasks.indexWhere((task) => task.id == taskId);
-    // final task = _tasks.firstWhere((task) => task.id == taskId);
-    // task.isDone = isDone;
-
-    // if (isDone) {
-    //   _tasks.removeAt(taskIndex);
-    //   _tasks.add(task);
-    // }
   }
 
-  Future<void> _updateServerTask(
-      {required String taskId, required bool isDone}) async {
-    try {
-      await databases.updateDocument(
-        databaseId: constants.appwriteDatabaseId,
-        collectionId: constants.appwriteTasksCollectionId,
-        documentId: taskId,
-        data: {'isDone': isDone},
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error updating task: $e');
-      }
-      // final taskIndex = _tasks.indexWhere((task) => task.id == taskId);
-      // _tasks[taskIndex].isDone = !isDone;
-      // notifyListeners();
-    }
-  }
 
   //to update tasks order only locally
   void updateTasksOrder(int oldIndex, int newIndex) {
@@ -616,61 +409,3 @@ class TasksAPI extends ChangeNotifier {
   }
 }
 
-
-
-
-
-
-//for fetching tasks
-  // void fetchTasks() async {
-  //   try {
-  //     final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     // await prefs.remove('tasks');
-  //     final cachedTasks = prefs.getStringList('tasks');
-  //     final cachedTags = prefs.getStringList('tags');
-  //     if (cachedTasks != null) {
-  //       _tasks = cachedTasks
-  //           .map((jsonString) => Task.fromJson(json.decode(jsonString)))
-  //           .toList();
-  //       // _filteredTasks = _tasks;
-  //       notifyListeners();
-  //     }
-  //     if (cachedTags != null) {
-  //       _tags = cachedTags;
-  //       notifyListeners();
-  //     }
-
-  //     if (auth.status == AuthStatus.uninitialized) {
-  //       await auth.loadUser();
-  //     }
-  //     final serverTasks = await databases.listDocuments(
-  //       databaseId: constants.appwriteDatabaseId,
-  //       collectionId: constants.appwriteTasksCollectionId,
-  //       queries: [
-  //         Query.equal("userID", [auth.userid])
-  //       ],
-  //     );
-  //     final serverTasksResults =
-  //         serverTasks.documents.map((e) => Task.fromMap(e.data)).toList();
-  //     _tasks = serverTasksResults;
-  //     prefs.setStringList(
-  //         'tasks', tasks.map((task) => json.encode(task.toJson())).toList());
-  //     notifyListeners();
-  //     final serverTags = await databases.listDocuments(
-  //       databaseId: constants.appwriteDatabaseId,
-  //       collectionId: constants.appwriteTagsCollectionId,
-  //     );
-  //     final serverTagsResults = serverTags.documents
-  //         .map((e) => e.data['tagname'].toString())
-  //         .toList();
-  //     _tags = serverTagsResults;
-
-  //     prefs.setStringList('tags', tags);
-
-  //     _searchedTags = _tags;
-  //     // _filteredTasks = _tasks;
-  //     notifyListeners();
-  //   } finally {
-  //     notifyListeners();
-  //   }
-  // }

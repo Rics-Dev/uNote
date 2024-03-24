@@ -57,6 +57,8 @@ dependencies:
   intl: ^0.19.0
   pull_down_button: ^0.9.3
   # database Part
+  objectbox: ^2.5.1
+  objectbox_flutter_libs: any
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +71,9 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
   change_app_package_name: ^1.1.0
+  #database part
+  build_runner: ^2.0.0
+  objectbox_generator: any
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
