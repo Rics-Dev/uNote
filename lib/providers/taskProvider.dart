@@ -15,6 +15,10 @@ class TasksProvider extends ChangeNotifier {
   final List<Tag> _selectedTags = [];
   final List<String> _selectedPriority = [];
   List<Task> _filteredTasks = [];
+  List<Task> _searchedTasks = [];
+  bool _isSearchingTasks = false;
+
+
 
   List<Tag> get tags => _tags;
   List<Task> get tasks => _tasks;
@@ -26,6 +30,10 @@ class TasksProvider extends ChangeNotifier {
   List<String> get priority => _priority;
   DateTime? get dueDate => _dueDate;
   String? get temporarySelectedPriority => _temporarySelectedPriority;
+  List<Task> get searchedTasks => _searchedTasks;
+  bool get isSearchingTasks => _isSearchingTasks;
+
+
 
   TasksProvider() {
     fetchTasks();
@@ -42,21 +50,15 @@ class TasksProvider extends ChangeNotifier {
   }
 
   Future<void> createTask({required String taskContent}) async {
-    final uniqueTags = <Tag>[];
-    // Add unique tags to the _tags list
-    for (var tpTag in _temporarilyAddedTags) {
-      if (!_tags.any((tag) => tag.name == tpTag.name)) {
-        _tags.add(tpTag);
-        uniqueTags.add(tpTag);
-      }
-    }
-
-    for (final tag in _tags) {
+    for (final tag in _temporarilyAddedTags) {
       await database.into(database.tags).insert(
           TagsCompanion(
             name: Value(tag.name),
           ),
-          onConflict: DoUpdate((old) => TagsCompanion.custom(numberOfTasks: old.numberOfTasks + const Constant(1)),));
+          onConflict: DoUpdate(
+            (old) => TagsCompanion.custom(
+                numberOfTasks: old.numberOfTasks + const Constant(1)),
+          ));
     }
 
     _tags.clear();
@@ -66,13 +68,8 @@ class TasksProvider extends ChangeNotifier {
     final newTaskCompanion = TasksCompanion(
       name: Value(taskContent),
     );
-    final insertedTaskId =
-        await database.into(database.tasks).insert(newTaskCompanion);
-
-    // Fetch the newly inserted task
-    final newTask = await (database.select(database.tasks)
-          ..where((t) => t.id.equals(insertedTaskId)))
-        .getSingle();
+    final newTask =
+        await database.into(database.tasks).insertReturning(newTaskCompanion);
 
     final insertedTags = await (database.select(database.tags)
           ..where((t) =>
@@ -92,13 +89,10 @@ class TasksProvider extends ChangeNotifier {
       }
     }
 
-    // Add the new task to the filtered tasks and tasks lists if necessary
     if (_selectedTags.isNotEmpty || _selectedPriority.isNotEmpty) {
       _filteredTasks.add(newTask);
     }
     _tasks.add(newTask);
-
-    notifyListeners(); // Notify listeners about the list change
 
     _temporarilyAddedTags = [];
     _temporarySelectedPriority = null;
@@ -121,12 +115,34 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleTagSelection(Tag tag) {
+    if (_selectedTags.contains(tag)) {
+      _selectedTags.remove(tag);
+    } else {
+      _selectedTags.add(tag);
+    }
+    if (selectedTags.isEmpty) {
+      _filteredTasks.clear();
+    }
+    filterTasksByTags(selectedTags);
+    notifyListeners();
+  }
 
+  void filterTasksByTags(List<Tag> selectedTags) async {
+    if (selectedTags.isEmpty) {
+      _filteredTasks.clear();
+    } else {
+      final query = (database.select(database.tasks).join([
+        innerJoin(database.taskTag,
+            database.taskTag.taskId.equalsExp(database.tasks.id)),
+        innerJoin(database.tags,
+            database.tags.name.equalsExp(database.taskTag.tagName))
+      ])
+      ..where(database.tags.name.isIn(selectedTags.map((e) => e.name).toList())));
+
+
+      _filteredTasks =  await query.map((row) => row.readTable(database.tasks)).get();
+    }
+    notifyListeners();
+  }
 }
-
-  // Future<int> getTaskCountsForTags(int? id) async {
-  //   final count = await (database.select(database.taskTag)
-  //         ..where((t) => t.tagId.equals(id!)))
-  //       .get();
-  //   return count.length;
-  // }

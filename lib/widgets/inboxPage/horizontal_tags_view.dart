@@ -16,7 +16,9 @@ class HorizontalTagsView extends StatelessWidget {
     final tasksProvider = context.watch<TasksProvider>();
 
     final tags = tasksProvider.tags;
-    final selectedTags = tasksAPI.selectedTags;
+    final selectedTags = tasksProvider.selectedTags;
+
+    // final selectedTags = tasksAPI.selectedTags;
     final selectedPriority = tasksAPI.selectedPriority;
 
     final allTasks = tasksAPI.tasks;
@@ -71,11 +73,11 @@ class HorizontalTagsView extends StatelessWidget {
                               // deleteTag(context, tag);
                             },
                             onTap: () {
-                              // tasksAPI.toggleTagSelection(tag);
+                              tasksProvider.toggleTagSelection(tag);
                             },
                             child: OutlinedButton.icon(
                               onPressed: () {
-                                // tasksAPI.toggleTagSelection(tag);
+                                tasksProvider.toggleTagSelection(tag);
                               },
                               icon: Icon(
                                 Icons.label_outline_rounded,
