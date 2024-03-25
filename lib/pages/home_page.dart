@@ -5,7 +5,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:utask/providers/task_provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
+import '../main.dart';
 import '../providers/drag_provider.dart';
+import '../providers/taskProvider.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/homePage/add_task_widgets/add_task_modal.dart';
 import '../widgets/homePage/build_body_home_page.dart';
@@ -32,15 +34,6 @@ class _HomePageState extends State<HomePage> {
     'Your inbox',
     'Your lists',
   ];
-
-  void removeTask(String taskId) async {
-    try {
-      await context.read<TasksAPI>().deleteTask(taskId: taskId);
-      // showSuccessDelete();
-    } on AppwriteException catch (e) {
-      showAlert(title: 'Error', text: e.message.toString());
-    }
-  }
 
   Future<dynamic> _showAddTaskDialog(BuildContext context) {
     return showModalBottomSheet(
@@ -93,7 +86,7 @@ class _HomePageState extends State<HomePage> {
               onWillAcceptWithDetails: (data) => true,
               onAcceptWithDetails: (DragTargetDetails<Object> data) {
                 final draggableData = data.data;
-                removeTask(draggableData as String);
+                context.read<TasksProvider>().deleteTask(draggableData as int);
               }),
       extendBody: true,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

@@ -17,14 +17,22 @@
         {
           "id": "2:1342849585998960233",
           "name": "name",
-          "type": 9
+          "type": 9,
+          "flags": 2080,
+          "indexId": "3:9194883798312277152"
         }
       ],
-      "relations": []
+      "relations": [
+        {
+          "id": "2:785102049100997188",
+          "name": "tasks",
+          "targetId": "2:7031062309905276887"
+        }
+      ]
     },
     {
       "id": "2:7031062309905276887",
-      "lastPropertyId": "8:1759390588833332395",
+      "lastPropertyId": "9:7171793210229252129",
       "name": "Task",
       "properties": [
         {
@@ -67,6 +75,14 @@
           "id": "8:1759390588833332395",
           "name": "priority",
           "type": 9
+        },
+        {
+          "id": "9:7171793210229252129",
+          "name": "listId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "1:7409048701794538828",
+          "relationTarget": "TaskList"
         }
       ],
       "relations": []
@@ -102,14 +118,18 @@
     }
   ],
   "lastEntityId": "3:2058075289807397123",
-  "lastIndexId": "0:0",
-  "lastRelationId": "0:0",
+  "lastIndexId": "3:9194883798312277152",
+  "lastRelationId": "2:785102049100997188",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
   "retiredEntityUids": [],
-  "retiredIndexUids": [],
+  "retiredIndexUids": [
+    5318798887338303490
+  ],
   "retiredPropertyUids": [],
-  "retiredRelationUids": [],
+  "retiredRelationUids": [
+    1612697448648994606
+  ],
   "version": 1
 }

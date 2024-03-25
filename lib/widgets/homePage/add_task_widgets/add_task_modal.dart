@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:utask/widgets/homePage/add_task_widgets/add_tast_to_list.dart';
 
+import '../../../providers/taskProvider.dart';
 import '../../../providers/task_provider.dart';
 import 'package:toastification/toastification.dart';
 
@@ -33,21 +34,13 @@ class _AddTaskViewState extends State<AddTaskView> {
     super.dispose();
   }
 
-  void addTask(String newTask, List<String> temporarilyAddedTags,
-      String? temporarySelectedPriority) async {
-    try {
-      await context.read<TasksAPI>().createTask(
-            taskContent: newTask,
-          );
-    } on AppwriteException catch (e) {
-      showAlert(title: 'Error', text: e.message.toString());
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     final tasksAPI = context.watch<TasksAPI>();
-    final temporarilyAddedTags = tasksAPI.temporarilyAddedTags;
+    final tasksProvider = context.watch<TasksProvider>();
+    // final temporarilyAddedTags = tasksAPI.temporarilyAddedTags;
+    final temporarilyAddedTags = tasksProvider.temporarilyAddedTags;
     final dueDate = tasksAPI.dueDate;
     String? formattedDate =
         dueDate != null ? DateFormat('EEEE, MMM d, y').format(dueDate) : null;
@@ -120,7 +113,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 4.0),
                               child: Chip(
-                                label: Text('#$tag'),
+                                label: Text('#${tag.name}'),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20.0),
                                 ),
@@ -130,11 +123,8 @@ class _AddTaskViewState extends State<AddTaskView> {
                                     const Icon(Icons.close_rounded, size: 18),
                                 onDeleted: () {
                                   context
-                                      .read<TasksAPI>()
+                                      .read<TasksProvider>()
                                       .removeTemporarilyAddedTags(tag);
-                                  // setState(() {
-                                  //   tags.remove(tag);
-                                  // });
                                 },
                               ),
                             );
@@ -157,9 +147,10 @@ class _AddTaskViewState extends State<AddTaskView> {
                       TextInputAction.done, // Dismiss keyboard on Done
                   onSubmitted: (_) {
                     if (taskController.text.isNotEmpty) {
-                      addTask(taskController.text, temporarilyAddedTags,
-                          temporarySelectedPriority);
-                      context.read<TasksAPI>().temporarilyAddedTags.clear();
+                      // addTask(taskController.text, temporarilyAddedTags,
+                      //     temporarySelectedPriority);
+                      // context.read<TasksAPI>().temporarilyAddedTags.clear();
+                      context.read<TasksProvider>().addTask(taskController.text);
                       Navigator.pop(context, true);
                     } else {
                       toastEmptyTask(context);
@@ -226,9 +217,10 @@ class _AddTaskViewState extends State<AddTaskView> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (taskController.text.isNotEmpty) {
-                        addTask(taskController.text, temporarilyAddedTags,
-                            temporarySelectedPriority);
+                        // addTask(taskController.text, temporarilyAddedTags,
+                        //     temporarySelectedPriority);
                         // context.read<TasksAPI>().removeAllTemporaryTags();
+                      context.read<TasksProvider>().addTask(taskController.text);
                         Navigator.pop(context, true);
                       } else {
                         toastEmptyTask(context);

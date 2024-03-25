@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import '../../providers/taskProvider.dart';
 import '../../providers/task_provider.dart';
 import 'package:badges/badges.dart' as badges;
 
@@ -12,13 +13,15 @@ class HorizontalTagsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tasksAPI = context.watch<TasksAPI>();
-    final tags = tasksAPI.tags;
-    final selectedTags = tasksAPI.selectedTags;
-    final selectedPriority = tasksAPI.selectedPriority;
+    final tasksProvider = context.watch<TasksProvider>();
 
-    final allTasks = tasksAPI.tasks;
+    final tags = tasksProvider.tags;
+    final selectedTags = tasksProvider.selectedTags;
+    final selectedPriority = tasksProvider.selectedPriority;
+
+    final allTasks = tasksProvider.tasks;
     FilterCriteria filterCriteria = tasksAPI.filterCriteria;
-    final priority = tasksAPI.priority;
+    final priority = tasksProvider.priority;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
@@ -30,8 +33,8 @@ class HorizontalTagsView extends StatelessWidget {
           selectedTags.isNotEmpty
               ? GestureDetector(
                   onTap: () {
-                    tasksAPI.clearSelectedTags();
-                    tasksAPI.filterTasksByTags(tasksAPI.selectedTags);
+                    tasksProvider.clearSelectedTags();
+                    // tasksProvider.filterTasksByTags(tasksProvider.selectedTags);
                   },
                   child: Container(
                       padding: const EdgeInsets.all(13),
@@ -57,10 +60,12 @@ class HorizontalTagsView extends StatelessWidget {
                             badgeColor: Color.fromARGB(255, 0, 73, 133)),
                         position: badges.BadgePosition.topEnd(top: -5, end: 0),
                         badgeContent: Text(
-                          allTasks
-                              .where((task) => task.tags.contains(tag))
-                              .length
-                              .toString(),
+                          tag.tasks.length.toString(),
+                          // allTasks
+                          //     .where((task) => task.tags.contains(tag))
+                          //     .length
+                          //     .toString(),
+                          // allTasks.where((task) => task.tags.contains(tag)).length.toString(),
                           style: const TextStyle(color: Colors.white),
                         ),
                         child: Padding(
@@ -68,14 +73,14 @@ class HorizontalTagsView extends StatelessWidget {
                           child: GestureDetector(
                             onLongPress: () {
                               // Show a confirmation dialog
-                              deleteTag(context, tag);
+                              // deleteTag(context, tag);
                             },
                             onTap: () {
-                              tasksAPI.toggleTagSelection(tag);
+                              tasksProvider.toggleTagSelection(tag);
                             },
                             child: OutlinedButton.icon(
                               onPressed: () {
-                                tasksAPI.toggleTagSelection(tag);
+                                tasksProvider.toggleTagSelection(tag);
                               },
                               icon: Icon(
                                 Icons.label_outline_rounded,
@@ -85,7 +90,7 @@ class HorizontalTagsView extends StatelessWidget {
                                     : const Color.fromARGB(255, 0, 73, 133),
                               ),
                               label: Text(
-                                tag,
+                                tag.name,
                                 style: TextStyle(
                                   color: isSelected
                                       ? Colors.white

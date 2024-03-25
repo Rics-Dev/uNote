@@ -35,14 +35,20 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(2, 1342849585998960233),
             name: 'name',
             type: 9,
-            flags: 0)
+            flags: 2080,
+            indexId: const obx_int.IdUid(3, 9194883798312277152))
       ],
-      relations: <obx_int.ModelRelation>[],
+      relations: <obx_int.ModelRelation>[
+        obx_int.ModelRelation(
+            id: const obx_int.IdUid(2, 785102049100997188),
+            name: 'tasks',
+            targetId: const obx_int.IdUid(2, 7031062309905276887))
+      ],
       backlinks: <obx_int.ModelBacklink>[]),
   obx_int.ModelEntity(
       id: const obx_int.IdUid(2, 7031062309905276887),
       name: 'Task',
-      lastPropertyId: const obx_int.IdUid(8, 1759390588833332395),
+      lastPropertyId: const obx_int.IdUid(9, 7171793210229252129),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -84,10 +90,19 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(8, 1759390588833332395),
             name: 'priority',
             type: 9,
-            flags: 0)
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(9, 7171793210229252129),
+            name: 'listId',
+            type: 11,
+            flags: 520,
+            indexId: const obx_int.IdUid(1, 7409048701794538828),
+            relationTarget: 'TaskList')
       ],
       relations: <obx_int.ModelRelation>[],
-      backlinks: <obx_int.ModelBacklink>[]),
+      backlinks: <obx_int.ModelBacklink>[
+        obx_int.ModelBacklink(name: 'tags', srcEntity: 'Tag', srcField: '')
+      ]),
   obx_int.ModelEntity(
       id: const obx_int.IdUid(3, 2058075289807397123),
       name: 'TaskList',
@@ -116,7 +131,9 @@ final _entities = <obx_int.ModelEntity>[
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
-      backlinks: <obx_int.ModelBacklink>[])
+      backlinks: <obx_int.ModelBacklink>[
+        obx_int.ModelBacklink(name: 'tasks', srcEntity: 'Task', srcField: '')
+      ])
 ];
 
 /// Shortcut for [Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -155,13 +172,13 @@ obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
       lastEntityId: const obx_int.IdUid(3, 2058075289807397123),
-      lastIndexId: const obx_int.IdUid(0, 0),
-      lastRelationId: const obx_int.IdUid(0, 0),
+      lastIndexId: const obx_int.IdUid(3, 9194883798312277152),
+      lastRelationId: const obx_int.IdUid(2, 785102049100997188),
       lastSequenceId: const obx_int.IdUid(0, 0),
       retiredEntityUids: const [],
-      retiredIndexUids: const [],
+      retiredIndexUids: const [5318798887338303490],
       retiredPropertyUids: const [],
-      retiredRelationUids: const [],
+      retiredRelationUids: const [1612697448648994606],
       modelVersion: 5,
       modelVersionParserMinimum: 5,
       version: 1);
@@ -170,7 +187,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
     Tag: obx_int.EntityDefinition<Tag>(
         model: _entities[0],
         toOneRelations: (Tag object) => [],
-        toManyRelations: (Tag object) => {},
+        toManyRelations: (Tag object) =>
+            {obx_int.RelInfo<Tag>.toMany(2, object.id): object.tasks},
         getId: (Tag object) => object.id,
         setId: (Tag object, int id) {
           object.id = id;
@@ -191,13 +209,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final nameParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 6, '');
           final object = Tag(id: idParam, name: nameParam);
-
+          obx_int.InternalToManyAccess.setRelInfo<Tag>(
+              object.tasks, store, obx_int.RelInfo<Tag>.toMany(2, object.id));
           return object;
         }),
     Task: obx_int.EntityDefinition<Task>(
         model: _entities[1],
-        toOneRelations: (Task object) => [],
-        toManyRelations: (Task object) => {},
+        toOneRelations: (Task object) => [object.list],
+        toManyRelations: (Task object) =>
+            {obx_int.RelInfo<Tag>.toManyBacklink(2, object.id): object.tags},
         getId: (Task object) => object.id,
         setId: (Task object, int id) {
           object.id = id;
@@ -208,7 +228,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final priorityOffset = object.priority == null
               ? null
               : fbb.writeString(object.priority!);
-          fbb.startTable(9);
+          fbb.startTable(10);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nameOffset);
           fbb.addOffset(2, detailsOffset);
@@ -217,6 +237,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addInt64(5, object.updatedAt.millisecondsSinceEpoch);
           fbb.addInt64(6, object.dueDate?.millisecondsSinceEpoch);
           fbb.addOffset(7, priorityOffset);
+          fbb.addInt64(8, object.list.targetId);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -251,13 +272,21 @@ obx_int.ModelDefinition getObjectBoxModel() {
               updatedAt: updatedAtParam,
               dueDate: dueDateParam,
               priority: priorityParam);
-
+          object.list.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0);
+          object.list.attach(store);
+          obx_int.InternalToManyAccess.setRelInfo<Task>(object.tags, store,
+              obx_int.RelInfo<Tag>.toManyBacklink(2, object.id));
           return object;
         }),
     TaskList: obx_int.EntityDefinition<TaskList>(
         model: _entities[2],
         toOneRelations: (TaskList object) => [],
-        toManyRelations: (TaskList object) => {},
+        toManyRelations: (TaskList object) => {
+              obx_int.RelInfo<Task>.toOneBacklink(
+                      9, object.id, (Task srcObject) => srcObject.list):
+                  object.tasks
+            },
         getId: (TaskList object) => object.id,
         setId: (TaskList object, int id) {
           object.id = id;
@@ -288,7 +317,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
               name: nameParam,
               createdAt: createdAtParam,
               updatedAt: updatedAtParam);
-
+          obx_int.InternalToManyAccess.setRelInfo<TaskList>(
+              object.tasks,
+              store,
+              obx_int.RelInfo<Task>.toOneBacklink(
+                  9, object.id, (Task srcObject) => srcObject.list));
           return object;
         })
   };
@@ -303,6 +336,10 @@ class Tag_ {
 
   /// see [Tag.name]
   static final name = obx.QueryStringProperty<Tag>(_entities[0].properties[1]);
+
+  /// see [Tag.tasks]
+  static final tasks =
+      obx.QueryRelationToMany<Tag, Task>(_entities[0].relations[0]);
 }
 
 /// [Task] entity fields to define ObjectBox queries.
@@ -336,6 +373,10 @@ class Task_ {
   /// see [Task.priority]
   static final priority =
       obx.QueryStringProperty<Task>(_entities[1].properties[7]);
+
+  /// see [Task.list]
+  static final list =
+      obx.QueryRelationToOne<Task, TaskList>(_entities[1].properties[8]);
 }
 
 /// [TaskList] entity fields to define ObjectBox queries.
@@ -355,4 +396,7 @@ class TaskList_ {
   /// see [TaskList.updatedAt]
   static final updatedAt =
       obx.QueryDateProperty<TaskList>(_entities[2].properties[3]);
+
+  /// see [TaskList.tasks]
+  static final tasks = obx.QueryBacklinkToMany<Task, TaskList>(Task_.list);
 }

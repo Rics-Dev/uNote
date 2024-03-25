@@ -20,11 +20,14 @@ class Task {
   DateTime? dueDate; // Nullable dueDate
 
   String? priority; // Nullable priority
-  // List<Tag> tags;
-  // TaskList? list;
+
+  @Backlink()
+  final tags = ToMany<Tag>();
+
+  final list = ToOne<TaskList>();
 
   Task({
-    required this.id,
+    this.id = 0,
     required this.name,
     required this.details,
     this.isDone = false,
@@ -32,8 +35,6 @@ class Task {
     required this.updatedAt,
     this.dueDate, // Nullable dueDate
     this.priority, // Nullable priority
-    // this.tags = const [],
-    // this.list,
   });
 }
 
@@ -41,10 +42,14 @@ class Task {
 class Tag {
   @Id()
   int id;
+
+  @Unique()
   String name;
 
+  final tasks = ToMany<Task>();
+
   Tag({
-    required this.id,
+    this.id = 0,
     required this.name,
   });
 }
@@ -55,7 +60,6 @@ class TaskList {
   int id;
 
   String name;
-  // List<Task> tasks;
 
   @Property(type: PropertyType.date)
   DateTime createdAt;
@@ -63,13 +67,13 @@ class TaskList {
   @Property(type: PropertyType.date)
   DateTime updatedAt;
 
+  @Backlink()
+  final tasks = ToMany<Task>();
+
   TaskList({
-    required this.id,
+    this.id = 0,
     required this.name,
-    // this.tasks = const [],
     required this.createdAt,
     required this.updatedAt,
   });
 }
-
-

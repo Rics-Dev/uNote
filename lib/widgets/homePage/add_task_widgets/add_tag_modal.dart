@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/entities.dart';
+import '../../../providers/taskProvider.dart';
 import '../../../providers/task_provider.dart';
 
 class AddTagView extends StatefulWidget {
@@ -24,9 +26,9 @@ class _AddTagViewState extends State<AddTagView> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> tags = context.watch<TasksAPI>().tags;
-    final searchedTags = context.watch<TasksAPI>().searchedTags;
-    final temporarilyAddedTags = context.watch<TasksAPI>().temporarilyAddedTags;
+    List<Tag> tags = context.watch<TasksProvider>().tags;
+    final searchedTags = context.watch<TasksProvider>().searchedTags;
+    final temporarilyAddedTags = context.watch<TasksProvider>().temporarilyAddedTags;
 
     tags = searchedTags.isNotEmpty ? searchedTags : tags;
 
@@ -76,7 +78,7 @@ class _AddTagViewState extends State<AddTagView> {
                     },
                     onSubmitted: (_) {
                       if (_.isNotEmpty) {
-                        context.read<TasksAPI>().addTemporarilyAddedTags(_);
+                        context.read<TasksProvider>().addTemporarilyAddedTags(_);
                         tagController.clear();
                       }
                       Navigator.pop(context);
@@ -96,20 +98,20 @@ class _AddTagViewState extends State<AddTagView> {
                                   const EdgeInsets.symmetric(vertical: 4.0),
                               child: CheckboxListTile(
                                 contentPadding: const EdgeInsets.all(0),
-                                title: Text("#$tag"),
+                                title: Text("#${tag.name}"),
                                 checkboxShape: RoundedRectangleBorder(
                                     borderRadius:
                                         BorderRadius.circular(15)),
-                                value: temporarilyAddedTags.contains(tag),
+                                value: temporarilyAddedTags.any((element) => element.name == tag.name),
                                 onChanged: (bool? newValue) {
                                   if (newValue != null) {
                                     if (newValue) {
                                       context
-                                          .read<TasksAPI>()
-                                          .addTemporarilyAddedTags(tag);
+                                          .read<TasksProvider>()
+                                          .addTemporarilyAddedTags(tag.name);
                                     } else {
                                       context
-                                          .read<TasksAPI>()
+                                          .read<TasksProvider>()
                                           .removeTemporarilyAddedTags(tag);
                                     }
                                   }
