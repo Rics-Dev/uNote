@@ -72,33 +72,15 @@ class _AddTaskViewState extends State<AddTaskView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    temporarilyAddedTags.isEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: SizedBox(
-                              width: 105,
-                              height: 30,
-                              child: OutlinedButton.icon(
-                                onPressed: () {
-                                  showAddTagDialog(context);
-                                },
-                                icon: const Icon(Icons.add_rounded),
-                                label: const Text('Tags'),
-                              ),
-                            ),
-                          )
-                        : IconButton.outlined(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: IconButton.outlined(
                             onPressed: () {
                               showAddTagDialog(context);
                             },
-                            icon: const Icon(
-                              Icons.add_rounded,
-                              color: Color.fromARGB(255, 0, 73, 133),
-                            ),
+                            icon: const Icon(Icons.new_label_outlined, color: Color.fromARGB(255, 0, 73, 133),),
                           ),
-                    temporarilyAddedTags.isEmpty
-                        ? const SizedBox(width: 8)
-                        : const SizedBox(),
+                    ),
                     Expanded(
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
