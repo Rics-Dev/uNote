@@ -186,13 +186,13 @@ class _AddTagViewState extends State<AddTagView> {
   void searchTags(String query) {
     if (query.isEmpty) {
       // If the query is empty, show all tags
-      context.read<TasksAPI>().setSearchedTags(context.read<TasksAPI>().tags);
+      context.read<TasksProvider>().setSearchedTags(context.read<TasksProvider>().tags);
     } else {
       // search tags based on the query
-      final suggestions = context.read<TasksAPI>().tags.where((tag) {
-        return tag.toLowerCase().contains(query.toLowerCase());
+      final suggestions = context.read<TasksProvider>().tags.where((tag) {
+        return tag.name.toLowerCase().contains(query.toLowerCase());
       }).toList();
-      context.read<TasksAPI>().setSearchedTags(suggestions);
+      context.read<TasksProvider>().setSearchedTags(suggestions);
     }
   }
 }

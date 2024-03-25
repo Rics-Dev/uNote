@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/inboxPage/horizontal_tags_view.dart';
-import '../widgets/inboxPage/sort_filter_view.dart';
+import '../widgets/inboxPage/search_disposition_view.dart';
 import '../widgets/inboxPage/tasks_view_inboxpage.dart';
 
 class InboxPage extends StatelessWidget {

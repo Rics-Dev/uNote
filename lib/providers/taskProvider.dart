@@ -58,7 +58,6 @@ class TasksProvider extends ChangeNotifier {
   }
 
   void addTask(String taskContent) {
-
     final List<Tag> alreadyExistingTags = tagBox
         .query(
             Tag_.name.oneOf(_temporarilyAddedTags.map((e) => e.name).toList()))
@@ -91,8 +90,6 @@ class TasksProvider extends ChangeNotifier {
     _dueDate = null;
     notifyListeners();
   }
-
-  
 
   void deleteTask(int taskId) {
     final removedTask = taskBox.get(taskId);
@@ -151,6 +148,12 @@ class TasksProvider extends ChangeNotifier {
   void clearSelectedTags() {
     _selectedTags.clear();
     _filteredTasks.clear();
+    notifyListeners();
+  }
+
+  void setSearchedTags(List<Tag> tags) {
+    _searchedTags.clear();
+    _searchedTags.addAll(tags);
     notifyListeners();
   }
 

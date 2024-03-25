@@ -37,7 +37,7 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
           ),
           SearchBarAnimation(
             durationInMilliSeconds: 500,
-            searchBoxWidth: MediaQuery.of(context).size.width * 0.8,
+            searchBoxWidth: MediaQuery.of(context).size.width * 0.7,
             isOriginalAnimation: false,
             isSearchBoxOnRightSide: true,
             buttonBorderColour: Colors.black,
@@ -77,6 +77,7 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
   void searchTasks(String query) {
     if (query.isEmpty) {
       context.read<TasksProvider>().setIsSearching(false);
+      context.read<TasksProvider>().setSearchedTags(context.read<TasksProvider>().tags);
     } else {
       final suggestions = context.read<TasksProvider>().tasks.where((task) {
         return task.name.toLowerCase().contains(query.toLowerCase());
