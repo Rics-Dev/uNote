@@ -35,15 +35,14 @@ class _AddTaskViewState extends State<AddTaskView> {
 
   @override
   Widget build(BuildContext context) {
-    final tasksAPI = context.watch<TasksAPI>();
     final tasksProvider = context.watch<TasksProvider>();
     // final temporarilyAddedTags = tasksAPI.temporarilyAddedTags;
     final temporarilyAddedTags = tasksProvider.temporarilyAddedTags;
-    final dueDate = tasksAPI.dueDate;
+    final dueDate = tasksProvider.dueDate;
     String? formattedDate =
         dueDate != null ? DateFormat('EEEE, MMM d, y').format(dueDate) : null;
 
-    final temporarySelectedPriority = tasksAPI.temporarySelectedPriority;
+    final temporarySelectedPriority = tasksProvider.temporarySelectedPriority;
 
     return SafeArea(
       child: Padding(

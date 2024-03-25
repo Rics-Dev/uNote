@@ -6,6 +6,18 @@ import '../main.dart';
 import '../models/entities.dart';
 import '../objectbox.g.dart';
 
+enum SortCriteria {
+  creationDate,
+  editionDate,
+  nameAZ,
+  nameZA,
+}
+
+enum FilterCriteria {
+  tags,
+  priority,
+}
+
 class TasksProvider extends ChangeNotifier {
   Box<Task> taskBox = objectbox.taskBox;
   Box<Tag> tagBox = objectbox.tagBox;
@@ -22,6 +34,10 @@ class TasksProvider extends ChangeNotifier {
   final List<String> _selectedPriority = [];
   final List<String> _priority = ['Low', 'Medium', 'High'];
   bool _isSearchingTasks = false;
+  bool _isTimeSet = false;
+
+  final SortCriteria _sortCriteria = SortCriteria.creationDate;
+  FilterCriteria _filterCriteria = FilterCriteria.tags;
 
   List<Task> get tasks => _tasks;
   List<Task> get filteredTasks => _filteredTasks;
@@ -35,6 +51,9 @@ class TasksProvider extends ChangeNotifier {
   List<String> get selectedPriority => _selectedPriority;
   List<String> get priority => _priority;
   bool get isSearchingTasks => _isSearchingTasks;
+  SortCriteria get sortCriteria => _sortCriteria;
+  FilterCriteria get filterCriteria => _filterCriteria;
+  bool get isTimeSet => _isTimeSet;
 
   TasksProvider() {
     _init();
@@ -80,11 +99,18 @@ class TasksProvider extends ChangeNotifier {
       details: '',
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
+      dueDate: dueDate,
+      priority: temporarySelectedPriority,
     );
+    if (selectedTags.isNotEmpty || selectedPriority.isNotEmpty) {
+      _filteredTasks.add(task);
+    }
 
     task.tags.addAll(tags);
     taskBox.put(task);
 
+    _selectedTags.clear();
+    _selectedPriority.clear();
     _temporarilyAddedTags = [];
     _temporarySelectedPriority = null;
     _dueDate = null;
@@ -115,6 +141,29 @@ class TasksProvider extends ChangeNotifier {
     taskBox.remove(taskId);
   }
 
+  void updateTask(int taskId, bool isDone) async {
+    final updatedTask = taskBox.get(taskId);
+    if (updatedTask != null) {
+      updatedTask.isDone = isDone;
+      updatedTask.updatedAt = DateTime.now();
+      taskBox.put(updatedTask);
+    }
+    notifyListeners();
+  }
+
+  updateTasksOrder(int oldIndex, int newIndex) async {
+    final task = tasks.removeAt(oldIndex);
+    tasks.insert(newIndex, task);
+    notifyListeners();
+
+    // await taskBox.putManyAsync(tasks);
+  }
+
+  void deleteTag(Tag tag) {
+    tagBox.remove(tag.id);
+    notifyListeners();
+  }
+
   //Done
   void addTemporarilyAddedTags(String tag) {
     final tagObject = Tag(name: tag);
@@ -127,6 +176,36 @@ class TasksProvider extends ChangeNotifier {
   //Done
   void removeTemporarilyAddedTags(Tag tag) {
     _temporarilyAddedTags.removeWhere((element) => element.name == tag.name);
+    notifyListeners();
+  }
+
+  void setTemporarySelectedPriority(String? priority) {
+    _temporarySelectedPriority = priority;
+    notifyListeners();
+  }
+
+  //part to set due date
+  void setDueDate(DateTime? selectedDay) {
+    _dueDate = selectedDay;
+    notifyListeners();
+  }
+
+  void setTimeSet(bool bool) {
+    _isTimeSet = bool;
+    notifyListeners();
+  }
+
+
+
+  // ----------------- Filter and Search Section ------------------------------
+
+  void toggleFilterByTags() {
+    _filterCriteria = FilterCriteria.tags;
+    notifyListeners();
+  }
+
+  void toggleFilterByPriority() {
+    _filterCriteria = FilterCriteria.priority;
     notifyListeners();
   }
 
@@ -144,16 +223,17 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  //Done
-  void clearSelectedTags() {
-    _selectedTags.clear();
-    _filteredTasks.clear();
-    notifyListeners();
-  }
-
-  void setSearchedTags(List<Tag> tags) {
-    _searchedTags.clear();
-    _searchedTags.addAll(tags);
+  void togglePrioritySelection(String priority) {
+    if (_selectedPriority.contains(priority)) {
+      _selectedPriority.remove(priority);
+    } else {
+      _selectedPriority.clear();
+      _selectedPriority.add(priority);
+    }
+    if (_selectedPriority.isEmpty) {
+      _filteredTasks.clear();
+    }
+    filterTasksByPriority(_selectedPriority);
     notifyListeners();
   }
 
@@ -167,6 +247,37 @@ class TasksProvider extends ChangeNotifier {
               (tag) => task.tags.any((element) => element.name == tag.name)))
           .toList();
     }
+    notifyListeners();
+  }
+
+  void filterTasksByPriority(List priority) {
+    if (priority.isEmpty) {
+      _filteredTasks.clear();
+    } else {
+      _filteredTasks = _tasks.where((task) {
+        return priority.every((priority) => task.priority == priority);
+      }).toList();
+    }
+    notifyListeners();
+  }
+
+  void clearSelectedPriority() {
+    _selectedPriority.clear();
+    // _filteredTasks = tasks;
+    _filteredTasks.clear();
+    notifyListeners();
+  }
+
+  //Done
+  void clearSelectedTags() {
+    _selectedTags.clear();
+    _filteredTasks.clear();
+    notifyListeners();
+  }
+
+  void setSearchedTags(List<Tag> tags) {
+    _searchedTags.clear();
+    _searchedTags.addAll(tags);
     notifyListeners();
   }
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import '../../models/entities.dart';
 import '../../providers/taskProvider.dart';
-import '../../providers/task_provider.dart';
 import 'package:badges/badges.dart' as badges;
 
 class HorizontalTagsView extends StatelessWidget {
@@ -12,7 +12,6 @@ class HorizontalTagsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tasksAPI = context.watch<TasksAPI>();
     final tasksProvider = context.watch<TasksProvider>();
 
     final tags = tasksProvider.tags;
@@ -20,7 +19,7 @@ class HorizontalTagsView extends StatelessWidget {
     final selectedPriority = tasksProvider.selectedPriority;
 
     final allTasks = tasksProvider.tasks;
-    FilterCriteria filterCriteria = tasksAPI.filterCriteria;
+    FilterCriteria filterCriteria = tasksProvider.filterCriteria;
     final priority = tasksProvider.priority;
 
     return Padding(
@@ -73,7 +72,7 @@ class HorizontalTagsView extends StatelessWidget {
                           child: GestureDetector(
                             onLongPress: () {
                               // Show a confirmation dialog
-                              // deleteTag(context, tag);
+                              deleteTag(context, tag);
                             },
                             onTap: () {
                               tasksProvider.toggleTagSelection(tag);
@@ -144,11 +143,11 @@ class HorizontalTagsView extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
                         child: GestureDetector(
                           onTap: () {
-                            tasksAPI.togglePrioritySelection(priority);
+                            tasksProvider.togglePrioritySelection(priority);
                           },
                           child: ElevatedButton.icon(
                             onPressed: () {
-                              tasksAPI.togglePrioritySelection(priority);
+                              tasksProvider.togglePrioritySelection(priority);
                             },
                             icon: Icon(
                               Icons.flag_outlined,
@@ -201,8 +200,8 @@ class HorizontalTagsView extends StatelessWidget {
             ),
             onPressed: () {
               filterCriteria == FilterCriteria.tags
-                  ? tasksAPI.toggleFilterByPriority()
-                  : tasksAPI.toggleFilterByTags();
+                  ? tasksProvider.toggleFilterByPriority()
+                  : tasksProvider.toggleFilterByTags();
             },
           ),
         ],
@@ -210,8 +209,8 @@ class HorizontalTagsView extends StatelessWidget {
     );
   }
 
-  Future<dynamic> deleteTag(BuildContext context, String tag) {
-    final tasksAPI = context.read<TasksAPI>();
+  Future<dynamic> deleteTag(BuildContext context, Tag tag) {
+    final tasksProvider = context.read<TasksProvider>();
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -236,7 +235,7 @@ class HorizontalTagsView extends StatelessWidget {
                     ),
                     onPressed: () {
                       // Save changes
-                      tasksAPI.deleteTag(tag);
+                      tasksProvider.deleteTag(tag);
                       Navigator.pop(context);
                     },
                     child: Row(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
@@ -24,12 +25,12 @@ class TasksViewInboxPage extends StatelessWidget {
     } else if (tasksProvider.filteredTasks.isNotEmpty ||
         (tasksProvider.filteredTasks.isEmpty &&
             tasksProvider.selectedPriority.isNotEmpty) ||
-        (tasksProvider.filteredTasks.isEmpty && tasksProvider.selectedTags.isNotEmpty)) {
+        (tasksProvider.filteredTasks.isEmpty &&
+            tasksProvider.selectedTags.isNotEmpty)) {
       tasks = tasksProvider.filteredTasks;
     } else {
       tasks = tasksProvider.tasks;
     }
-
 
     final notDoneTasks = tasks.where((task) => !task.isDone).toList();
     final doneTasks = tasks.where((task) => task.isDone).toList();
@@ -106,21 +107,16 @@ class TasksViewInboxPage extends StatelessWidget {
     } else {
       return DragTarget(
         builder: (context, incoming, rejected) {
-          return GestureDetector(
-            onTap: () {
-              showTaskDetails(context, task);
-            },
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(18, 6, 18, 6),
-              child: buildTaskContainer(context, task, incoming),
-            ),
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(18, 6, 18, 6),
+            child: buildTaskContainer(context, task, incoming),
           );
         },
         onWillAcceptWithDetails: (data) => true,
         onAcceptWithDetails: (data) {
           final oldIndex = context.read<DragStateProvider>().originalIndex;
           final newIndex = index;
-          context.read<TasksAPI>().updateTasksOrder(oldIndex, newIndex);
+          context.read<TasksProvider>().updateTasksOrder(oldIndex, newIndex);
         },
         // Drag target callbacks...
       );
@@ -147,9 +143,7 @@ class TasksViewInboxPage extends StatelessWidget {
             ),
             style: MSHCheckboxStyle.fillScaleColor,
             onChanged: (selected) {
-              // context
-              //     .read<TasksAPI>()
-              //     .updateTask(taskId: task.id, isDone: selected);
+              context.read<TasksProvider>().updateTask(task.id, selected);
             },
           ),
           const SizedBox(width: 10),
@@ -235,8 +229,8 @@ class TasksViewInboxPage extends StatelessWidget {
             onAcceptWithDetails: (data) {
               final draggableData = data.data;
               context
-                  .read<TasksAPI>()
-                  .updateTask(taskId: draggableData as String, isDone: true);
+                  .read<TasksProvider>()
+                  .updateTask(draggableData as int, true);
             },
           ),
         ),
