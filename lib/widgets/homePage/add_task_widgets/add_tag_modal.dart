@@ -28,7 +28,9 @@ class _AddTagViewState extends State<AddTagView> {
   Widget build(BuildContext context) {
     List<Tag> tags = context.watch<TasksProvider>().tags;
     final searchedTags = context.watch<TasksProvider>().searchedTags;
-    final temporarilyAddedTags = context.watch<TasksProvider>().temporarilyAddedTags;
+    final selectedTags = context.watch<TasksProvider>().selectedTags;
+    final temporarilyAddedTags =
+        context.watch<TasksProvider>().temporarilyAddedTags;
 
     tags = searchedTags.isNotEmpty ? searchedTags : tags;
 
@@ -37,13 +39,12 @@ class _AddTagViewState extends State<AddTagView> {
         padding: MediaQuery.of(context).viewInsets,
         child: SizedBox(
           width: MediaQuery.of(context).size.width * 0.90,
-          height: MediaQuery.of(context).size.height * 0.40,
+          height: MediaQuery.of(context).size.height * 0.4,
           child: Column(
             children: [
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: SizedBox(
-                  
                   height: 40,
                   child: TextField(
                     controller: tagController,
@@ -59,18 +60,16 @@ class _AddTagViewState extends State<AddTagView> {
                         // Only add value if it matches the allowed pattern
                         setState(() {
                           tagController.text = value;
-                          tagController.selection =
-                              TextSelection.fromPosition(TextPosition(
-                                  offset: tagController.text.length));
+                          tagController.selection = TextSelection.fromPosition(
+                              TextPosition(offset: tagController.text.length));
                         });
                       } else {
                         // Remove invalid characters
                         setState(() {
                           tagController.text = tagController.text
                               .replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
-                          tagController.selection =
-                              TextSelection.fromPosition(TextPosition(
-                                  offset: tagController.text.length));
+                          tagController.selection = TextSelection.fromPosition(
+                              TextPosition(offset: tagController.text.length));
                         });
                       }
                       searchTags(tagController
@@ -78,7 +77,9 @@ class _AddTagViewState extends State<AddTagView> {
                     },
                     onSubmitted: (_) {
                       if (_.isNotEmpty) {
-                        context.read<TasksProvider>().addTemporarilyAddedTags(_);
+                        context
+                            .read<TasksProvider>()
+                            .addTemporarilyAddedTags(_);
                         tagController.clear();
                       }
                       Navigator.pop(context);
@@ -88,42 +89,91 @@ class _AddTagViewState extends State<AddTagView> {
               ),
               const SizedBox(height: 10.0),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: tags.isEmpty
-                        ? [const Text('Add a new tag')]
-                        : tags.map((tag) {
-                            return Container(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 4.0),
-                              child: CheckboxListTile(
-                                contentPadding: const EdgeInsets.all(0),
-                                title: Text("#${tag.name}"),
-                                checkboxShape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(15)),
-                                value: temporarilyAddedTags.any((element) => element.name == tag.name),
-                                onChanged: (bool? newValue) {
-                                  if (newValue != null) {
-                                    if (newValue) {
-                                      context
-                                          .read<TasksProvider>()
-                                          .addTemporarilyAddedTags(tag.name);
-                                    } else {
-                                      context
-                                          .read<TasksProvider>()
-                                          .removeTemporarilyAddedTags(tag);
-                                    }
-                                  }
-                                },
-                                activeColor:
-                                    const Color.fromARGB(255, 0, 73, 133),
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
+                child: GridView.extent(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  childAspectRatio: 2.5,
+                  maxCrossAxisExtent: 150.0,
+                  mainAxisSpacing: 12.0, // spacing between rows
+                  crossAxisSpacing: 8.0, // spacing between columns
+                  children: tags.isEmpty
+                      ? [const Text('Add a new tag')]
+                      : tags.map((tag) {
+                          final isSelected = temporarilyAddedTags
+                              .any((element) => element.name == tag.name);
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 2.0, horizontal: 4.0),
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                if (!isSelected) {
+                                  context
+                                      .read<TasksProvider>()
+                                      .addTemporarilyAddedTags(tag.name);
+                                } else {
+                                  context
+                                      .read<TasksProvider>()
+                                      .removeTemporarilyAddedTags(tag);
+                                }
+                              },
+                              icon: Icon(
+                                Icons.label_outline_rounded,
+                                size: 18,
+                                color: isSelected
+                                    ? Colors.white
+                                    : const Color.fromARGB(255, 0, 73, 133),
                               ),
-                            );
-                          }).toList(),
-                  ),
+                              label: Text(
+                                tag.name,
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? Colors.white
+                                      : const Color.fromARGB(255, 0, 73, 133),
+                                ),
+                              ),
+                              style: ButtonStyle(
+                                elevation: MaterialStateProperty.all<double>(3),
+                                padding: MaterialStateProperty.all<
+                                    EdgeInsetsGeometry>(
+                                  const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical:
+                                          4), // Adjust the padding as needed
+                                ),
+                                backgroundColor: isSelected
+                                    ? MaterialStateProperty.all<Color>(
+                                        const Color.fromARGB(255, 0, 73, 133))
+                                    : MaterialStateProperty.all<Color>(
+                                        Colors.white),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                ),
+                              ),
+                              // child: Row(
+                              //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              //   children: [
+                              //     Icon(
+                              //       Icons.label_outline_rounded,
+                              //       size: 18,
+                              //       color: isSelected
+                              //           ? Colors.white
+                              //           : const Color.fromARGB(255, 0, 73, 133),
+                              //     ),
+                              //     Text(
+                              //       tag.name,
+                              //       style: TextStyle(
+                              //         color: isSelected
+                              //             ? Colors.white
+                              //             : const Color.fromARGB(255, 0, 73, 133),
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
+                            ),
+                          );
+                        }).toList(),
                 ),
               ),
             ],

@@ -37,7 +37,7 @@ class HorizontalTagsView extends StatelessWidget {
                     // tasksProvider.filterTasksByTags(tasksProvider.selectedTags);
                   },
                   child: Container(
-                      padding: const EdgeInsets.all(13),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.grey)),
@@ -78,7 +78,7 @@ class HorizontalTagsView extends StatelessWidget {
                             onTap: () {
                               tasksProvider.toggleTagSelection(tag);
                             },
-                            child: OutlinedButton.icon(
+                            child: ElevatedButton.icon(
                               onPressed: () {
                                 tasksProvider.toggleTagSelection(tag);
                               },
@@ -109,7 +109,7 @@ class HorizontalTagsView extends StatelessWidget {
                                     ? MaterialStateProperty.all<Color>(
                                         const Color.fromARGB(255, 0, 73, 133))
                                     : MaterialStateProperty.all<Color>(
-                                        Colors.transparent),
+                                        Colors.white),
                                 shape: MaterialStateProperty.all<
                                     RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
@@ -146,7 +146,7 @@ class HorizontalTagsView extends StatelessWidget {
                           onTap: () {
                             tasksAPI.togglePrioritySelection(priority);
                           },
-                          child: OutlinedButton.icon(
+                          child: ElevatedButton.icon(
                             onPressed: () {
                               tasksAPI.togglePrioritySelection(priority);
                             },
@@ -177,7 +177,7 @@ class HorizontalTagsView extends StatelessWidget {
                                   ? MaterialStateProperty.all<Color>(
                                       const Color.fromARGB(255, 0, 73, 133))
                                   : MaterialStateProperty.all<Color>(
-                                      Colors.transparent),
+                                      Colors.white),
                               shape: MaterialStateProperty.all<
                                   RoundedRectangleBorder>(
                                 RoundedRectangleBorder(

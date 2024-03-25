@@ -58,6 +58,7 @@ class TasksProvider extends ChangeNotifier {
   }
 
   void addTask(String taskContent) {
+
     final List<Tag> alreadyExistingTags = tagBox
         .query(
             Tag_.name.oneOf(_temporarilyAddedTags.map((e) => e.name).toList()))
@@ -71,16 +72,16 @@ class TasksProvider extends ChangeNotifier {
 
     final Set<Tag> tags = {...alreadyExistingTags, ...newTags};
 
+    for (final tag in tags) {
+      tagBox.put(tag);
+    }
+
     final task = Task(
       name: taskContent,
       details: '',
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
-
-    for (final tag in tags) {
-      tagBox.put(tag);
-    }
 
     task.tags.addAll(tags);
     taskBox.put(task);
@@ -90,6 +91,8 @@ class TasksProvider extends ChangeNotifier {
     _dueDate = null;
     notifyListeners();
   }
+
+  
 
   void deleteTask(int taskId) {
     final removedTask = taskBox.get(taskId);
@@ -115,7 +118,6 @@ class TasksProvider extends ChangeNotifier {
     taskBox.remove(taskId);
   }
 
-
   //Done
   void addTemporarilyAddedTags(String tag) {
     final tagObject = Tag(name: tag);
@@ -125,13 +127,11 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   //Done
   void removeTemporarilyAddedTags(Tag tag) {
     _temporarilyAddedTags.removeWhere((element) => element.name == tag.name);
     notifyListeners();
   }
-
 
   //Done
   void toggleTagSelection(Tag tag) {
@@ -146,7 +146,6 @@ class TasksProvider extends ChangeNotifier {
     filterTasksByTags(selectedTags);
     notifyListeners();
   }
-
 
   //Done
   void clearSelectedTags() {
@@ -173,7 +172,6 @@ class TasksProvider extends ChangeNotifier {
     _isSearchingTasks = bool;
     notifyListeners();
   }
-
 
   //Done
   void setSearchedTasks(List<Task> suggestions) {

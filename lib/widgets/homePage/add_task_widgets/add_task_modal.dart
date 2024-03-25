@@ -100,19 +100,16 @@ class _AddTaskViewState extends State<AddTaskView> {
                         ? const SizedBox(width: 8)
                         : const SizedBox(),
                     Expanded(
-                      // width: tags.isEmpty
-                      //     ? MediaQuery.of(context).size.width * 0.53
-                      //     : MediaQuery.of(context).size.width *
-                      //         0.65, // Adjust the width as needed
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: temporarilyAddedTags.map((tag) {
                             return Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 4.0),
+                                  const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
                               child: Chip(
-                                label: Text('#${tag.name}'),
+                                // elevation: 2.0,
+                                label: Text(tag.name),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20.0),
                                 ),
