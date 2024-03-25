@@ -33,7 +33,6 @@ class _AddTaskViewState extends State<AddTaskView> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final tasksAPI = context.watch<TasksAPI>();
@@ -74,12 +73,19 @@ class _AddTaskViewState extends State<AddTaskView> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: IconButton.outlined(
-                            onPressed: () {
-                              showAddTagDialog(context);
-                            },
-                            icon: const Icon(Icons.new_label_outlined, color: Color.fromARGB(255, 0, 73, 133),),
-                          ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            elevation: 3.0,
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(10.0)),
+                        onPressed: () {
+                          showAddTagDialog(context);
+                        },
+                        child: const Icon(
+                          Icons.new_label_outlined,
+                          color: Color.fromARGB(255, 0, 73, 133),
+                        ),
+                      ),
                     ),
                     Expanded(
                       child: SingleChildScrollView(
@@ -87,8 +93,8 @@ class _AddTaskViewState extends State<AddTaskView> {
                         child: Row(
                           children: temporarilyAddedTags.map((tag) {
                             return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 4.0, vertical: 8.0),
                               child: Chip(
                                 // elevation: 2.0,
                                 label: Text(tag.name),
@@ -128,7 +134,9 @@ class _AddTaskViewState extends State<AddTaskView> {
                       // addTask(taskController.text, temporarilyAddedTags,
                       //     temporarySelectedPriority);
                       // context.read<TasksAPI>().temporarilyAddedTags.clear();
-                      context.read<TasksProvider>().addTask(taskController.text);
+                      context
+                          .read<TasksProvider>()
+                          .addTask(taskController.text);
                       Navigator.pop(context, true);
                     } else {
                       toastEmptyTask(context);
@@ -140,11 +148,15 @@ class _AddTaskViewState extends State<AddTaskView> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     dueDate == null
-                        ? IconButton.outlined(
+                        ? ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                elevation: 3.0,
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(10.0)),
                             onPressed: () {
                               showAddDueDateDialog(context);
                             },
-                            icon: const Icon(
+                            child: const Icon(
                               Icons.calendar_today_rounded,
                               color: Color.fromARGB(255, 0, 73, 133),
                             ),
@@ -159,21 +171,29 @@ class _AddTaskViewState extends State<AddTaskView> {
                             ),
                             label: Text(formattedDate!),
                           ),
-                    IconButton.outlined(
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          elevation: 3.0,
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(10.0)),
                       onPressed: () {
                         showAddListDialog(context);
                       },
-                      icon: const Icon(
+                      child: const Icon(
                         Icons.format_list_bulleted_rounded,
                         color: Color.fromARGB(255, 0, 73, 133),
                       ),
                     ),
                     temporarySelectedPriority == null
-                        ? IconButton.outlined(
+                        ? ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                elevation: 3.0,
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(10.0)),
                             onPressed: () {
                               showAddPriorityDialog(context);
                             },
-                            icon: const Icon(
+                            child: const Icon(
                               Icons.flag_outlined,
                               color: Color.fromARGB(255, 0, 73, 133),
                             ),
@@ -198,7 +218,9 @@ class _AddTaskViewState extends State<AddTaskView> {
                         // addTask(taskController.text, temporarilyAddedTags,
                         //     temporarySelectedPriority);
                         // context.read<TasksAPI>().removeAllTemporaryTags();
-                      context.read<TasksProvider>().addTask(taskController.text);
+                        context
+                            .read<TasksProvider>()
+                            .addTask(taskController.text);
                         Navigator.pop(context, true);
                       } else {
                         toastEmptyTask(context);
