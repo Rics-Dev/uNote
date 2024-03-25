@@ -4,6 +4,7 @@ import 'package:top_modal_sheet/top_modal_sheet.dart';
 import 'package:utask/widgets/inboxPage/sort_view.dart';
 import 'package:searchbar_animation/searchbar_animation.dart';
 
+import '../../providers/taskProvider.dart';
 import '../../providers/task_provider.dart';
 
 class SortAndFilterView extends StatefulWidget {
@@ -28,11 +29,10 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
           IconButton.outlined(
             color: const Color.fromARGB(255, 0, 73, 133),
             icon: const Icon(
-              Icons.sort_rounded,
+              Icons.grid_view_rounded,
               color: Color.fromARGB(255, 0, 73, 133),
             ),
             onPressed: () {
-              showSortView(context);
             },
           ),
           SearchBarAnimation(
@@ -72,26 +72,16 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
     );
   }
 
-  Future<dynamic> showSortView(BuildContext context) {
-    return showTopModalSheet(
-      transitionDuration: const Duration(milliseconds: 500),
-      context,
-      const SortView(),
-      backgroundColor: Colors.white,
-      borderRadius: const BorderRadius.vertical(
-        bottom: Radius.circular(25),
-      ),
-    );
-  }
+
 
   void searchTasks(String query) {
     if (query.isEmpty) {
-      context.read<TasksAPI>().setIsSearching(false);
+      context.read<TasksProvider>().setIsSearching(false);
     } else {
-      final suggestions = context.read<TasksAPI>().tasks.where((task) {
-        return task.content.toLowerCase().contains(query.toLowerCase());
+      final suggestions = context.read<TasksProvider>().tasks.where((task) {
+        return task.name.toLowerCase().contains(query.toLowerCase());
       }).toList();
-      context.read<TasksAPI>().setSearchedTasks(suggestions);
+      context.read<TasksProvider>().setSearchedTasks(suggestions);
     }
   }
 }

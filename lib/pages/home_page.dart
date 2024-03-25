@@ -12,6 +12,7 @@ import '../widgets/app_drawer.dart';
 import '../widgets/homePage/add_task_widgets/add_task_modal.dart';
 import '../widgets/homePage/build_body_home_page.dart';
 import '../widgets/homePage/calendar_view.dart';
+import '../widgets/inboxPage/sort_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -69,6 +70,14 @@ class _HomePageState extends State<HomePage> {
         // ),
         title: Text(appBarTitles[_bottomNavIndex]),
         actions: <Widget>[
+          IconButton(
+            icon: const Icon(
+              Icons.filter_list_rounded,
+            ),
+            onPressed: () {
+              showSortView(context);
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.calendar_month_rounded),
             onPressed: () {
@@ -162,6 +171,18 @@ class _HomePageState extends State<HomePage> {
               _showAddTaskDialog(context);
             },
           );
+  }
+
+  Future<dynamic> showSortView(BuildContext context) {
+    return showTopModalSheet(
+      transitionDuration: const Duration(milliseconds: 500),
+      context,
+      const SortView(),
+      backgroundColor: Colors.white,
+      borderRadius: const BorderRadius.vertical(
+        bottom: Radius.circular(25),
+      ),
+    );
   }
 
   showAlert({required String title, required String text}) {

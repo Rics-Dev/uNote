@@ -41,7 +41,6 @@ class TasksProvider extends ChangeNotifier {
   }
 
   void _init() async {
-    // tagBox.removeAll();
     final tasksStream = objectbox.getTasks();
     tasksStream.listen(_onTasksChanged);
     final tagsStream = objectbox.getTags();
@@ -166,6 +165,23 @@ class TasksProvider extends ChangeNotifier {
               (tag) => task.tags.any((element) => element.name == tag.name)))
           .toList();
     }
+    notifyListeners();
+  }
+
+  //Done
+  void setIsSearching(bool bool) {
+    _isSearchingTasks = bool;
+    notifyListeners();
+  }
+
+
+  //Done
+  void setSearchedTasks(List<Task> suggestions) {
+    _isSearchingTasks = true;
+    if (suggestions.isEmpty) {
+      _searchedTasks.clear();
+    }
+    _searchedTasks = suggestions;
     notifyListeners();
   }
 }
