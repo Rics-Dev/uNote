@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
+import 'package:utask/providers/taskProvider.dart';
 
 import '../providers/list_provider.dart';
 import 'package:toastification/toastification.dart';
@@ -43,6 +44,9 @@ class _ListPageState extends State<ListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final tasksProvider = context.watch<TasksProvider>();
+    final taskLists = tasksProvider.taskLists;
+
     return Center(
       child: Column(
         children: [
@@ -86,7 +90,7 @@ class _ListPageState extends State<ListPage> {
           const SizedBox(height: 40),
           Expanded(
             child: ListView.builder(
-              itemCount: context.watch<ListsAPI>().lists.length,
+              itemCount: taskLists.length,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 12),
@@ -111,7 +115,7 @@ class _ListPageState extends State<ListPage> {
                         title: Row(
                           children: [
                             Text(
-                              context.watch<ListsAPI>().lists[index].listName,
+                              taskLists[index].name,
                               style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
@@ -124,12 +128,7 @@ class _ListPageState extends State<ListPage> {
                                 shape: BoxShape.circle,
                               ),
                               child: Text(
-                                context
-                                    .watch<ListsAPI>()
-                                    .lists[index]
-                                    .tasks
-                                    .length
-                                    .toString(),
+                                taskLists[index].tasks.length.toString(),
                                 style: const TextStyle(
                                     fontSize: 14, color: Colors.black),
                               ),
@@ -139,20 +138,13 @@ class _ListPageState extends State<ListPage> {
                         children: [
                           ListView.builder(
                             shrinkWrap: true,
-                            itemCount: context
-                                .watch<ListsAPI>()
-                                .lists[index]
-                                .tasks
-                                .length,
+                            itemCount: taskLists[index].tasks.length,
                             itemBuilder: (context, taskIndex) {
                               return ListTile(
                                 leading: MSHCheckbox(
                                   size: 22,
-                                  value: context
-                                      .watch<ListsAPI>()
-                                      .lists[index]
-                                      .tasks[taskIndex]
-                                      .isDone,
+                                  value:
+                                      taskLists[index].tasks[taskIndex].isDone,
                                   // colorConfig: MSHColorConfig
                                   //     .fromCheckedUncheckedDisabled(
                                   //   checkedColor:
@@ -161,22 +153,18 @@ class _ListPageState extends State<ListPage> {
                                   // ),
                                   style: MSHCheckboxStyle.fillScaleColor,
                                   onChanged: (selected) {
-                                    context.read<TasksAPI>().updateTask(
-                                        taskId: context
-                                            .read<ListsAPI>()
-                                            .lists[index]
-                                            .tasks[taskIndex]
-                                            .id,
-                                        isDone: selected);
+                                    context.read<TasksProvider>().updateTask(
+                                        taskLists[index].tasks[taskIndex].id,
+                                        selected);
                                   },
                                 ),
                                 textColor: Colors.white,
                                 title: Text(
-                                  context
-                                      .watch<ListsAPI>()
-                                      .lists[index]
-                                      .tasks[taskIndex]
-                                      .content,
+                                  taskLists[index].tasks[taskIndex].name,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                 ),
                               );
                             },

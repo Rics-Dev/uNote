@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:utask/widgets/homePage/add_task_widgets/add_tast_to_list.dart';
+import 'package:utask/widgets/homePage/add_task_widgets/add_tast_to_list_modal.dart';
 
 import '../../../providers/taskProvider.dart';
 import '../../../providers/task_provider.dart';
@@ -37,11 +37,13 @@ class _AddTaskViewState extends State<AddTaskView> {
   Widget build(BuildContext context) {
     final tasksProvider = context.watch<TasksProvider>();
     // final temporarilyAddedTags = tasksAPI.temporarilyAddedTags;
-    final temporarilyAddedTags = tasksProvider.temporarilyAddedTags;
+
     final dueDate = tasksProvider.dueDate;
     String? formattedDate =
         dueDate != null ? DateFormat('EEEE, MMM d, y').format(dueDate) : null;
 
+    final temporarilyAddedTags = tasksProvider.temporarilyAddedTags;
+    final temporarilyAddedList = tasksProvider.temporarilyAddedList;
     final temporarySelectedPriority = tasksProvider.temporarySelectedPriority;
 
     return SafeArea(
@@ -170,19 +172,30 @@ class _AddTaskViewState extends State<AddTaskView> {
                             ),
                             label: Text(formattedDate!),
                           ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          elevation: 3.0,
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(10.0)),
-                      onPressed: () {
-                        showAddListDialog(context);
-                      },
-                      child: const Icon(
-                        Icons.format_list_bulleted_rounded,
-                        color: Color.fromARGB(255, 0, 73, 133),
-                      ),
-                    ),
+                    temporarilyAddedList.name == ''
+                        ? ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                elevation: 3.0,
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(10.0)),
+                            onPressed: () {
+                              showAddListDialog(context);
+                            },
+                            child: const Icon(
+                              Icons.format_list_bulleted_rounded,
+                              color: Color.fromARGB(255, 0, 73, 133),
+                            ),
+                          )
+                        : OutlinedButton.icon(
+                            onPressed: () {
+                              showAddListDialog(context);
+                            },
+                            icon: const Icon(
+                              Icons.format_list_bulleted_rounded,
+                              color: Color.fromARGB(255, 0, 73, 133),
+                            ),
+                            label: Text(temporarilyAddedList.name),
+                          ),
                     temporarySelectedPriority == null
                         ? ElevatedButton(
                             style: ElevatedButton.styleFrom(

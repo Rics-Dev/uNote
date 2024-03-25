@@ -43,6 +43,24 @@ class _AddTagViewState extends State<AddTagView> {
           child: Column(
             children: [
               Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Container(
+                  width: 100,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Add Tag',
+                style: TextStyle(
+                  fontSize: 20.0,
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: SizedBox(
                   height: 40,
@@ -152,25 +170,6 @@ class _AddTagViewState extends State<AddTagView> {
                                 ),
                               ),
                               // child: Row(
-                              //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              //   children: [
-                              //     Icon(
-                              //       Icons.label_outline_rounded,
-                              //       size: 18,
-                              //       color: isSelected
-                              //           ? Colors.white
-                              //           : const Color.fromARGB(255, 0, 73, 133),
-                              //     ),
-                              //     Text(
-                              //       tag.name,
-                              //       style: TextStyle(
-                              //         color: isSelected
-                              //             ? Colors.white
-                              //             : const Color.fromARGB(255, 0, 73, 133),
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
                             ),
                           );
                         }).toList(),
@@ -186,7 +185,9 @@ class _AddTagViewState extends State<AddTagView> {
   void searchTags(String query) {
     if (query.isEmpty) {
       // If the query is empty, show all tags
-      context.read<TasksProvider>().setSearchedTags(context.read<TasksProvider>().tags);
+      context
+          .read<TasksProvider>()
+          .setSearchedTags(context.read<TasksProvider>().tags);
     } else {
       // search tags based on the query
       final suggestions = context.read<TasksProvider>().tags.where((tag) {

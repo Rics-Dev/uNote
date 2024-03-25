@@ -21,6 +21,7 @@ enum FilterCriteria {
 class TasksProvider extends ChangeNotifier {
   Box<Task> taskBox = objectbox.taskBox;
   Box<Tag> tagBox = objectbox.tagBox;
+  Box<TaskList> taskListBox = objectbox.taskListBox;
 
   List<Task> _tasks = [];
   List<Task> _filteredTasks = [];
@@ -35,6 +36,9 @@ class TasksProvider extends ChangeNotifier {
   final List<String> _priority = ['Low', 'Medium', 'High'];
   bool _isSearchingTasks = false;
   bool _isTimeSet = false;
+  List<TaskList> _taskLists = [];
+  final TaskList _temporarilyAddedList =
+      TaskList(name: '', createdAt: DateTime.now(), updatedAt: DateTime.now());
 
   final SortCriteria _sortCriteria = SortCriteria.creationDate;
   FilterCriteria _filterCriteria = FilterCriteria.tags;
@@ -54,16 +58,21 @@ class TasksProvider extends ChangeNotifier {
   SortCriteria get sortCriteria => _sortCriteria;
   FilterCriteria get filterCriteria => _filterCriteria;
   bool get isTimeSet => _isTimeSet;
+  TaskList get temporarilyAddedList => _temporarilyAddedList;
+  List<TaskList> get taskLists => _taskLists;
 
   TasksProvider() {
     _init();
   }
 
   void _init() async {
+    final taskList = taskListBox.getAll();
     final tasksStream = objectbox.getTasks();
     tasksStream.listen(_onTasksChanged);
     final tagsStream = objectbox.getTags();
     tagsStream.listen(_onTagsChanged);
+    final taskListStream = objectbox.getTaskLists();
+    taskListStream.listen(_onTaskListsChanged);
   }
 
   void _onTasksChanged(List<Task> tasks) {
@@ -76,7 +85,14 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void _onTaskListsChanged(List<TaskList> taskLists) {
+    _taskLists = taskLists;
+    notifyListeners();
+  }
+
   void addTask(String taskContent) {
+    //-------------------------------------------------------
+
     final List<Tag> alreadyExistingTags = tagBox
         .query(
             Tag_.name.oneOf(_temporarilyAddedTags.map((e) => e.name).toList()))
@@ -94,6 +110,10 @@ class TasksProvider extends ChangeNotifier {
       tagBox.put(tag);
     }
 
+    //-------------------------------------------
+
+    //-------------------------------------------
+
     final task = Task(
       name: taskContent,
       details: '',
@@ -107,10 +127,13 @@ class TasksProvider extends ChangeNotifier {
     }
 
     task.tags.addAll(tags);
+    task.list.target = _temporarilyAddedList;
+    taskListBox.put(_temporarilyAddedList);
     taskBox.put(task);
 
     _selectedTags.clear();
     _selectedPriority.clear();
+    _temporarilyAddedList.name = '';
     _temporarilyAddedTags = [];
     _temporarySelectedPriority = null;
     _dueDate = null;
@@ -184,6 +207,11 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addTemporarilyAddedList(String s) {
+    _temporarilyAddedList.name = s;
+    notifyListeners();
+  }
+
   //part to set due date
   void setDueDate(DateTime? selectedDay) {
     _dueDate = selectedDay;
@@ -194,8 +222,6 @@ class TasksProvider extends ChangeNotifier {
     _isTimeSet = bool;
     notifyListeners();
   }
-
-
 
   // ----------------- Filter and Search Section ------------------------------
 
