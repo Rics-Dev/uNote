@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:appwrite/appwrite.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -11,9 +10,6 @@ import 'task_provider.dart';
 class ListsAPI extends ChangeNotifier {
   var uuid =const Uuid();
   late SharedPreferences prefs;
-  Client client = Client();
-  late final Account account;
-  late final Databases databases;
   final TasksAPI tasksAPI = TasksAPI();
   List<ListItem> _lists = [];
 
@@ -26,9 +22,6 @@ class ListsAPI extends ChangeNotifier {
   }
 
   void init(String endpoint, String projectId) {
-    client.setEndpoint(endpoint).setProject(projectId).setSelfSigned();
-    account = Account(client);
-    databases = Databases(client);
     _fetchLists();
   }
 
@@ -53,17 +46,6 @@ class ListsAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchServerLists() async {
-    final serverLists = await databases.listDocuments(
-      databaseId: constants.appwriteDatabaseId,
-      collectionId: constants.appwriteListsCollectionId,
-    );
-    _lists =
-        serverLists.documents.map((e) => ListItem.fromMap(e.data)).toList();
-    notifyListeners();
-
-    await prefs.setStringList('lists', lists.map((list) => json.encode(list.toJson())).toList());
-  }
 
   Future<void> createList(String listName) async {
     final listId = uuid.v4();
@@ -83,15 +65,6 @@ class ListsAPI extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> createServerList({required String listName, required String listId}) async {
-    await databases.createDocument(
-      databaseId: constants.appwriteDatabaseId,
-      collectionId: constants.appwriteListsCollectionId,
-      documentId: listId,
-      data: {'listname': listName},
-    );
-    notifyListeners();
-  }
 
   Future<int> verifyExistingList(String listName) async {
 
@@ -104,15 +77,4 @@ class ListsAPI extends ChangeNotifier {
     return existingList.length;
   }
 
-
-  Future<int> verifyServerExistingList(String listName) async {
-    final existingListDocument = await databases.listDocuments(
-      databaseId: constants.appwriteDatabaseId,
-      collectionId: constants.appwriteListsCollectionId,
-      queries: [
-        Query.equal("listname", [listName])
-      ],
-    );
-    return existingListDocument.total;
-  }
 }

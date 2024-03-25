@@ -1,14 +1,9 @@
-import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
-import 'package:utask/providers/task_provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
-import '../main.dart';
 import '../providers/drag_provider.dart';
 import '../providers/taskProvider.dart';
-import '../widgets/app_drawer.dart';
 import '../widgets/homePage/add_task_widgets/add_task_modal.dart';
 import '../widgets/homePage/build_body_home_page.dart';
 import '../widgets/homePage/calendar_view.dart';
@@ -22,7 +17,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   bool deleteFloatingActionButton = false;
 
   bool addTaskDialogOpened = false;

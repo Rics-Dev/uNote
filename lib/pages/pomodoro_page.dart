@@ -1,5 +1,4 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,12 +27,8 @@ class _PomodoroPageState extends State<PomodoroPage> {
   int _bottomNavIndex = 0;
 
   void removeTask(String taskId) async {
-    try {
       await context.read<TasksAPI>().deleteTask(taskId: taskId);
       // showSuccessDelete();
-    } on AppwriteException catch (e) {
-      showAlert(title: 'Error', text: e.message.toString());
-    }
   }
 
   Future<dynamic> _showAddTaskDialog(BuildContext context) {
