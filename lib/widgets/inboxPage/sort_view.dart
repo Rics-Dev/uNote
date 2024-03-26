@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/task_provider.dart';
+import '../../providers/taskProvider.dart';
 
 class SortView extends StatelessWidget {
   const SortView({
@@ -10,10 +10,10 @@ class SortView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tasksAPI = context.watch<TasksAPI>();
-    final oldToNew = tasksAPI.oldToNew;
+    final tasksProvider = context.watch<TasksProvider>();
+    final oldToNew = tasksProvider.oldToNew;
 
-    SortCriteria sortCriteria = tasksAPI.sortCriteria;
+    SortCriteria sortCriteria = tasksProvider.sortCriteria;
 
     return SafeArea(
         child: SizedBox(
@@ -36,7 +36,7 @@ class SortView extends StatelessWidget {
             children: [
               OutlinedButton(
                 onPressed: () {
-                  tasksAPI.toggleSortByCreationDate();
+                  tasksProvider.toggleSortByCreationDate();
                 },
                 style: sortCriteria == SortCriteria.creationDate
                     ? ButtonStyle(
@@ -58,7 +58,7 @@ class SortView extends StatelessWidget {
                   const Text('Old'),
                   IconButton.outlined(
                     onPressed: () {
-                      tasksAPI.toggleNewToOld();
+                      tasksProvider.toggleNewToOld();
                     },
                     color: const Color.fromARGB(255, 0, 73, 133),
                     icon: Icon(
@@ -73,7 +73,7 @@ class SortView extends StatelessWidget {
               ),
               OutlinedButton(
                 onPressed: () {
-                  tasksAPI.toggleSortByEditionDate();
+                  tasksProvider.toggleSortByEditionDate();
                 },
                 style: sortCriteria == SortCriteria.editionDate
                     ? ButtonStyle(
@@ -100,7 +100,7 @@ class SortView extends StatelessWidget {
             children: [
               OutlinedButton(
                 onPressed: () {
-                  tasksAPI.toggleSortByNameAZ();
+                  tasksProvider.toggleSortByNameAZ();
                 },
                 style: sortCriteria == SortCriteria.nameAZ
                     ? ButtonStyle(
@@ -119,7 +119,7 @@ class SortView extends StatelessWidget {
               ),
               OutlinedButton(
                 onPressed: () {
-                  tasksAPI.toggleSortByNameZA();
+                  tasksProvider.toggleSortByNameZA();
                 },
                 style: sortCriteria == SortCriteria.nameZA
                     ? ButtonStyle(
@@ -143,7 +143,7 @@ class SortView extends StatelessWidget {
           ),
           // const Text('Filter by',
           //     style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
-          
+
           const Spacer(),
           Container(
             width: 100,

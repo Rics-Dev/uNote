@@ -58,13 +58,17 @@ class _ListPageState extends State<ListPage> {
               controller: listController,
               maxLines: 1,
               onSubmitted: (value) {
-                addList(value);
+                // addList(value);
+                context.read<TasksProvider>().addList(value);
+                listController.clear();
               },
               decoration: InputDecoration(
                 suffix: const Text('Add'),
                 suffixIcon: GestureDetector(
                   onTap: () {
-                    addList(listController.text);
+                    // addList(listController.text);
+                    context.read<TasksProvider>().addList(listController.text);
+                    listController.clear();
                   },
                   child: const Icon(
                     Icons.add_circle_outline_rounded,

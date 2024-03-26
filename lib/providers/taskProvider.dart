@@ -31,6 +31,8 @@ class TasksProvider extends ChangeNotifier {
   final List<Tag> _searchedTags = [];
   String? _temporarySelectedPriority;
   DateTime? _dueDate;
+  bool _oldToNew = true;
+  String _disposition = 'List';
   final List<Tag> _selectedTags = [];
   final List<String> _selectedPriority = [];
   final List<String> _priority = ['Low', 'Medium', 'High'];
@@ -40,7 +42,7 @@ class TasksProvider extends ChangeNotifier {
   final TaskList _temporarilyAddedList =
       TaskList(name: '', createdAt: DateTime.now(), updatedAt: DateTime.now());
 
-  final SortCriteria _sortCriteria = SortCriteria.creationDate;
+  SortCriteria _sortCriteria = SortCriteria.creationDate;
   FilterCriteria _filterCriteria = FilterCriteria.tags;
 
   List<Task> get tasks => _tasks;
@@ -60,6 +62,8 @@ class TasksProvider extends ChangeNotifier {
   bool get isTimeSet => _isTimeSet;
   TaskList get temporarilyAddedList => _temporarilyAddedList;
   List<TaskList> get taskLists => _taskLists;
+  String get disposition => _disposition;
+  bool get oldToNew => _oldToNew;
 
   TasksProvider() {
     _init();
@@ -109,6 +113,9 @@ class TasksProvider extends ChangeNotifier {
     for (final tag in tags) {
       tagBox.put(tag);
     }
+    if (_temporarilyAddedList.name.isNotEmpty) {
+      taskListBox.put(_temporarilyAddedList);
+    }
 
     //-------------------------------------------
 
@@ -127,8 +134,11 @@ class TasksProvider extends ChangeNotifier {
     }
 
     task.tags.addAll(tags);
-    task.list.target = _temporarilyAddedList;
-    taskListBox.put(_temporarilyAddedList);
+
+    if (_temporarilyAddedList.name != '') {
+      task.list.target = _temporarilyAddedList;
+    }
+
     taskBox.put(task);
 
     _selectedTags.clear();
@@ -138,6 +148,13 @@ class TasksProvider extends ChangeNotifier {
     _temporarySelectedPriority = null;
     _dueDate = null;
     notifyListeners();
+  }
+
+  void addList(String listName){
+    final taskList = TaskList(name: listName, createdAt: DateTime.now(), updatedAt: DateTime.now());
+    taskListBox.put(taskList);
+    notifyListeners();
+
   }
 
   void deleteTask(int taskId) {
@@ -159,6 +176,12 @@ class TasksProvider extends ChangeNotifier {
         if (!isTagUsed) {
           tagBox.remove(tag.id);
         }
+      }
+    }
+    for (final list in taskLists) {
+      if (list.tasks.where((element) => element.id == taskId).isNotEmpty) {
+        list.tasks.remove(removedTask);
+        taskListBox.put(list);
       }
     }
     taskBox.remove(taskId);
@@ -320,6 +343,72 @@ class TasksProvider extends ChangeNotifier {
       _searchedTasks.clear();
     }
     _searchedTasks = suggestions;
+    notifyListeners();
+  }
+
+  void toggleSortByCreationDate() {
+    _sortCriteria = SortCriteria.creationDate;
+    sortTasks();
+    notifyListeners();
+  }
+
+  void toggleSortByEditionDate() {
+    _sortCriteria = SortCriteria.editionDate;
+    sortTasks();
+    notifyListeners();
+  }
+
+  void toggleSortByNameAZ() {
+    _sortCriteria = SortCriteria.nameAZ;
+    sortTasks();
+    notifyListeners();
+  }
+
+  void toggleSortByNameZA() {
+    _sortCriteria = SortCriteria.nameZA;
+    sortTasks();
+    notifyListeners();
+  }
+
+  void toggleNewToOld() {
+    _oldToNew = !_oldToNew;
+    sortTasks();
+    notifyListeners();
+  }
+
+  void sortTasks() {
+    List<Task> tasksToSort = filteredTasks.isNotEmpty ? _filteredTasks : _tasks;
+
+    tasksToSort.sort((a, b) {
+      switch (sortCriteria) {
+        case SortCriteria.creationDate:
+          return _sortByDate(a.createdAt, b.createdAt);
+        case SortCriteria.editionDate:
+          return _sortByDate(a.updatedAt, b.updatedAt);
+        case SortCriteria.nameAZ:
+          return a.name.compareTo(b.name);
+        case SortCriteria.nameZA:
+          return b.name.compareTo(a.name);
+        default:
+          return 0;
+      }
+    });
+
+    if (filteredTasks.isNotEmpty) {
+      _filteredTasks = tasksToSort;
+    } else {
+      _tasks = tasksToSort;
+    }
+
+    notifyListeners();
+  }
+
+  int _sortByDate(DateTime a, DateTime b) {
+    return _oldToNew ? a.compareTo(b) : b.compareTo(a);
+  }
+
+  void setDisposition(String s) {
+    _disposition = s;
     notifyListeners();
   }
 }

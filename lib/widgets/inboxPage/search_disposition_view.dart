@@ -21,20 +21,34 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
 
   @override
   Widget build(BuildContext context) {
+    final tasksProvider = context.watch<TasksProvider>();
+    final disposition = tasksProvider.disposition;
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton.outlined(
-            color: const Color.fromARGB(255, 0, 73, 133),
-            icon: const Icon(
-              Icons.grid_view_rounded,
-              color: Color.fromARGB(255, 0, 73, 133),
-            ),
-            onPressed: () {
-            },
-          ),
+          disposition == 'List'
+              ? IconButton.outlined(
+                  color: const Color.fromARGB(255, 0, 73, 133),
+                  icon: const Icon(
+                    Icons.grid_view_rounded,
+                    color: Color.fromARGB(255, 0, 73, 133),
+                  ),
+                  onPressed: () {
+                    context.read<TasksProvider>().setDisposition('Grid');
+                  },
+                )
+              : IconButton.outlined(
+                  color: const Color.fromARGB(255, 0, 73, 133),
+                  icon: const Icon(
+                    Icons.list_rounded,
+                    color: Color.fromARGB(255, 0, 73, 133),
+                  ),
+                  onPressed: () {
+                    context.read<TasksProvider>().setDisposition('List');
+                  },
+                ),
           SearchBarAnimation(
             durationInMilliSeconds: 500,
             searchBoxWidth: MediaQuery.of(context).size.width * 0.7,
@@ -72,12 +86,12 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
     );
   }
 
-
-
   void searchTasks(String query) {
     if (query.isEmpty) {
       context.read<TasksProvider>().setIsSearching(false);
-      context.read<TasksProvider>().setSearchedTags(context.read<TasksProvider>().tags);
+      context
+          .read<TasksProvider>()
+          .setSearchedTags(context.read<TasksProvider>().tags);
     } else {
       final suggestions = context.read<TasksProvider>().tasks.where((task) {
         return task.name.toLowerCase().contains(query.toLowerCase());

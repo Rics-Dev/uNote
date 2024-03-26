@@ -406,5 +406,7 @@ class TasksAPI extends ChangeNotifier {
     _isTimeSet = bool;
     notifyListeners();
   }
+
+  void setDisposition(String s) {}
 }
 

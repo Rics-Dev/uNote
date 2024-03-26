@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/taskProvider.dart';
@@ -24,6 +27,7 @@ class _AddTaskToListViewState extends State<AddTaskToListView> {
   Widget build(BuildContext context) {
     final tasksProvider = context.watch<TasksProvider>();
     final taskLists = tasksProvider.taskLists;
+    final temporarilyAddedList = tasksProvider.temporarilyAddedList;
 
     return SafeArea(
       child: Padding(
@@ -81,19 +85,49 @@ class _AddTaskToListViewState extends State<AddTaskToListView> {
                 child: ListView.builder(
                   itemCount: taskLists.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return RadioListTile(
-                      title: Row(
-                        children: [
-                          const Icon(Icons.list),
-                          Text(taskLists[index].name),
-                        ],
-                      ),
-                      value: null,
-                      groupValue: null,
-                      onChanged: (void value) {
-                        // context.read<TasksProvider>().setTemporarySelectedPriority('Low');
-                        Navigator.pop(context);
+                    return GestureDetector(
+                      onTap: () {
+                        context
+                            .read<TasksProvider>()
+                            .addTemporarilyAddedList(taskLists[index].name);
+                        Timer(const Duration(milliseconds: 1000), () {
+                          Navigator.pop(context);
+                        });
                       },
+                      child: ListTile(
+                        leading: MSHCheckbox(
+                          style: MSHCheckboxStyle.stroke,
+                          checkedColor: const Color.fromARGB(255, 0, 73, 133),
+                          size: 22,
+                          value: context
+                                  .read<TasksProvider>()
+                                  .temporarilyAddedList
+                                  .name ==
+                              taskLists[index].name,
+                          onChanged: (bool value) {
+                            context
+                                .read<TasksProvider>()
+                                .addTemporarilyAddedList(taskLists[index].name);
+                            Timer(const Duration(milliseconds: 1000), () {
+                              Navigator.pop(context);
+                            });
+                          },
+                        ),
+                        title: Row(
+                          children: [
+                            const Icon(Icons.list),
+                            Text(taskLists[index].name),
+                          ],
+                        ),
+                        // value: taskLists[index].name,
+                        // groupValue: taskLists[index],
+                        // onChanged: (void value) {
+                        //   context
+                        //       .read<TasksProvider>()
+                        //       .addTemporarilyAddedList(value as String);
+                        //   // Navigator.pop(context);
+                        // },
+                      ),
                     );
                   },
                 ),
