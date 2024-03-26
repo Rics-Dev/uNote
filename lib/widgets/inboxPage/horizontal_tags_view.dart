@@ -60,11 +60,6 @@ class HorizontalTagsView extends StatelessWidget {
                         position: badges.BadgePosition.topEnd(top: -5, end: 0),
                         badgeContent: Text(
                           tag.tasks.length.toString(),
-                          // allTasks
-                          //     .where((task) => task.tags.contains(tag))
-                          //     .length
-                          //     .toString(),
-                          // allTasks.where((task) => task.tags.contains(tag)).length.toString(),
                           style: const TextStyle(color: Colors.white),
                         ),
                         child: Padding(
@@ -215,13 +210,16 @@ class HorizontalTagsView extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Delete Tag? "$tag"'),
+          title: Text('Delete Tag? "${tag.name}"'),
           content: const Text('Are you sure you want to delete this tag?'),
           actions: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 3.0,
+                  ),
                   onPressed: () {
                     // Save changes
                     Navigator.pop(context);
@@ -229,9 +227,9 @@ class HorizontalTagsView extends StatelessWidget {
                   child: const Text('Cancel'),
                 ),
                 ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.red),
+                    style: ElevatedButton.styleFrom(
+                      elevation: 5.0,
+                      backgroundColor: Colors.red,
                     ),
                     onPressed: () {
                       // Save changes

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:utask/widgets/homePage/add_task_widgets/add_tast_to_list_modal.dart';
 
@@ -40,7 +41,7 @@ class _AddTaskViewState extends State<AddTaskView> {
 
     final dueDate = tasksProvider.dueDate;
     String? formattedDate =
-        dueDate != null ? DateFormat('EEEE, MMM d, y').format(dueDate) : null;
+        dueDate != null ? DateFormat('E d / M').format(dueDate) : null;
 
     final temporarilyAddedTags = tasksProvider.temporarilyAddedTags;
     final temporarilyAddedList = tasksProvider.temporarilyAddedList;
@@ -69,56 +70,57 @@ class _AddTaskViewState extends State<AddTaskView> {
                 const SizedBox(
                   height: 5,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            elevation: 3.0,
-                            shape: const CircleBorder(),
-                            padding: const EdgeInsets.all(10.0)),
-                        onPressed: () {
-                          showAddTagDialog(context);
-                        },
-                        child: const Icon(
-                          Icons.new_label_outlined,
-                          color: Color.fromARGB(255, 0, 73, 133),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: temporarilyAddedTags.map((tag) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 4.0, vertical: 8.0),
-                              child: Chip(
-                                // elevation: 2.0,
-                                label: Text(tag.name),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                deleteIconColor:
-                                    const Color.fromARGB(255, 0, 73, 133),
-                                deleteIcon:
-                                    const Icon(Icons.close_rounded, size: 18),
-                                onDeleted: () {
-                                  context
-                                      .read<TasksProvider>()
-                                      .removeTemporarilyAddedTags(tag);
-                                },
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.start,
+                //   children: [
+                //     Padding(
+                //       padding: const EdgeInsets.symmetric(vertical: 8.0),
+                //       child: ElevatedButton(
+                //         style: ElevatedButton.styleFrom(
+                //             elevation: 3.0,
+                //             shape: const CircleBorder(),
+                //             padding: const EdgeInsets.all(10.0)),
+                //         onPressed: () {
+                //           showAddTagDialog(context);
+                //         },
+                //         child: const Icon(
+                //           Icons.new_label_outlined,
+                //           color: Color.fromARGB(255, 0, 73, 133),
+                //         ),
+                //       ),
+                //     ),
+                //     Expanded(
+                //       child: SingleChildScrollView(
+                //         scrollDirection: Axis.horizontal,
+                //         child: Row(
+                //           children: temporarilyAddedTags.map((tag) {
+                //             return Padding(
+                //               padding: const EdgeInsets.symmetric(
+                //                   horizontal: 4.0, vertical: 8.0),
+                //               child: Chip(
+                //                 // elevation: 2.0,
+                //                 label: Text(tag.name),
+                //                 shape: RoundedRectangleBorder(
+                //                   borderRadius: BorderRadius.circular(20.0),
+                //                 ),
+                //                 deleteIconColor:
+                //                     const Color.fromARGB(255, 0, 73, 133),
+                //                 deleteIcon:
+                //                     const Icon(Icons.close_rounded, size: 18),
+                //                 onDeleted: () {
+                //                   context
+                //                       .read<TasksProvider>()
+                //                       .removeTemporarilyAddedTags(tag);
+                //                 },
+                //               ),
+                //             );
+                //           }).toList(),
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                const SizedBox(height: 10),
                 TextField(
                   controller: taskController,
                   // autofocus: true,
@@ -138,89 +140,93 @@ class _AddTaskViewState extends State<AddTaskView> {
                       context
                           .read<TasksProvider>()
                           .addTask(taskController.text);
-                      Navigator.pop(context, true);
+                      taskController.clear();
+                      // Navigator.pop(context, true);
                     } else {
                       toastEmptyTask(context);
                     }
                   },
                 ),
                 const SizedBox(height: 10.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    dueDate == null
-                        ? ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                elevation: 3.0,
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(10.0)),
-                            onPressed: () {
-                              showAddDueDateDialog(context);
-                            },
-                            child: const Icon(
-                              Icons.calendar_today_rounded,
-                              color: Color.fromARGB(255, 0, 73, 133),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      dueDate == null
+                          ? ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  elevation: 3.0,
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(10.0)),
+                              onPressed: () {
+                                showAddDueDateDialog(context);
+                              },
+                              child: const Icon(
+                                Icons.calendar_today_rounded,
+                                color: Color.fromARGB(255, 0, 73, 133),
+                              ),
+                            )
+                          : OutlinedButton.icon(
+                              onPressed: () {
+                                showAddDueDateDialog(context);
+                              },
+                              icon: const Icon(
+                                Icons.calendar_today_rounded,
+                                color: Color.fromARGB(255, 0, 73, 133),
+                              ),
+                              label: Text(formattedDate!),
                             ),
-                          )
-                        : OutlinedButton.icon(
-                            onPressed: () {
-                              showAddDueDateDialog(context);
-                            },
-                            icon: const Icon(
-                              Icons.calendar_today_rounded,
-                              color: Color.fromARGB(255, 0, 73, 133),
+                      temporarilyAddedList.name == ''
+                          ? ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  elevation: 3.0,
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(10.0)),
+                              onPressed: () {
+                                showAddListDialog(context);
+                              },
+                              child: const Icon(
+                                Icons.format_list_bulleted_rounded,
+                                color: Color.fromARGB(255, 0, 73, 133),
+                              ),
+                            )
+                          : OutlinedButton.icon(
+                              onPressed: () {
+                                showAddListDialog(context);
+                              },
+                              icon: const Icon(
+                                Icons.format_list_bulleted_rounded,
+                                color: Color.fromARGB(255, 0, 73, 133),
+                              ),
+                              label: Text(temporarilyAddedList.name),
                             ),
-                            label: Text(formattedDate!),
-                          ),
-                    temporarilyAddedList.name == ''
-                        ? ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                elevation: 3.0,
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(10.0)),
-                            onPressed: () {
-                              showAddListDialog(context);
-                            },
-                            child: const Icon(
-                              Icons.format_list_bulleted_rounded,
-                              color: Color.fromARGB(255, 0, 73, 133),
+                      temporarySelectedPriority == null
+                          ? ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  elevation: 3.0,
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(10.0)),
+                              onPressed: () {
+                                showAddPriorityDialog(context);
+                              },
+                              child: const Icon(
+                                Icons.flag_outlined,
+                                color: Color.fromARGB(255, 0, 73, 133),
+                              ),
+                            )
+                          : OutlinedButton.icon(
+                              onPressed: () {
+                                showAddPriorityDialog(context);
+                              },
+                              icon: const Icon(
+                                Icons.flag_outlined,
+                                color: Color.fromARGB(255, 0, 73, 133),
+                              ),
+                              label: Text(temporarySelectedPriority),
                             ),
-                          )
-                        : OutlinedButton.icon(
-                            onPressed: () {
-                              showAddListDialog(context);
-                            },
-                            icon: const Icon(
-                              Icons.format_list_bulleted_rounded,
-                              color: Color.fromARGB(255, 0, 73, 133),
-                            ),
-                            label: Text(temporarilyAddedList.name),
-                          ),
-                    temporarySelectedPriority == null
-                        ? ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                elevation: 3.0,
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(10.0)),
-                            onPressed: () {
-                              showAddPriorityDialog(context);
-                            },
-                            child: const Icon(
-                              Icons.flag_outlined,
-                              color: Color.fromARGB(255, 0, 73, 133),
-                            ),
-                          )
-                        : OutlinedButton.icon(
-                            onPressed: () {
-                              showAddPriorityDialog(context);
-                            },
-                            icon: const Icon(
-                              Icons.flag_outlined,
-                              color: Color.fromARGB(255, 0, 73, 133),
-                            ),
-                            label: Text(temporarySelectedPriority),
-                          ),
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20.0),
                 Center(
@@ -233,7 +239,8 @@ class _AddTaskViewState extends State<AddTaskView> {
                         context
                             .read<TasksProvider>()
                             .addTask(taskController.text);
-                        Navigator.pop(context, true);
+                        taskController.clear();
+                        // Navigator.pop(context, true);
                       } else {
                         toastEmptyTask(context);
                       }

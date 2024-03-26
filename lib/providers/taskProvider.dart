@@ -39,7 +39,7 @@ class TasksProvider extends ChangeNotifier {
   bool _isSearchingTasks = false;
   bool _isTimeSet = false;
   List<TaskList> _taskLists = [];
-  final TaskList _temporarilyAddedList =
+  TaskList _temporarilyAddedList =
       TaskList(name: '', createdAt: DateTime.now(), updatedAt: DateTime.now());
 
   SortCriteria _sortCriteria = SortCriteria.creationDate;
@@ -70,6 +70,7 @@ class TasksProvider extends ChangeNotifier {
   }
 
   void _init() async {
+    // taskListBox.removeAll();
     final taskList = taskListBox.getAll();
     final tasksStream = objectbox.getTasks();
     tasksStream.listen(_onTasksChanged);
@@ -113,9 +114,6 @@ class TasksProvider extends ChangeNotifier {
     for (final tag in tags) {
       tagBox.put(tag);
     }
-    if (_temporarilyAddedList.name.isNotEmpty) {
-      taskListBox.put(_temporarilyAddedList);
-    }
 
     //-------------------------------------------
 
@@ -133,16 +131,30 @@ class TasksProvider extends ChangeNotifier {
       _filteredTasks.add(task);
     }
 
-    task.tags.addAll(tags);
-
-    if (_temporarilyAddedList.name != '') {
-      task.list.target = _temporarilyAddedList;
+    final taskList = _temporarilyAddedList;
+    if (taskList.name.isNotEmpty) {
+      final alreadyExistingTaskList = taskListBox
+          .query(TaskList_.name.equals(taskList.name))
+          .build()
+          .findFirst();
+      if (alreadyExistingTaskList != null) {
+        task.list.target = alreadyExistingTaskList;
+        alreadyExistingTaskList.tasks.add(task);
+        taskListBox.put(alreadyExistingTaskList);
+      } else {
+        task.list.target = taskList;
+        // taskList.tasks.add(task); // ne fonctionne pas
+        taskListBox.put(taskList);
+      }
     }
+
+    task.tags.addAll(tags);
 
     taskBox.put(task);
 
     _selectedTags.clear();
     _selectedPriority.clear();
+    _temporarilyAddedList.id = 0;
     _temporarilyAddedList.name = '';
     _temporarilyAddedTags = [];
     _temporarySelectedPriority = null;
@@ -150,11 +162,33 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addList(String listName){
-    final taskList = TaskList(name: listName, createdAt: DateTime.now(), updatedAt: DateTime.now());
-    taskListBox.put(taskList);
-    notifyListeners();
+  //Done
+  verifyExistingList(String listName) {
+    return taskListBox
+        .query(TaskList_.name.equals(listName))
+        .build()
+        .findFirst();
+  }
 
+  //Done
+  void addList(String listName) {
+    final taskList = TaskList(
+        name: listName, createdAt: DateTime.now(), updatedAt: DateTime.now());
+    taskListBox.put(taskList);
+
+    notifyListeners();
+  }
+
+  //Done
+  void deleteList(int id) {
+    final taskList = taskListBox.get(id);
+    if (taskList!.tasks.isNotEmpty) {
+      for (final task in taskList.tasks) {
+        taskBox.remove(task.id);
+      }
+    }
+    taskListBox.remove(id);
+    // notifyListeners();
   }
 
   void deleteTask(int taskId) {
@@ -192,6 +226,11 @@ class TasksProvider extends ChangeNotifier {
     if (updatedTask != null) {
       updatedTask.isDone = isDone;
       updatedTask.updatedAt = DateTime.now();
+      if (updatedTask.list.target != null) {
+        final taskList = updatedTask.list.target!;
+        taskList.updatedAt = DateTime.now();
+        taskListBox.put(taskList);
+      }
       taskBox.put(updatedTask);
     }
     notifyListeners();
@@ -382,9 +421,9 @@ class TasksProvider extends ChangeNotifier {
     tasksToSort.sort((a, b) {
       switch (sortCriteria) {
         case SortCriteria.creationDate:
-          return _sortByDate(a.createdAt, b.createdAt);
+          return sortByDate(a.createdAt, b.createdAt);
         case SortCriteria.editionDate:
-          return _sortByDate(a.updatedAt, b.updatedAt);
+          return sortByDate(a.updatedAt, b.updatedAt);
         case SortCriteria.nameAZ:
           return a.name.compareTo(b.name);
         case SortCriteria.nameZA:
@@ -403,12 +442,16 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  int _sortByDate(DateTime a, DateTime b) {
+  int sortByDate(DateTime a, DateTime b) {
     return _oldToNew ? a.compareTo(b) : b.compareTo(a);
   }
 
   void setDisposition(String s) {
     _disposition = s;
     notifyListeners();
+  }
+
+  void setTemporaySelectedList(TaskList taskList) {
+    _temporarilyAddedList = taskList;
   }
 }

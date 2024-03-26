@@ -9,6 +9,8 @@ import '../../models/entities.dart';
 import '../../providers/drag_provider.dart';
 import '../../providers/taskProvider.dart';
 import '../../providers/task_provider.dart';
+import 'horizontal_tags_view.dart';
+import 'search_disposition_view.dart';
 
 class TasksViewInboxPage extends StatelessWidget {
   const TasksViewInboxPage({
@@ -32,7 +34,9 @@ class TasksViewInboxPage extends StatelessWidget {
       tasks = tasksProvider.tasks;
     }
 
-    final notDoneTasks = tasks.where((task) => !task.isDone).toList();
+    final notDoneTasks = tasks
+        .where((task) => !task.isDone && task.list.target == null)
+        .toList();
     final doneTasks = tasks.where((task) => task.isDone).toList();
 
     return Expanded(
@@ -52,9 +56,11 @@ class TasksViewInboxPage extends StatelessWidget {
               ),
             )
           : ListView.builder(
-              itemCount: notDoneTasks.length + (doneTasks.isNotEmpty ? 1 : 0),
+              itemCount:
+                  notDoneTasks.length + (doneTasks.isNotEmpty ? 1 : 0),
               itemBuilder: (context, index) {
-                return buildTaskItem(context, notDoneTasks, doneTasks, index);
+                return buildTaskItem(
+                    context, notDoneTasks, doneTasks, index);
               },
             ),
     );

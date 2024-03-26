@@ -90,7 +90,7 @@ class _AddTaskToListViewState extends State<AddTaskToListView> {
                         context
                             .read<TasksProvider>()
                             .addTemporarilyAddedList(taskLists[index].name);
-                        Timer(const Duration(milliseconds: 1000), () {
+                        Timer(const Duration(milliseconds: 800), () {
                           Navigator.pop(context);
                         });
                       },
