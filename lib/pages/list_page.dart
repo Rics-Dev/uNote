@@ -20,9 +20,8 @@ class ListPage extends StatefulWidget {
 }
 
 class _ListPageState extends State<ListPage> {
+  final ExpansionTileController controller = ExpansionTileController();
   final TextEditingController listController = TextEditingController();
-
-  bool isKeyBoardOpened = false;
 
   @override
   void dispose() {
@@ -52,6 +51,8 @@ class _ListPageState extends State<ListPage> {
   Widget build(BuildContext context) {
     final tasksProvider = context.watch<TasksProvider>();
     final taskLists = tasksProvider.taskLists;
+
+    List<bool> isKeyBoardOpenedList = tasksProvider.isKeyBoardOpenedList;
 
     return Center(
       child: Column(
@@ -131,6 +132,14 @@ class _ListPageState extends State<ListPage> {
                             ],
                           ),
                           child: ExpansionTile(
+                            onExpansionChanged: (value) {
+                              if (value) {
+                                context
+                                    .read<TasksProvider>()
+                                    .setIsKeyboardOpened(false, index);
+                              }
+                            },
+                            initiallyExpanded: false,
                             leading: const Icon(Icons.list),
                             iconColor: Colors.white,
                             collapsedIconColor: Colors.white,
@@ -147,7 +156,6 @@ class _ListPageState extends State<ListPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
-                            initiallyExpanded: true,
                             title: Row(
                               children: [
                                 GestureDetector(
@@ -171,7 +179,7 @@ class _ListPageState extends State<ListPage> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ),
-                                const SizedBox(width: 20),
+                                const SizedBox(width: 10),
                                 Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: const BoxDecoration(
@@ -185,16 +193,22 @@ class _ListPageState extends State<ListPage> {
                                   ),
                                 ),
                                 const SizedBox(
-                                  width: 10,
+                                  width: 20,
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      isKeyBoardOpened = true;
-                                    });
-                                  },
-                                  child: const Icon(Icons.add),
-                                ),
+                                Builder(builder: (context) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      ExpansionTileController.of(context)
+                                          .expand();
+                                      context
+                                          .read<TasksProvider>()
+                                          .setIsKeyboardOpened(
+                                              !isKeyBoardOpenedList[index],
+                                              index);
+                                    },
+                                    child: const Icon(Icons.add),
+                                  );
+                                }),
                               ],
                             ),
                             children: [
@@ -203,6 +217,23 @@ class _ListPageState extends State<ListPage> {
                                 itemCount: taskLists[index].tasks.length,
                                 itemBuilder: (context, taskIndex) {
                                   return ListTile(
+                                    // trailing: IconButton(
+                                    //   icon: const Icon(Icons.delete),
+                                    //   onPressed: () {
+                                    //     context
+                                    //         .read<TasksProvider>()
+                                    //         .deleteTask(taskLists[index]
+                                    //             .tasks[taskIndex]
+                                    //             .id);
+                                    //   },
+                                    // ),
+                                    trailing: IconButton(
+                                      icon: const Icon(
+                                        Icons.more_vert_rounded,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () {},
+                                    ),
                                     leading: MSHCheckbox(
                                       size: 24,
                                       value: taskLists[index]
@@ -246,7 +277,7 @@ class _ListPageState extends State<ListPage> {
                                   );
                                 },
                               ),
-                              isKeyBoardOpened
+                              isKeyBoardOpenedList[index]
                                   ? Padding(
                                       padding: const EdgeInsets.fromLTRB(
                                           0, 0.0, 8.0, 12.0),
@@ -260,9 +291,11 @@ class _ListPageState extends State<ListPage> {
                                           context.read<TasksProvider>().addTask(
                                                 value,
                                               );
-                                          setState(() {
-                                            isKeyBoardOpened = false;
-                                          });
+                                          context
+                                              .read<TasksProvider>()
+                                              .setIsKeyboardOpened(
+                                                  !isKeyBoardOpenedList[index],
+                                                  index);
                                         },
                                         cursorColor: Colors.white,
                                         style: const TextStyle(
@@ -276,9 +309,12 @@ class _ListPageState extends State<ListPage> {
                                                   .addTask(
                                                     listController.text,
                                                   );
-                                              setState(() {
-                                                isKeyBoardOpened = false;
-                                              });
+                                              context
+                                                  .read<TasksProvider>()
+                                                  .setIsKeyboardOpened(
+                                                      !isKeyBoardOpenedList[
+                                                          index],
+                                                      index);
                                             },
                                             child: const Icon(
                                               Icons.add_circle_outline_rounded,

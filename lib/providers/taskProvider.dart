@@ -42,8 +42,10 @@ class TasksProvider extends ChangeNotifier {
   TaskList _temporarilyAddedList =
       TaskList(name: '', createdAt: DateTime.now(), updatedAt: DateTime.now());
 
+  List<bool> isKeyBoardOpenedList = [];
+
   SortCriteria _sortCriteria = SortCriteria.creationDate;
-  FilterCriteria _filterCriteria = FilterCriteria.tags;
+  FilterCriteria _filterCriteria = FilterCriteria.priority;
 
   List<Task> get tasks => _tasks;
   List<Task> get filteredTasks => _filteredTasks;
@@ -92,6 +94,7 @@ class TasksProvider extends ChangeNotifier {
 
   void _onTaskListsChanged(List<TaskList> taskLists) {
     _taskLists = taskLists;
+    isKeyBoardOpenedList = List.filled(_taskLists.length, false);
     notifyListeners();
   }
 
@@ -453,5 +456,10 @@ class TasksProvider extends ChangeNotifier {
 
   void setTemporaySelectedList(TaskList taskList) {
     _temporarilyAddedList = taskList;
+  }
+
+  void setIsKeyboardOpened(bool bool, int index) {
+    isKeyBoardOpenedList[index] = bool;
+    notifyListeners();
   }
 }

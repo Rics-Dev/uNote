@@ -26,7 +26,7 @@ class HorizontalTagsView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
       child: Row(
         mainAxisAlignment: filterCriteria == FilterCriteria.priority
-            ? MainAxisAlignment.spaceBetween
+            ? MainAxisAlignment.spaceEvenly
             : MainAxisAlignment.start,
         children: [
           selectedTags.isNotEmpty
@@ -129,7 +129,8 @@ class HorizontalTagsView extends StatelessWidget {
                       badgeContent: Text(
                         allTasks
                             .where((task) =>
-                                task.priority?.contains(priority) ?? false)
+                                (task.priority?.contains(priority) ?? false) &&
+                                (task.list.target == null))
                             .length
                             .toString(),
                         style: const TextStyle(color: Colors.white),
@@ -185,20 +186,20 @@ class HorizontalTagsView extends StatelessWidget {
                     );
                   }).toList(),
                 ),
-          IconButton.outlined(
-            color: const Color.fromARGB(255, 0, 73, 133),
-            icon: Icon(
-              filterCriteria == FilterCriteria.tags
-                  ? Icons.flag_outlined
-                  : Icons.label_outline_rounded,
-              color: const Color.fromARGB(255, 0, 73, 133),
-            ),
-            onPressed: () {
-              filterCriteria == FilterCriteria.tags
-                  ? tasksProvider.toggleFilterByPriority()
-                  : tasksProvider.toggleFilterByTags();
-            },
-          ),
+          // IconButton.outlined(
+          //   color: const Color.fromARGB(255, 0, 73, 133),
+          //   icon: Icon(
+          //     filterCriteria == FilterCriteria.tags
+          //         ? Icons.flag_outlined
+          //         : Icons.label_outline_rounded,
+          //     color: const Color.fromARGB(255, 0, 73, 133),
+          //   ),
+          //   onPressed: () {
+          //     filterCriteria == FilterCriteria.tags
+          //         ? tasksProvider.toggleFilterByPriority()
+          //         : tasksProvider.toggleFilterByTags();
+          //   },
+          // ),
         ],
       ),
     );

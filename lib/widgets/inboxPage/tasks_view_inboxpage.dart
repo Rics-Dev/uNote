@@ -56,11 +56,9 @@ class TasksViewInboxPage extends StatelessWidget {
               ),
             )
           : ListView.builder(
-              itemCount:
-                  notDoneTasks.length + (doneTasks.isNotEmpty ? 1 : 0),
+              itemCount: notDoneTasks.length + (doneTasks.isNotEmpty ? 1 : 0),
               itemBuilder: (context, index) {
-                return buildTaskItem(
-                    context, notDoneTasks, doneTasks, index);
+                return buildTaskItem(context, notDoneTasks, doneTasks, index);
               },
             ),
     );

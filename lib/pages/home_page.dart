@@ -52,10 +52,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final tasksProvider = context.watch<TasksProvider>();
+    final taskLists = tasksProvider.taskLists;
     bool keyboardIsOpened = MediaQuery.of(context).viewInsets.bottom != 0.0;
 
     return DefaultTabController(
-      length: 2,
+      length: taskLists.length + 2,
       child: Scaffold(
         appBar: AppBar(
           // leading: IconButton(
@@ -91,7 +93,9 @@ class _HomePageState extends State<HomePage> {
                 onWillAcceptWithDetails: (data) => true,
                 onAcceptWithDetails: (DragTargetDetails<Object> data) {
                   final draggableData = data.data;
-                  context.read<TasksProvider>().deleteTask(draggableData as int);
+                  context
+                      .read<TasksProvider>()
+                      .deleteTask(draggableData as int);
                 }),
         extendBody: true,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
