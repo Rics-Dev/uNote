@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
 import '../providers/drag_provider.dart';
 import '../providers/taskProvider.dart';
+import '../widgets/homePage/add_note_modal.dart';
 import '../widgets/homePage/add_task_widgets/add_task_modal.dart';
 import '../widgets/homePage/build_body_home_page.dart';
 import '../widgets/homePage/calendar_view.dart';
@@ -34,6 +35,14 @@ class _HomePageState extends State<HomePage> {
     return showModalBottomSheet(
       context: context,
       builder: (context) => const AddTaskView(),
+      isScrollControlled: true,
+    );
+  }
+
+  Future<dynamic> _showAddNoteDialog(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) => const AddNoteView(),
       isScrollControlled: true,
     );
   }
@@ -145,7 +154,11 @@ class _HomePageState extends State<HomePage> {
                   child: const Icon(Icons.delete_outline_rounded,
                       color: Colors.white, size: 38),
                   onPressed: () {
-                    _showAddTaskDialog(context);
+                    if (_bottomNavIndex == 0) {
+                      _showAddNoteDialog(context);
+                    } else {
+                      _showAddTaskDialog(context);
+                    }
                   },
                 ),
               )
@@ -161,7 +174,11 @@ class _HomePageState extends State<HomePage> {
                   child: const Icon(Icons.delete_outline_rounded,
                       color: Colors.white, size: 38),
                   onPressed: () {
-                    _showAddTaskDialog(context);
+                    if (_bottomNavIndex == 0) {
+                      _showAddNoteDialog(context);
+                    } else {
+                      _showAddTaskDialog(context);
+                    }
                   },
                 ),
               )
@@ -171,7 +188,11 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: const Color.fromARGB(255, 0, 73, 133),
             child: const Icon(Icons.add_rounded, color: Colors.white, size: 38),
             onPressed: () {
-              _showAddTaskDialog(context);
+              if (_bottomNavIndex == 0) {
+                _showAddNoteDialog(context);
+              } else {
+                _showAddTaskDialog(context);
+              }
             },
           );
   }

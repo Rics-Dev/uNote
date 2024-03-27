@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:utask/providers/note_provider.dart';
 import 'database/objectbox.dart';
 import 'providers/drag_provider.dart';
 import 'providers/list_provider.dart';
@@ -17,9 +18,9 @@ void main() async {
     providers: [
       ChangeNotifierProvider<TasksAPI>(create: (context) => TasksAPI()),
       ChangeNotifierProvider<TasksProvider>(create: (context) => TasksProvider()),
+      ChangeNotifierProvider<NotesProvider>(create: (context) => NotesProvider()),
       ChangeNotifierProvider<ListsAPI>(create: (context) => ListsAPI()),
-      ChangeNotifierProvider<DragStateProvider>(
-          create: (context) => DragStateProvider()),
+      ChangeNotifierProvider<DragStateProvider>(create: (context) => DragStateProvider()),
     ],
     child: MyApp(router: router),
   ));

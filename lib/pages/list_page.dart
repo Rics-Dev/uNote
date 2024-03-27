@@ -74,6 +74,11 @@ class _ListPageState extends State<ListPage> {
             // height: 60,
             duration: const Duration(milliseconds: 300),
             child: TextField(
+              onTap: () {
+                setState(() {
+                  isAddingList = true;
+                });
+              },
               controller: listController,
               maxLines: 1,
               onSubmitted: (value) {
@@ -86,7 +91,6 @@ class _ListPageState extends State<ListPage> {
                 suffix: const Text('Add'),
                 prefixIcon: GestureDetector(
                   onTap: () {
-                    addList(listController.text);
                     setState(() {
                       isAddingList = true;
                     });
@@ -155,6 +159,9 @@ class _ListPageState extends State<ListPage> {
                         child: ExpansionTile(
                           onExpansionChanged: (value) {
                             if (value) {
+                              setState(() {
+                                isAddingList = false;
+                              });
                               context
                                   .read<TasksProvider>()
                                   .setIsKeyboardOpened(false, index);
