@@ -151,10 +151,15 @@ class _ListPageState extends State<ListPage> {
                             collapsedIconColor: Colors.white,
                             textColor: Colors.white,
                             collapsedTextColor: Colors.white,
+
                             collapsedBackgroundColor:
                                 const Color.fromARGB(255, 0, 73, 133),
                             backgroundColor:
                                 const Color.fromARGB(255, 0, 73, 133),
+                            // collapsedBackgroundColor: Colors.blue[100],
+                            // backgroundColor: Colors.blue[100],
+                            // collapsedBackgroundColor: const Color(0xFFF7F7F7),
+                            // backgroundColor: const Color(0xFFF7F7F7),
                             childrenPadding: const EdgeInsets.only(left: 20),
                             collapsedShape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
