@@ -166,6 +166,26 @@ class TasksViewInboxPage extends StatelessWidget {
       // const Spacer(),
       trailing: PullDownButton(
         itemBuilder: (context) => [
+          // PullDownMenuItem(
+          //   icon: Icons.arrow_forward_rounded,
+          //   title: 'Move to list',
+          //   onTap: () async {
+          //     await showPullDownMenu(
+          //       context: context,
+          //       items: [
+          //         PullDownMenuItem(
+          //           title: 'Disconnect',
+          //           onTap: () {},
+          //           icon: Icons.logout,
+          //           isDestructive: true,
+          //           iconColor: Colors.red,
+          //         ),
+          //       ],
+          //       position: ,
+          //     );
+          //   },
+          // ),
+          // const PullDownMenuDivider(),
           PullDownMenuItem(
             icon: Icons.edit,
             title: 'Edit',

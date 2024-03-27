@@ -24,6 +24,8 @@ class _ListPageState extends State<ListPage> {
   final ExpansionTileController controller = ExpansionTileController();
   final TextEditingController listController = TextEditingController();
 
+  bool isAddingList = false;
+
   @override
   void dispose() {
     listController.dispose();
@@ -56,23 +58,38 @@ class _ListPageState extends State<ListPage> {
     List<bool> isKeyBoardOpenedList = tasksProvider.isKeyBoardOpenedList;
     List<List<bool>> isEditingTask = tasksProvider.isEditingTask;
 
-    return Builder(builder: (context) {
-      return Column(
-        children: [
-          const SizedBox(height: 20),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.80,
+    return Column(
+      children: [
+        // const SizedBox(height: 20),
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              isAddingList = true;
+            });
+          },
+          child: AnimatedContainer(
+            width: isAddingList
+                ? MediaQuery.of(context).size.width * 0.8
+                : MediaQuery.of(context).size.width * 0.45,
+            // height: 60,
+            duration: const Duration(milliseconds: 300),
             child: TextField(
               controller: listController,
               maxLines: 1,
               onSubmitted: (value) {
                 addList(value);
+                setState(() {
+                  isAddingList = false;
+                });
               },
               decoration: InputDecoration(
                 suffix: const Text('Add'),
-                suffixIcon: GestureDetector(
+                prefixIcon: GestureDetector(
                   onTap: () {
                     addList(listController.text);
+                    setState(() {
+                      isAddingList = true;
+                    });
                   },
                   child: const Icon(
                     Icons.add_circle_outline_rounded,
@@ -89,410 +106,397 @@ class _ListPageState extends State<ListPage> {
                 border: const OutlineInputBorder(
                   borderSide: BorderSide.none,
                   borderRadius: BorderRadius.all(
-                    Radius.circular(20),
+                    Radius.circular(50),
                   ),
                 ),
                 hintText: 'Add a List',
               ),
             ),
           ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: taskLists.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 12),
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onLongPress: () {
-                          deleteList(context, taskLists, index);
+        ),
+        const SizedBox(height: 20),
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: taskLists.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 12),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onLongPress: () {
+                        deleteList(context, taskLists, index);
+                      },
+                      child: Dismissible(
+                        direction: DismissDirection.endToStart,
+                        key: Key(taskLists[index].id.toString()),
+                        onDismissed: (direction) {
+                          context
+                              .read<TasksProvider>()
+                              .deleteList(taskLists[index].id);
                         },
-                        child: Dismissible(
-                          direction: DismissDirection.endToStart,
-                          key: Key(taskLists[index].id.toString()),
-                          onDismissed: (direction) {
-                            context
-                                .read<TasksProvider>()
-                                .deleteList(taskLists[index].id);
+                        confirmDismiss: (direction) {
+                          return deleteList(context, taskLists, index);
+                        },
+                        background: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 20),
+                              child: SvgPicture.asset(
+                                'assets/trash-2.svg',
+                                // ignore: deprecated_member_use
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                        child: ExpansionTile(
+                          onExpansionChanged: (value) {
+                            if (value) {
+                              context
+                                  .read<TasksProvider>()
+                                  .setIsKeyboardOpened(false, index);
+                              context
+                                  .read<TasksProvider>()
+                                  .setIsEditingTask(false, index, -1);
+                            }
                           },
-                          confirmDismiss: (direction) {
-                            return deleteList(context, taskLists, index);
-                          },
-                          background: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                          initiallyExpanded: false,
+                          leading: const Icon(Icons.list),
+                          iconColor: Colors.white,
+                          collapsedIconColor: Colors.white,
+                          textColor: Colors.white,
+                          collapsedTextColor: Colors.white,
+
+                          collapsedBackgroundColor:
+                              const Color.fromARGB(255, 0, 73, 133),
+                          backgroundColor:
+                              const Color.fromARGB(255, 0, 73, 133),
+                          // collapsedBackgroundColor: Colors.blue[100],
+                          // backgroundColor: Colors.blue[100],
+                          // collapsedBackgroundColor: const Color(0xFFF7F7F7),
+                          // backgroundColor: const Color(0xFFF7F7F7),
+                          childrenPadding: const EdgeInsets.only(left: 20),
+                          collapsedShape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          title: Row(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 20),
-                                child: SvgPicture.asset(
-                                  'assets/trash-2.svg',
-                                  // ignore: deprecated_member_use
-                                  color: Colors.red,
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    taskLists[index].tasks.sort((a, b) {
+                                      if (a.isDone && !b.isDone) {
+                                        return 1;
+                                      } else if (!a.isDone && b.isDone) {
+                                        return -1;
+                                      } else {
+                                        return 0;
+                                      }
+                                    });
+                                  });
+                                },
+                                child: Text(
+                                  taskLists[index].name,
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
+                              const SizedBox(width: 10),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  taskLists[index].tasks.length.toString(),
+                                  style: const TextStyle(
+                                      fontSize: 14, color: Colors.black),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              Builder(builder: (context) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    ExpansionTileController.of(context)
+                                        .expand();
+                                    context
+                                        .read<TasksProvider>()
+                                        .setIsKeyboardOpened(
+                                            !isKeyBoardOpenedList[index],
+                                            index);
+                                  },
+                                  child: const Icon(Icons.add),
+                                );
+                              }),
                             ],
                           ),
-                          child: ExpansionTile(
-                            onExpansionChanged: (value) {
-                              if (value) {
-                                context
-                                    .read<TasksProvider>()
-                                    .setIsKeyboardOpened(false, index);
-                                context
-                                    .read<TasksProvider>()
-                                    .setIsEditingTask(false, index, -1);
-                              }
-                            },
-                            initiallyExpanded: false,
-                            leading: const Icon(Icons.list),
-                            iconColor: Colors.white,
-                            collapsedIconColor: Colors.white,
-                            textColor: Colors.white,
-                            collapsedTextColor: Colors.white,
-
-                            collapsedBackgroundColor:
-                                const Color.fromARGB(255, 0, 73, 133),
-                            backgroundColor:
-                                const Color.fromARGB(255, 0, 73, 133),
-                            // collapsedBackgroundColor: Colors.blue[100],
-                            // backgroundColor: Colors.blue[100],
-                            // collapsedBackgroundColor: const Color(0xFFF7F7F7),
-                            // backgroundColor: const Color(0xFFF7F7F7),
-                            childrenPadding: const EdgeInsets.only(left: 20),
-                            collapsedShape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            title: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      taskLists[index].tasks.sort((a, b) {
-                                        if (a.isDone && !b.isDone) {
-                                          return 1;
-                                        } else if (!a.isDone && b.isDone) {
-                                          return -1;
-                                        } else {
-                                          return 0;
-                                        }
-                                      });
-                                    });
-                                  },
-                                  child: Text(
-                                    taskLists[index].name,
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Text(
-                                    taskLists[index].tasks.length.toString(),
-                                    style: const TextStyle(
-                                        fontSize: 14, color: Colors.black),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Builder(builder: (context) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      ExpansionTileController.of(context)
-                                          .expand();
-                                      context
-                                          .read<TasksProvider>()
-                                          .setIsKeyboardOpened(
-                                              !isKeyBoardOpenedList[index],
-                                              index);
-                                    },
-                                    child: const Icon(Icons.add),
-                                  );
-                                }),
-                              ],
-                            ),
-                            children: [
-                              ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: taskLists[index].tasks.length,
-                                itemBuilder: (context, taskIndex) {
-                                  return ListTile(
-                                    trailing: PullDownButton(
-                                      itemBuilder: (context) => [
-                                        PullDownMenuItem(
-                                          icon: Icons.delete,
-                                          isDestructive: true,
-                                          title: 'Delete',
-                                          onTap: () {
-                                            context
-                                                .read<TasksProvider>()
-                                                .deleteTask(taskLists[index]
-                                                    .tasks[taskIndex]
-                                                    .id);
-                                          },
-                                        ),
-                                      ],
-                                      buttonBuilder: (context, showMenu) =>
-                                          IconButton(
-                                        onPressed: showMenu,
-                                        icon: const Icon(
-                                          Icons.more_vert,
-                                          color: Colors.white,
-                                        ),
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: taskLists[index].tasks.length,
+                              itemBuilder: (context, taskIndex) {
+                                return ListTile(
+                                  trailing: PullDownButton(
+                                    itemBuilder: (context) => [
+                                      PullDownMenuItem(
+                                        icon: Icons.delete,
+                                        isDestructive: true,
+                                        title: 'Delete',
+                                        onTap: () {
+                                          context
+                                              .read<TasksProvider>()
+                                              .deleteTask(taskLists[index]
+                                                  .tasks[taskIndex]
+                                                  .id);
+                                        },
+                                      ),
+                                    ],
+                                    buttonBuilder: (context, showMenu) =>
+                                        IconButton(
+                                      onPressed: showMenu,
+                                      icon: const Icon(
+                                        Icons.more_vert,
+                                        color: Colors.white,
                                       ),
                                     ),
-                                    leading: MSHCheckbox(
-                                      size: 24,
-                                      value: taskLists[index]
-                                          .tasks[taskIndex]
-                                          .isDone,
-                                      colorConfig: MSHColorConfig
-                                          .fromCheckedUncheckedDisabled(
-                                              // checkedColor:
-                                              // const Color.fromARGB(255, 0, 73, 133),
-                                              // Colors.white,
+                                  ),
+                                  leading: MSHCheckbox(
+                                    size: 24,
+                                    value: taskLists[index]
+                                        .tasks[taskIndex]
+                                        .isDone,
+                                    colorConfig: MSHColorConfig
+                                        .fromCheckedUncheckedDisabled(
+                                            // checkedColor:
+                                            // const Color.fromARGB(255, 0, 73, 133),
+                                            // Colors.white,
+                                            ),
+                                    style: MSHCheckboxStyle.fillScaleCheck,
+                                    onChanged: (selected) {
+                                      context.read<TasksProvider>().updateTask(
+                                          taskLists[index].tasks[taskIndex].id,
+                                          selected);
+                                    },
+                                  ),
+                                  textColor: Colors.white,
+                                  // subtitle: taskLists[index]
+                                  //             .tasks[taskIndex]
+                                  //             .dueDate !=
+                                  //         null
+                                  //     ? Text(taskLists[index]
+                                  //         .tasks[taskIndex]
+                                  //         .dueDate!
+                                  //         .day
+                                  //         .toString())
+                                  //     : null,
+                                  title: GestureDetector(
+                                    onTap: () {
+                                      context
+                                          .read<TasksProvider>()
+                                          .setIsEditingTask(
+                                              true, index, taskIndex);
+                                    },
+                                    child: isEditingTask[index][taskIndex]
+                                        ? TextField(
+                                            autofocus: true,
+                                            onSubmitted: (value) {
+                                              context
+                                                  .read<TasksProvider>()
+                                                  .updateTaskName(
+                                                      taskLists[index]
+                                                          .tasks[taskIndex]
+                                                          .id,
+                                                      value);
+                                              context
+                                                  .read<TasksProvider>()
+                                                  .setIsEditingTask(
+                                                      false, index, taskIndex);
+                                            },
+                                            cursorColor: Colors.white,
+                                            style: const TextStyle(
+                                                color: Colors.white),
+                                            decoration: InputDecoration(
+                                              suffix: const Text('Edit'),
+                                              suffixIcon: GestureDetector(
+                                                onTap: () {
+                                                  context
+                                                      .read<TasksProvider>()
+                                                      .updateTaskName(
+                                                          taskLists[index]
+                                                              .tasks[taskIndex]
+                                                              .id,
+                                                          listController.text);
+                                                  context
+                                                      .read<TasksProvider>()
+                                                      .setIsEditingTask(false,
+                                                          index, taskIndex);
+                                                },
+                                                child: const Icon(
+                                                  Icons.edit,
+                                                  color: Colors.white,
+                                                ),
                                               ),
-                                      style: MSHCheckboxStyle.fillScaleCheck,
-                                      onChanged: (selected) {
-                                        context
-                                            .read<TasksProvider>()
-                                            .updateTask(
-                                                taskLists[index]
-                                                    .tasks[taskIndex]
-                                                    .id,
-                                                selected);
-                                      },
-                                    ),
-                                    textColor: Colors.white,
-                                    // subtitle: taskLists[index]
-                                    //             .tasks[taskIndex]
-                                    //             .dueDate !=
-                                    //         null
-                                    //     ? Text(taskLists[index]
-                                    //         .tasks[taskIndex]
-                                    //         .dueDate!
-                                    //         .day
-                                    //         .toString())
-                                    //     : null,
-                                    title: GestureDetector(
-                                      onTap: () {
-                                        context
-                                            .read<TasksProvider>()
-                                            .setIsEditingTask(
-                                                true, index, taskIndex);
-                                      },
-                                      child: isEditingTask[index][taskIndex]
-                                          ? TextField(
-                                              autofocus: true,
-                                              onSubmitted: (value) {
-                                                context
-                                                    .read<TasksProvider>()
-                                                    .updateTaskName(
-                                                        taskLists[index]
-                                                            .tasks[taskIndex]
-                                                            .id,
-                                                        value);
-                                                context
-                                                    .read<TasksProvider>()
-                                                    .setIsEditingTask(false,
-                                                        index, taskIndex);
-                                              },
-                                              cursorColor: Colors.white,
-                                              style: const TextStyle(
-                                                  color: Colors.white),
-                                              decoration: InputDecoration(
-                                                suffix: const Text('Edit'),
-                                                suffixIcon: GestureDetector(
-                                                  onTap: () {
-                                                    context
-                                                        .read<TasksProvider>()
-                                                        .updateTaskName(
-                                                            taskLists[index]
-                                                                .tasks[
-                                                                    taskIndex]
-                                                                .id,
-                                                            listController
-                                                                .text);
-                                                    context
-                                                        .read<TasksProvider>()
-                                                        .setIsEditingTask(false,
-                                                            index, taskIndex);
-                                                  },
-                                                  child: const Icon(
-                                                    Icons.edit,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                hintStyle: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: Color.fromARGB(
-                                                      255, 0, 73, 133),
-                                                ),
-                                                filled: false,
-                                                fillColor: const Color.fromARGB(
-                                                    255, 235, 235, 235),
-                                                border:
-                                                    const OutlineInputBorder(
-                                                  borderSide: BorderSide.none,
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(20),
-                                                  ),
-                                                ),
-                                                hintText: 'Edit Task',
-                                              ),
-                                            )
-                                          : Text(
-                                              taskLists[index]
-                                                  .tasks[taskIndex]
-                                                  .name,
-                                              style: TextStyle(
-                                                decoration: taskLists[index]
-                                                        .tasks[taskIndex]
-                                                        .isDone
-                                                    ? TextDecoration.lineThrough
-                                                    : TextDecoration.none,
+                                              hintStyle: const TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w400,
-                                                color: taskLists[index]
-                                                        .tasks[taskIndex]
-                                                        .isDone
-                                                    ? Colors.grey
-                                                    : Colors.white,
-                                              ),
-                                            ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              isKeyBoardOpenedList[index]
-                                  ? Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          0, 0.0, 8.0, 12.0),
-                                      child: ListTile(
-                                        trailing: PullDownButton(
-                                          itemBuilder: (context) => [
-                                            PullDownMenuItem(
-                                              icon: Icons.delete,
-                                              isDestructive: true,
-                                              title: 'Delete',
-                                              onTap: () {
-                                                // context
-                                                //     .read<TasksProvider>()
-                                                //     .deleteTask(taskLists[index]
-                                                //         .tasks[taskIndex]
-                                                //         .id);
-                                              },
-                                            ),
-                                          ],
-                                          buttonBuilder: (context, showMenu) =>
-                                              IconButton(
-                                            onPressed: showMenu,
-                                            icon: const Icon(
-                                              Icons.more_vert,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                        leading: MSHCheckbox(
-                                          size: 24,
-                                          value: false,
-                                          style:
-                                              MSHCheckboxStyle.fillScaleCheck,
-                                          onChanged: (selected) {},
-                                        ),
-                                        title: TextField(
-                                          autofocus: true,
-                                          onSubmitted: (value) {
-                                            context
-                                                .read<TasksProvider>()
-                                                .setTemporaySelectedList(
-                                                    taskLists[index]);
-                                            context
-                                                .read<TasksProvider>()
-                                                .addTask(
-                                                  value,
-                                                );
-                                            context
-                                                .read<TasksProvider>()
-                                                .setIsKeyboardOpened(
-                                                    !isKeyBoardOpenedList[
-                                                        index],
-                                                    index);
-                                          },
-                                          cursorColor: Colors.white,
-                                          style: const TextStyle(
-                                              color: Colors.white),
-                                          decoration: InputDecoration(
-                                            suffix: const Text('Add'),
-                                            suffixIcon: GestureDetector(
-                                              onTap: () {
-                                                context
-                                                    .read<TasksProvider>()
-                                                    .addTask(
-                                                      listController.text,
-                                                    );
-                                                context
-                                                    .read<TasksProvider>()
-                                                    .setIsKeyboardOpened(
-                                                        !isKeyBoardOpenedList[
-                                                            index],
-                                                        index);
-                                              },
-                                              child: const Icon(
-                                                Icons
-                                                    .add_circle_outline_rounded,
                                                 color: Color.fromARGB(
                                                     255, 0, 73, 133),
                                               ),
+                                              filled: false,
+                                              fillColor: const Color.fromARGB(
+                                                  255, 235, 235, 235),
+                                              border: const OutlineInputBorder(
+                                                borderSide: BorderSide.none,
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(20),
+                                                ),
+                                              ),
+                                              hintText: 'Edit Task',
                                             ),
-                                            hintStyle: const TextStyle(
+                                          )
+                                        : Text(
+                                            taskLists[index]
+                                                .tasks[taskIndex]
+                                                .name,
+                                            style: TextStyle(
+                                              decoration: taskLists[index]
+                                                      .tasks[taskIndex]
+                                                      .isDone
+                                                  ? TextDecoration.lineThrough
+                                                  : TextDecoration.none,
                                               fontSize: 16,
                                               fontWeight: FontWeight.w400,
-                                              color: Color.fromARGB(
-                                                  255, 0, 73, 133),
+                                              color: taskLists[index]
+                                                      .tasks[taskIndex]
+                                                      .isDone
+                                                  ? Colors.grey
+                                                  : Colors.white,
                                             ),
-                                            filled: false,
-                                            fillColor: const Color.fromARGB(
-                                                255, 235, 235, 235),
-                                            border: const OutlineInputBorder(
-                                              borderSide: BorderSide.none,
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(20),
-                                              ),
-                                            ),
-                                            hintText: 'Add a Task',
+                                          ),
+                                  ),
+                                );
+                              },
+                            ),
+                            isKeyBoardOpenedList[index]
+                                ? Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        0, 0.0, 8.0, 12.0),
+                                    child: ListTile(
+                                      trailing: PullDownButton(
+                                        itemBuilder: (context) => [
+                                          PullDownMenuItem(
+                                            icon: Icons.delete,
+                                            isDestructive: true,
+                                            title: 'Delete',
+                                            onTap: () {
+                                              // context
+                                              //     .read<TasksProvider>()
+                                              //     .deleteTask(taskLists[index]
+                                              //         .tasks[taskIndex]
+                                              //         .id);
+                                            },
+                                          ),
+                                        ],
+                                        buttonBuilder: (context, showMenu) =>
+                                            IconButton(
+                                          onPressed: showMenu,
+                                          icon: const Icon(
+                                            Icons.more_vert,
+                                            color: Colors.white,
                                           ),
                                         ),
                                       ),
-                                    )
-                                  : Container(),
-                            ],
-                          ),
+                                      leading: MSHCheckbox(
+                                        size: 24,
+                                        value: false,
+                                        style: MSHCheckboxStyle.fillScaleCheck,
+                                        onChanged: (selected) {},
+                                      ),
+                                      title: TextField(
+                                        autofocus: true,
+                                        onSubmitted: (value) {
+                                          context
+                                              .read<TasksProvider>()
+                                              .setTemporaySelectedList(
+                                                  taskLists[index]);
+                                          context.read<TasksProvider>().addTask(
+                                                value,
+                                              );
+                                          context
+                                              .read<TasksProvider>()
+                                              .setIsKeyboardOpened(
+                                                  !isKeyBoardOpenedList[index],
+                                                  index);
+                                        },
+                                        cursorColor: Colors.white,
+                                        style: const TextStyle(
+                                            color: Colors.white),
+                                        decoration: InputDecoration(
+                                          suffix: const Text('Add'),
+                                          suffixIcon: GestureDetector(
+                                            onTap: () {
+                                              context
+                                                  .read<TasksProvider>()
+                                                  .addTask(
+                                                    listController.text,
+                                                  );
+                                              context
+                                                  .read<TasksProvider>()
+                                                  .setIsKeyboardOpened(
+                                                      !isKeyBoardOpenedList[
+                                                          index],
+                                                      index);
+                                            },
+                                            child: const Icon(
+                                              Icons.add_circle_outline_rounded,
+                                              color: Color.fromARGB(
+                                                  255, 0, 73, 133),
+                                            ),
+                                          ),
+                                          hintStyle: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color:
+                                                Color.fromARGB(255, 0, 73, 133),
+                                          ),
+                                          filled: false,
+                                          fillColor: const Color.fromARGB(
+                                              255, 235, 235, 235),
+                                          border: const OutlineInputBorder(
+                                            borderSide: BorderSide.none,
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                          ),
+                                          hintText: 'Add a Task',
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                          ],
                         ),
                       ),
-                      // const SizedBox(height: 10),
-                    ],
-                  ),
-                );
-              },
-            ),
-          )
-        ],
-      );
-    });
+                    ),
+                    // const SizedBox(height: 10),
+                  ],
+                ),
+              );
+            },
+          ),
+        )
+      ],
+    );
   }
 
   Future<bool?> deleteList(
