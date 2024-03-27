@@ -7,8 +7,8 @@ import '../widgets/inboxPage/search_disposition_view.dart';
 import '../widgets/inboxPage/tasks_view_inboxpage.dart';
 import 'list_page.dart';
 
-class InboxPage extends StatelessWidget {
-  const InboxPage({super.key});
+class TasksPage extends StatelessWidget {
+  const TasksPage({super.key});
 
   @override
   Widget build(BuildContext context) {

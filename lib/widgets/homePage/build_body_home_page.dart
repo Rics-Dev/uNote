@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 
-import '../../pages/inbox_page.dart';
+import '../../pages/note_page.dart';
+import '../../pages/task_page.dart';
 import '../../pages/list_page.dart';
 
 Widget buildBody(int bottomNavIndex) {
   switch (bottomNavIndex) {
     case 0:
-      return const InboxPage();
+      return const NotesPage();
     case 1:
-      return const ListPage();
+      return const TasksPage();
     default:
-      return const InboxPage();
+      return const TasksPage();
   }
 }
 // , List<Task> tasks

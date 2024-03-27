@@ -20,14 +20,14 @@ class _HomePageState extends State<HomePage> {
   bool deleteFloatingActionButton = false;
 
   bool addTaskDialogOpened = false;
-  int _bottomNavIndex = 0;
+  int _bottomNavIndex = 1;
   List<IconData> iconList = [
     Icons.inbox_rounded,
     Icons.format_list_bulleted_rounded,
   ];
   List<String> appBarTitles = [
-    'Your inbox',
-    'Your lists',
+    'Your Notes',
+    'Your Tasks',
   ];
 
   Future<dynamic> _showAddTaskDialog(BuildContext context) {
@@ -100,6 +100,7 @@ class _HomePageState extends State<HomePage> {
         extendBody: true,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: AnimatedBottomNavigationBar(
+            splashRadius: 0,
             height: 65.0,
             icons: iconList,
             activeIndex: _bottomNavIndex,
@@ -121,6 +122,7 @@ class _HomePageState extends State<HomePage> {
             }
             //other params
             ),
+
         // drawer: const AppDrawer(),
         body: buildBody(_bottomNavIndex),
       ),

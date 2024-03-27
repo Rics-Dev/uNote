@@ -366,63 +366,95 @@ class _ListPageState extends State<ListPage> {
                                 ? Padding(
                                     padding: const EdgeInsets.fromLTRB(
                                         0, 0.0, 8.0, 12.0),
-                                    child: TextField(
-                                      autofocus: true,
-                                      onSubmitted: (value) {
-                                        context
-                                            .read<TasksProvider>()
-                                            .setTemporaySelectedList(
-                                                taskLists[index]);
-                                        context.read<TasksProvider>().addTask(
-                                              value,
-                                            );
-                                        context
-                                            .read<TasksProvider>()
-                                            .setIsKeyboardOpened(
-                                                !isKeyBoardOpenedList[index],
-                                                index);
-                                      },
-                                      cursorColor: Colors.white,
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                      decoration: InputDecoration(
-                                        suffix: const Text('Add'),
-                                        suffixIcon: GestureDetector(
-                                          onTap: () {
-                                            context
-                                                .read<TasksProvider>()
-                                                .addTask(
-                                                  listController.text,
-                                                );
-                                            context
-                                                .read<TasksProvider>()
-                                                .setIsKeyboardOpened(
-                                                    !isKeyBoardOpenedList[
-                                                        index],
-                                                    index);
-                                          },
-                                          child: const Icon(
-                                            Icons.add_circle_outline_rounded,
+                                    child: ListTile(
+                                      trailing: PullDownButton(
+                                        itemBuilder: (context) => [
+                                          PullDownMenuItem(
+                                            icon: Icons.delete,
+                                            isDestructive: true,
+                                            title: 'Delete',
+                                            onTap: () {
+                                              // context
+                                              //     .read<TasksProvider>()
+                                              //     .deleteTask(taskLists[index]
+                                              //         .tasks[taskIndex]
+                                              //         .id);
+                                            },
+                                          ),
+                                        ],
+                                        buttonBuilder: (context, showMenu) =>
+                                            IconButton(
+                                          onPressed: showMenu,
+                                          icon: const Icon(
+                                            Icons.more_vert,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      leading: MSHCheckbox(
+                                        size: 24,
+                                        value: false,
+                                        style: MSHCheckboxStyle.fillScaleCheck,
+                                        onChanged: (selected) {},
+                                      ),
+                                      title: TextField(
+                                        autofocus: true,
+                                        onSubmitted: (value) {
+                                          context
+                                              .read<TasksProvider>()
+                                              .setTemporaySelectedList(
+                                                  taskLists[index]);
+                                          context.read<TasksProvider>().addTask(
+                                                value,
+                                              );
+                                          context
+                                              .read<TasksProvider>()
+                                              .setIsKeyboardOpened(
+                                                  !isKeyBoardOpenedList[index],
+                                                  index);
+                                        },
+                                        cursorColor: Colors.white,
+                                        style: const TextStyle(
+                                            color: Colors.white),
+                                        decoration: InputDecoration(
+                                          suffix: const Text('Add'),
+                                          suffixIcon: GestureDetector(
+                                            onTap: () {
+                                              context
+                                                  .read<TasksProvider>()
+                                                  .addTask(
+                                                    listController.text,
+                                                  );
+                                              context
+                                                  .read<TasksProvider>()
+                                                  .setIsKeyboardOpened(
+                                                      !isKeyBoardOpenedList[
+                                                          index],
+                                                      index);
+                                            },
+                                            child: const Icon(
+                                              Icons.add_circle_outline_rounded,
+                                              color: Color.fromARGB(
+                                                  255, 0, 73, 133),
+                                            ),
+                                          ),
+                                          hintStyle: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
                                             color:
                                                 Color.fromARGB(255, 0, 73, 133),
                                           ),
-                                        ),
-                                        hintStyle: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400,
-                                          color:
-                                              Color.fromARGB(255, 0, 73, 133),
-                                        ),
-                                        filled: false,
-                                        fillColor: const Color.fromARGB(
-                                            255, 235, 235, 235),
-                                        border: const OutlineInputBorder(
-                                          borderSide: BorderSide.none,
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(20),
+                                          filled: false,
+                                          fillColor: const Color.fromARGB(
+                                              255, 235, 235, 235),
+                                          border: const OutlineInputBorder(
+                                            borderSide: BorderSide.none,
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
                                           ),
+                                          hintText: 'Add a Task',
                                         ),
-                                        hintText: 'Add a Task',
                                       ),
                                     ),
                                   )

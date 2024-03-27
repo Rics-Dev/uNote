@@ -19,7 +19,7 @@ class HorizontalTagsView extends StatelessWidget {
     final selectedPriority = tasksProvider.selectedPriority;
 
     final allTasks = tasksProvider.tasks;
-    FilterCriteria filterCriteria = tasksProvider.filterCriteria;
+    FilterCriteria filterCriteria = FilterCriteria.tags;
     final priority = tasksProvider.priority;
 
     return Padding(
