@@ -43,6 +43,7 @@ class TasksProvider extends ChangeNotifier {
       TaskList(name: '', createdAt: DateTime.now(), updatedAt: DateTime.now());
 
   List<bool> isKeyBoardOpenedList = [];
+  List<List<bool>> isEditingTask = [];
 
   SortCriteria _sortCriteria = SortCriteria.creationDate;
   FilterCriteria _filterCriteria = FilterCriteria.priority;
@@ -95,6 +96,11 @@ class TasksProvider extends ChangeNotifier {
   void _onTaskListsChanged(List<TaskList> taskLists) {
     _taskLists = taskLists;
     isKeyBoardOpenedList = List.filled(_taskLists.length, false);
+    isEditingTask = List.generate(
+        _taskLists.length,
+        (index) =>
+            List.filled(_taskLists[index].tasks.length, false, growable: true),
+        growable: true);
     notifyListeners();
   }
 
@@ -235,6 +241,21 @@ class TasksProvider extends ChangeNotifier {
         taskListBox.put(taskList);
       }
       taskBox.put(updatedTask);
+    }
+    notifyListeners();
+  }
+
+  void updateTaskName(int id, String value) {
+    final task = taskBox.get(id);
+    if (task != null) {
+      task.name = value;
+      task.updatedAt = DateTime.now();
+      if (task.list.target != null) {
+        final taskList = task.list.target!;
+        taskList.updatedAt = DateTime.now();
+        taskListBox.put(taskList);
+      }
+      taskBox.put(task);
     }
     notifyListeners();
   }
@@ -460,6 +481,20 @@ class TasksProvider extends ChangeNotifier {
 
   void setIsKeyboardOpened(bool bool, int index) {
     isKeyBoardOpenedList[index] = bool;
+    notifyListeners();
+  }
+
+  void setTemporaySelectedTask(Task task) {
+    _temporarilyAddedList.tasks.add(task);
+  }
+
+  void setIsEditingTask(bool bool, int index, int taskId) {
+    if (taskId == -1) {
+      isEditingTask[index] = List.filled(isEditingTask[index].length, bool);
+      notifyListeners();
+      return;
+    }
+    isEditingTask[index][taskId] = bool;
     notifyListeners();
   }
 }

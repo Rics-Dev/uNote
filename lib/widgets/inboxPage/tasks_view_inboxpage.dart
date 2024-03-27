@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_down_button/pull_down_button.dart';
 
 // import '../../models/tasks.dart';
 import '../../models/entities.dart';
@@ -130,51 +131,74 @@ class TasksViewInboxPage extends StatelessWidget {
   //each task container
   Widget buildTaskContainer(
       BuildContext context, Task task, List<Object?> incoming) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: incoming.isNotEmpty ? Colors.blue[100] : const Color(0xFFF7F7F7),
-        borderRadius: BorderRadius.circular(12),
+    return ListTile(
+      // width: double.infinity,
+      // decoration: BoxDecoration(
+      //   color: incoming.isNotEmpty ? Colors.blue[100] : const Color(0xFFF7F7F7),
+      //   borderRadius: BorderRadius.circular(12),
+      // ),
+      // padding: const EdgeInsets.all(16),
+      // style: ListTileStyle.list,
+      // selectedColor: Colors.blue,
+      // tileColor: const Color(0xFFF7F7F7),
+      leading: MSHCheckbox(
+        size: 22,
+        value: task.isDone,
+        colorConfig: MSHColorConfig.fromCheckedUncheckedDisabled(
+          checkedColor: const Color.fromARGB(255, 0, 73, 133),
+        ),
+        style: MSHCheckboxStyle.fillScaleColor,
+        onChanged: (selected) {
+          context.read<TasksProvider>().updateTask(task.id, selected);
+        },
       ),
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          MSHCheckbox(
-            size: 22,
-            value: task.isDone,
-            colorConfig: MSHColorConfig.fromCheckedUncheckedDisabled(
-              checkedColor: const Color.fromARGB(255, 0, 73, 133),
-            ),
-            style: MSHCheckboxStyle.fillScaleColor,
-            onChanged: (selected) {
-              context.read<TasksProvider>().updateTask(task.id, selected);
+      // const SizedBox(width: 10),
+      title: Text(
+        task.name,
+        style: TextStyle(
+          fontSize: 14,
+          decoration:
+              task.isDone ? TextDecoration.lineThrough : TextDecoration.none,
+          color: task.isDone ? Colors.grey : Colors.black,
+        ),
+      ),
+      //pin button
+      // const Spacer(),
+      trailing: PullDownButton(
+        itemBuilder: (context) => [
+          PullDownMenuItem(
+            icon: Icons.edit,
+            title: 'Edit',
+            onTap: () {
+              showTaskDetails(context, task);
             },
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              task.name,
-              style: TextStyle(
-                fontSize: 14,
-                decoration: task.isDone
-                    ? TextDecoration.lineThrough
-                    : TextDecoration.none,
-                color: task.isDone ? Colors.grey : Colors.black,
-              ),
-            ),
+          const PullDownMenuDivider(),
+          PullDownMenuItem(
+            icon: Icons.delete,
+            isDestructive: true,
+            title: 'Delete',
+            onTap: () {
+              context.read<TasksProvider>().deleteTask(task.id);
+            },
           ),
-          //pin button
-          // const Spacer(),
-          // task.isDone
-          //     ? const SizedBox()
-          //     : GestureDetector(
-          //         child: Icon(Icons.push_pin_outlined, color: Colors.grey[600]),
-          //         onTap: () {
-          //           // context.read<TasksAPI>().pinTask(task.id);
-          //         },
-          //       ),
         ],
+        buttonBuilder: (context, showMenu) => IconButton(
+          onPressed: showMenu,
+          icon: const Icon(
+            Icons.more_vert,
+            // color: Colors.white,
+          ),
+        ),
       ),
+      // task.isDone
+      //     ? const SizedBox()
+      //     : GestureDetector(
+      //         child: Icon(Icons.push_pin_outlined, color: Colors.grey[600]),
+      //         onTap: () {
+      //           // context.read<TasksAPI>().pinTask(task.id);
+      //         },
+      //       ),
     );
   }
 

@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
     bool keyboardIsOpened = MediaQuery.of(context).viewInsets.bottom != 0.0;
 
     return DefaultTabController(
-      length: taskLists.length + 2,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           // leading: IconButton(
