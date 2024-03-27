@@ -267,6 +267,7 @@ class _ListPageState extends State<ListPage> {
                                                   .id);
                                         },
                                       ),
+                                      
                                     ],
                                     buttonBuilder: (context, showMenu) =>
                                         IconButton(
@@ -277,6 +278,49 @@ class _ListPageState extends State<ListPage> {
                                       ),
                                     ),
                                   ),
+                                  // trailing: PopupMenuButton(
+                                  //   shape: RoundedRectangleBorder(
+                                  //     borderRadius: BorderRadius.circular(15.0),
+                                  //   ),
+                                  //   icon: const Icon(Icons.more_vert),
+                                  //   itemBuilder: (BuildContext context) =>
+                                  //       <PopupMenuEntry>[
+                                  //     const PopupMenuItem(
+                                  //       child: ListTile(
+                                  //         trailing: Icon(Icons.delete,
+                                  //             color: Colors.red),
+                                  //         // leading: Icon(Icons.delete),
+                                  //         title: Text(
+                                  //           'Delete',
+                                  //           style: TextStyle(color: Colors.red),
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //     const PopupMenuDivider(),
+                                  //     PopupMenuItem<String>(
+                                  //       child: PopupMenuButton(
+                                  //           child: const SizedBox(
+                                  //             width: 200,
+                                  //             child: ListTile(
+                                  //               title: Text('Move to'),
+                                  //               trailing: Icon(
+                                  //                   Icons.arrow_forward_ios),
+                                  //             ),
+                                  //           ),
+                                  //           itemBuilder:
+                                  //               (BuildContext context) {
+                                  //             return [1, 2, 3, 4]
+                                  //                 .map((e) =>
+                                  //                     PopupMenuItem<int>(
+                                  //                       value: e,
+                                  //                       child:
+                                  //                           Text(e.toString()),
+                                  //                     ))
+                                  //                 .toList();
+                                  //           }),
+                                  //     )
+                                  //   ],
+                                  // ),
                                   leading: MSHCheckbox(
                                     size: 24,
                                     value: taskLists[index]

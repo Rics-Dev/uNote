@@ -1,7 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class AddNoteView extends StatelessWidget {
+import '../../providers/note_provider.dart';
+
+class AddNoteView extends StatefulWidget {
   const AddNoteView({super.key});
+
+  @override
+  State<AddNoteView> createState() => _AddNoteViewState();
+}
+
+class _AddNoteViewState extends State<AddNoteView> {
+  final TextEditingController _noteTitleController = TextEditingController();
+  final TextEditingController _noteContentController = TextEditingController();
+
+  @override
+  void dispose() {
+    _noteTitleController.dispose();
+    _noteContentController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,20 +32,28 @@ class AddNoteView extends StatelessWidget {
         height: MediaQuery.of(context).size.height * 0.5,
         child: Column(
           children: [
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: _noteTitleController,
+              decoration: const InputDecoration(
                 hintText: 'Title',
               ),
             ),
             const SizedBox(height: 16.0),
-            const TextField(
-              decoration: InputDecoration(
-                hintText: 'Description',
+            TextField(
+              controller: _noteContentController,
+              decoration: const InputDecoration(
+                hintText: 'Content',
               ),
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                context.read<NotesProvider>().addNote(
+                    _noteTitleController.text, _noteContentController.text);
+                _noteContentController.clear();
+                _noteTitleController.clear();
+                Navigator.of(context).pop();
+              },
               child: const Text('Add Note'),
             ),
           ],

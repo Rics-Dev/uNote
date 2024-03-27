@@ -42,7 +42,11 @@ final _entities = <obx_int.ModelEntity>[
         obx_int.ModelRelation(
             id: const obx_int.IdUid(2, 785102049100997188),
             name: 'tasks',
-            targetId: const obx_int.IdUid(2, 7031062309905276887))
+            targetId: const obx_int.IdUid(2, 7031062309905276887)),
+        obx_int.ModelRelation(
+            id: const obx_int.IdUid(3, 6593666496360618030),
+            name: 'notes',
+            targetId: const obx_int.IdUid(4, 6582988619389156410))
       ],
       backlinks: <obx_int.ModelBacklink>[]),
   obx_int.ModelEntity(
@@ -133,6 +137,80 @@ final _entities = <obx_int.ModelEntity>[
       relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[
         obx_int.ModelBacklink(name: 'tasks', srcEntity: 'Task', srcField: '')
+      ]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(4, 6582988619389156410),
+      name: 'Note',
+      lastPropertyId: const obx_int.IdUid(6, 5639902291895940951),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 1744807741711115826),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 3709443565666971693),
+            name: 'title',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 5790417944814782457),
+            name: 'content',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 6017248645263383727),
+            name: 'createdAt',
+            type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 8674644191856380858),
+            name: 'updatedAt',
+            type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(6, 5639902291895940951),
+            name: 'notebookId',
+            type: 11,
+            flags: 520,
+            indexId: const obx_int.IdUid(4, 6158637978171915309),
+            relationTarget: 'NoteBook')
+      ],
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[
+        obx_int.ModelBacklink(name: 'tags', srcEntity: 'Tag', srcField: '')
+      ]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(5, 1891198414133088334),
+      name: 'NoteBook',
+      lastPropertyId: const obx_int.IdUid(4, 7425348356299112206),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 6296233523745376924),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 6533682516401497984),
+            name: 'name',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 8314748196248704566),
+            name: 'createdAt',
+            type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 7425348356299112206),
+            name: 'updatedAt',
+            type: 10,
+            flags: 0)
+      ],
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[
+        obx_int.ModelBacklink(name: 'notes', srcEntity: 'Note', srcField: '')
       ])
 ];
 
@@ -171,9 +249,9 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(3, 2058075289807397123),
-      lastIndexId: const obx_int.IdUid(3, 9194883798312277152),
-      lastRelationId: const obx_int.IdUid(2, 785102049100997188),
+      lastEntityId: const obx_int.IdUid(5, 1891198414133088334),
+      lastIndexId: const obx_int.IdUid(4, 6158637978171915309),
+      lastRelationId: const obx_int.IdUid(3, 6593666496360618030),
       lastSequenceId: const obx_int.IdUid(0, 0),
       retiredEntityUids: const [],
       retiredIndexUids: const [5318798887338303490],
@@ -187,8 +265,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
     Tag: obx_int.EntityDefinition<Tag>(
         model: _entities[0],
         toOneRelations: (Tag object) => [],
-        toManyRelations: (Tag object) =>
-            {obx_int.RelInfo<Tag>.toMany(2, object.id): object.tasks},
+        toManyRelations: (Tag object) => {
+              obx_int.RelInfo<Tag>.toMany(2, object.id): object.tasks,
+              obx_int.RelInfo<Tag>.toMany(3, object.id): object.notes
+            },
         getId: (Tag object) => object.id,
         setId: (Tag object, int id) {
           object.id = id;
@@ -211,6 +291,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final object = Tag(id: idParam, name: nameParam);
           obx_int.InternalToManyAccess.setRelInfo<Tag>(
               object.tasks, store, obx_int.RelInfo<Tag>.toMany(2, object.id));
+          obx_int.InternalToManyAccess.setRelInfo<Tag>(
+              object.notes, store, obx_int.RelInfo<Tag>.toMany(3, object.id));
           return object;
         }),
     Task: obx_int.EntityDefinition<Task>(
@@ -323,6 +405,99 @@ obx_int.ModelDefinition getObjectBoxModel() {
               obx_int.RelInfo<Task>.toOneBacklink(
                   9, object.id, (Task srcObject) => srcObject.list));
           return object;
+        }),
+    Note: obx_int.EntityDefinition<Note>(
+        model: _entities[3],
+        toOneRelations: (Note object) => [object.notebook],
+        toManyRelations: (Note object) =>
+            {obx_int.RelInfo<Tag>.toManyBacklink(3, object.id): object.tags},
+        getId: (Note object) => object.id,
+        setId: (Note object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Note object, fb.Builder fbb) {
+          final titleOffset = fbb.writeString(object.title);
+          final contentOffset = fbb.writeString(object.content);
+          fbb.startTable(7);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, titleOffset);
+          fbb.addOffset(2, contentOffset);
+          fbb.addInt64(3, object.createdAt.millisecondsSinceEpoch);
+          fbb.addInt64(4, object.updatedAt.millisecondsSinceEpoch);
+          fbb.addInt64(5, object.notebook.targetId);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final titleParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final contentParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
+          final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0));
+          final object = Note(
+              id: idParam,
+              title: titleParam,
+              content: contentParam,
+              createdAt: createdAtParam,
+              updatedAt: updatedAtParam);
+          object.notebook.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0);
+          object.notebook.attach(store);
+          obx_int.InternalToManyAccess.setRelInfo<Note>(object.tags, store,
+              obx_int.RelInfo<Tag>.toManyBacklink(3, object.id));
+          return object;
+        }),
+    NoteBook: obx_int.EntityDefinition<NoteBook>(
+        model: _entities[4],
+        toOneRelations: (NoteBook object) => [],
+        toManyRelations: (NoteBook object) => {
+              obx_int.RelInfo<Note>.toOneBacklink(
+                      6, object.id, (Note srcObject) => srcObject.notebook):
+                  object.notes
+            },
+        getId: (NoteBook object) => object.id,
+        setId: (NoteBook object, int id) {
+          object.id = id;
+        },
+        objectToFB: (NoteBook object, fb.Builder fbb) {
+          final nameOffset = fbb.writeString(object.name);
+          fbb.startTable(5);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, nameOffset);
+          fbb.addInt64(2, object.createdAt.millisecondsSinceEpoch);
+          fbb.addInt64(3, object.updatedAt.millisecondsSinceEpoch);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final nameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0));
+          final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
+          final object = NoteBook(
+              id: idParam,
+              name: nameParam,
+              createdAt: createdAtParam,
+              updatedAt: updatedAtParam);
+          obx_int.InternalToManyAccess.setRelInfo<NoteBook>(
+              object.notes,
+              store,
+              obx_int.RelInfo<Note>.toOneBacklink(
+                  6, object.id, (Note srcObject) => srcObject.notebook));
+          return object;
         })
   };
 
@@ -340,6 +515,10 @@ class Tag_ {
   /// see [Tag.tasks]
   static final tasks =
       obx.QueryRelationToMany<Tag, Task>(_entities[0].relations[0]);
+
+  /// see [Tag.notes]
+  static final notes =
+      obx.QueryRelationToMany<Tag, Note>(_entities[0].relations[1]);
 }
 
 /// [Task] entity fields to define ObjectBox queries.
@@ -399,4 +578,52 @@ class TaskList_ {
 
   /// see [TaskList.tasks]
   static final tasks = obx.QueryBacklinkToMany<Task, TaskList>(Task_.list);
+}
+
+/// [Note] entity fields to define ObjectBox queries.
+class Note_ {
+  /// see [Note.id]
+  static final id = obx.QueryIntegerProperty<Note>(_entities[3].properties[0]);
+
+  /// see [Note.title]
+  static final title =
+      obx.QueryStringProperty<Note>(_entities[3].properties[1]);
+
+  /// see [Note.content]
+  static final content =
+      obx.QueryStringProperty<Note>(_entities[3].properties[2]);
+
+  /// see [Note.createdAt]
+  static final createdAt =
+      obx.QueryDateProperty<Note>(_entities[3].properties[3]);
+
+  /// see [Note.updatedAt]
+  static final updatedAt =
+      obx.QueryDateProperty<Note>(_entities[3].properties[4]);
+
+  /// see [Note.notebook]
+  static final notebook =
+      obx.QueryRelationToOne<Note, NoteBook>(_entities[3].properties[5]);
+}
+
+/// [NoteBook] entity fields to define ObjectBox queries.
+class NoteBook_ {
+  /// see [NoteBook.id]
+  static final id =
+      obx.QueryIntegerProperty<NoteBook>(_entities[4].properties[0]);
+
+  /// see [NoteBook.name]
+  static final name =
+      obx.QueryStringProperty<NoteBook>(_entities[4].properties[1]);
+
+  /// see [NoteBook.createdAt]
+  static final createdAt =
+      obx.QueryDateProperty<NoteBook>(_entities[4].properties[2]);
+
+  /// see [NoteBook.updatedAt]
+  static final updatedAt =
+      obx.QueryDateProperty<NoteBook>(_entities[4].properties[3]);
+
+  /// see [NoteBook.notes]
+  static final notes = obx.QueryBacklinkToMany<Note, NoteBook>(Note_.notebook);
 }

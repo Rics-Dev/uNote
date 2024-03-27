@@ -38,6 +38,36 @@ class Task {
   });
 }
 
+
+@Entity()
+class Note{
+  @Id()
+  int id;
+
+  String title;
+  String content;
+
+  @Property(type: PropertyType.date)
+  DateTime createdAt;
+
+  @Property(type: PropertyType.date)
+  DateTime updatedAt;
+
+  @Backlink()
+  final tags = ToMany<Tag>();
+
+  final notebook = ToOne<NoteBook>();
+
+
+  Note({
+    this.id = 0,
+    required this.title,
+    required this.content,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+}
+
 @Entity()
 class Tag {
   @Id()
@@ -47,6 +77,8 @@ class Tag {
   String name;
 
   final tasks = ToMany<Task>();
+
+  final notes = ToMany<Note>();
 
   Tag({
     this.id = 0,
@@ -71,6 +103,30 @@ class TaskList {
   final tasks = ToMany<Task>();
 
   TaskList({
+    this.id = 0,
+    required this.name,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+}
+
+@Entity()
+class NoteBook {
+  @Id()
+  int id;
+
+  String name;
+
+  @Property(type: PropertyType.date)
+  DateTime createdAt;
+
+  @Property(type: PropertyType.date)
+  DateTime updatedAt;
+
+  @Backlink()
+  final notes = ToMany<Note>();
+
+  NoteBook({
     this.id = 0,
     required this.name,
     required this.createdAt,

@@ -74,7 +74,7 @@ class TasksProvider extends ChangeNotifier {
 
   void _init() async {
     // taskListBox.removeAll();
-    final taskList = taskListBox.getAll();
+    // final taskList = taskListBox.getAll();
     final tasksStream = objectbox.getTasks();
     tasksStream.listen(_onTasksChanged);
     final tagsStream = objectbox.getTags();
