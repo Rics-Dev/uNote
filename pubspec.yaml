@@ -58,7 +58,8 @@ dependencies:
   pull_down_button: ^0.9.3
   syncfusion_flutter_charts: ^25.1.35
   easy_radio: ^0.0.3
-  stylish_bottom_bar: ^1.0.3
+  auto_animated: any
+  appflowy_editor: ^2.3.3
   # database Part
   objectbox: ^2.5.1
   objectbox_flutter_libs: any

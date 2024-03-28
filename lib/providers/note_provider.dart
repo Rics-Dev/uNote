@@ -45,7 +45,7 @@ class NotesProvider extends ChangeNotifier {
   }
 
   void _onNotesChanged(List<Note> notes) {
-    _notes = notes;
+    _notes = notes.reversed.toList();
     notifyListeners();
   }
 
@@ -70,8 +70,9 @@ class NotesProvider extends ChangeNotifier {
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
-    note.notebook.target = noteBookBox.get(2);
     noteBox.put(note);
+
+    // note.notebook.target = noteBookBox.get(2);
 
     // final noteBook = NoteBook(
     //   name: 'Test',

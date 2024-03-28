@@ -1,3 +1,4 @@
+import 'package:auto_animated/auto_animated.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -69,121 +70,131 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
     final notesProvider = context.watch<NotesProvider>();
     final noteBooks = notesProvider.noteBooks;
 
-    return Column(
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
+    return Container(
+      color: Colors.grey.shade100,
+      child: Column(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+            ),
+            child: const Column(
+              children: [
+                SortAndFilterView(),
+                // SizedBox(height: 10),
+                HorizontalTagsView(),
+              ],
+            ),
           ),
-          child: const Column(
-            children: [
-              SortAndFilterView(),
-              // SizedBox(height: 10),
-              HorizontalTagsView(),
-            ],
-          ),
-        ),
-        Container(
-          height: 50,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-          ),
-          child: TabBar(
-            // tabAlignment: TabAlignment.start,
-            controller: _tabController,
-            isScrollable: true,
-            indicatorSize: TabBarIndicatorSize.tab,
-            onTap: (index) {
-              if (index == noteBooks.length + 1) {
-                // If "Add Notebook" tab is tapped
-                _showAddNotebookDialog(context);
-                // _selectedTabIndex = noteBooks.length + 1;
-              }
-            },
-            tabs: [
-              const Tab(text: 'All Notes'),
-              ...noteBooks
-                  .map(
-                    (noteBook) => GestureDetector(
-                      onLongPress: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Delete Notebook?'),
-                              content: const Text(
-                                  'Are you sure you want to delete this notebook?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    context
-                                        .read<NotesProvider>()
-                                        .deleteNotebook(noteBook.id);
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Delete'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: Tab(
-                        // text: noteBook.name,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.book_rounded),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            Text(noteBook.name),
-                          ],
+          Container(
+            height: 50,
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade300,
+                  spreadRadius: 1,
+                  blurRadius: 10,
+                  offset: const Offset(0, 10), // changes position of shadow
+                ),
+              ],
+              color: Colors.white,
+            ),
+            child: TabBar(
+              // tabAlignment: TabAlignment.start,
+              controller: _tabController,
+              isScrollable: true,
+              indicatorSize: TabBarIndicatorSize.tab,
+              onTap: (index) {
+                if (index == noteBooks.length + 1) {
+                  // If "Add Notebook" tab is tapped
+                  _showAddNotebookDialog(context);
+                  // _selectedTabIndex = noteBooks.length + 1;
+                }
+              },
+              tabs: [
+                const Tab(text: 'All Notes'),
+                ...noteBooks
+                    .map(
+                      (noteBook) => GestureDetector(
+                        onLongPress: () {
+                          deleteNoteBook(context, noteBook);
+                        },
+                        child: Tab(
+                          // text: noteBook.name,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.book_rounded),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Text(noteBook.name),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                  .toList(),
-              const Tab(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add),
-                    // SizedBox(
-                    //   width: ,
-                    // ),
-                    Text('NoteBook'),
-                  ],
+                    )
+                    .toList(),
+                const Tab(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.add),
+                      // SizedBox(
+                      //   width: ,
+                      // ),
+                      Text('NoteBook'),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Expanded(
-          child: TabBarView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: _tabController,
-            children: [
-              // TasksViewInboxPage(),
-              NoteListPage(NoteBook(
-                  name: 'All Notes Ric',
-                  createdAt: DateTime.now(),
-                  updatedAt: DateTime.now())),
-              ...noteBooks.map((noteBook) => NoteListPage(noteBook)).toList(),
-              _buildAddNotebookPage(),
-            ],
+          const SizedBox(height: 10),
+          Expanded(
+            child: TabBarView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: _tabController,
+              children: [
+                // TasksViewInboxPage(),
+                NoteListPage(NoteBook(
+                    name: 'All Notes Ric',
+                    createdAt: DateTime.now(),
+                    updatedAt: DateTime.now())),
+                ...noteBooks.map((noteBook) => NoteListPage(noteBook)).toList(),
+                _buildAddNotebookPage(),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
+    );
+  }
+
+  Future<dynamic> deleteNoteBook(BuildContext context, NoteBook noteBook) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Notebook?'),
+          content: const Text('Are you sure you want to delete this notebook?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                context.read<NotesProvider>().deleteNotebook(noteBook.id);
+                Navigator.pop(context);
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -275,92 +286,116 @@ class NoteListPage extends StatelessWidget {
               .where((note) => note.notebook.target?.id == noteBook.id)
               .toList();
     }
+    const options = LiveOptions(
+      delay: Duration(seconds: -5),
+      showItemInterval: Duration(milliseconds: 100),
+      showItemDuration: Duration(milliseconds: 100),
+      visibleFraction: 0.01,
+      reAnimateOnVisibility: false,
+    );
 
     return disposition == 'list'
-        ? ListView.builder(
+        ? LiveList.options(
+            // reverse: true,
+            options: options,
             itemCount: notes.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12, 8.0),
-                child: Dismissible(
-                  key: UniqueKey(),
-                  onDismissed: (direction) {
-                    context.read<NotesProvider>().deleteNote(notes[index].id);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 243, 243, 243),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 5,
-                          offset:
-                              const Offset(0, 5), // changes position of shadow
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: GestureDetector(
-                      onLongPress: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog.adaptive(
-                              elevation: 5,
-                              // icon: const Icon(Icons.delete,
-                              //     color: Colors.red),
-                              actionsAlignment: MainAxisAlignment.center,
-                              title: const Text('Delete Note?'),
-                              content: const Text(
-                                  'Are you sure you want to delete this note?'),
-                              actions: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Cancel'),
-                                ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                  ),
-                                  onPressed: () {
-                                    context
-                                        .read<NotesProvider>()
-                                        .deleteNote(notes[index].id);
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text(
-                                    'Delete',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+            itemBuilder: (context, index, animation) {
+              return FadeTransition(
+                opacity: Tween<double>(
+                  begin: 0,
+                  end: 1,
+                ).animate(animation),
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, -0.1),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12, 8.0),
+                    child: Dismissible(
+                      key: UniqueKey(),
+                      onDismissed: (direction) {
+                        context
+                            .read<NotesProvider>()
+                            .deleteNote(notes[index].id);
                       },
-                      child: ListTile(
-                        shape: RoundedRectangleBorder(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          // color: const Color.fromARGB(255, 243, 243, 243),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: const Offset(
+                                  0, 5), // changes position of shadow
+                            ),
+                          ],
                           borderRadius: BorderRadius.circular(12.0),
                         ),
-                        title: Text(
-                          notes[index].title,
-                          // noteBook.notes[index].title,
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        subtitle: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            // noteBook.notes[index].content,
-                            notes[index].content,
-                            style: TextStyle(
-                                fontSize: 14, color: Colors.grey[600]),
-                            overflow: TextOverflow.ellipsis,
-                            // maxLines: 2,
+                        child: GestureDetector(
+                          onLongPress: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog.adaptive(
+                                  elevation: 5,
+                                  // icon: const Icon(Icons.delete,
+                                  //     color: Colors.red),
+                                  actionsAlignment: MainAxisAlignment.center,
+                                  title: const Text('Delete Note?'),
+                                  content: const Text(
+                                      'Are you sure you want to delete this note?'),
+                                  actions: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red,
+                                      ),
+                                      onPressed: () {
+                                        context
+                                            .read<NotesProvider>()
+                                            .deleteNote(notes[index].id);
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text(
+                                        'Delete',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: ListTile(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            title: Text(
+                              notes[index].title,
+                              // noteBook.notes[index].title,
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w500),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            subtitle: Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                // noteBook.notes[index].content,
+                                notes[index].content,
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.grey[600]),
+                                overflow: TextOverflow.ellipsis,
+                                // maxLines: 2,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -370,7 +405,8 @@ class NoteListPage extends StatelessWidget {
               );
             },
           )
-        : GridView.builder(
+        : LiveGrid.options(
+            options: options,
             padding: const EdgeInsets.all(8),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               childAspectRatio: 1,
@@ -379,48 +415,61 @@ class NoteListPage extends StatelessWidget {
               mainAxisSpacing: 8.0,
             ),
             itemCount: notes.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 4.0),
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 5,
-                        offset:
-                            const Offset(0, 5), // changes position of shadow
+            itemBuilder: (context, index, animation) {
+              return FadeTransition(
+                opacity: Tween<double>(
+                  begin: 0,
+                  end: 1,
+                ).animate(animation),
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, -0.1),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 4.0),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 5,
+                            offset: const Offset(
+                                0, 5), // changes position of shadow
+                          ),
+                        ],
+                        // color: const Color.fromARGB(255, 245, 245, 245),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.0),
                       ),
-                    ],
-                    color: const Color.fromARGB(255, 245, 245, 245),
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          notes[index].title,
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
-                          maxLines: 2,
-                          // overflow: TextOverflow.ellipsis,
-                        ),
+                      child: Column(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              notes[index].title,
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w500),
+                              maxLines: 2,
+                              // overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Flexible(
+                            child: Text(
+                              notes[index].content,
+                              style: TextStyle(
+                                  fontSize: 14, color: Colors.grey[600]),
+                              // overflow: TextOverflow.ellipsis,
+                              // maxLines: 3,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Flexible(
-                        child: Text(
-                          notes[index].content,
-                          style:
-                              TextStyle(fontSize: 14, color: Colors.grey[600]),
-                          // overflow: TextOverflow.ellipsis,
-                          // maxLines: 3,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               );
