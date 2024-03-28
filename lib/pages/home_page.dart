@@ -3,6 +3,7 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:provider/provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
 import '../providers/drag_provider.dart';
+import '../providers/note_provider.dart';
 import '../providers/taskProvider.dart';
 import '../widgets/homePage/add_note_modal.dart';
 import '../widgets/homePage/add_task_widgets/add_task_modal.dart';
@@ -62,79 +63,78 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final tasksProvider = context.watch<TasksProvider>();
+    final notesProvider = context.watch<NotesProvider>();
     final taskLists = tasksProvider.taskLists;
+    final noteBooks = notesProvider.noteBooks;
     bool keyboardIsOpened = MediaQuery.of(context).viewInsets.bottom != 0.0;
 
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          // leading: IconButton(
-          //   icon: const Icon(Icons.calendar_month_rounded),
-          //   onPressed: () {
-          //     _showCalendarView();
-          //   },
-          // ),
-          title: Text(appBarTitles[_bottomNavIndex]),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(
-                Icons.filter_list_rounded,
-              ),
-              onPressed: () {
-                showSortView(context);
-              },
+    return Scaffold(
+      appBar: AppBar(
+        // leading: IconButton(
+        //   icon: const Icon(Icons.calendar_month_rounded),
+        //   onPressed: () {
+        //     _showCalendarView();
+        //   },
+        // ),
+        title: Text(appBarTitles[_bottomNavIndex]),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(
+              Icons.filter_list_rounded,
             ),
-            IconButton(
-              icon: const Icon(Icons.calendar_month_rounded),
-              onPressed: () {
-                _showCalendarView();
-              },
-            ),
-          ],
-        ),
-        floatingActionButton: keyboardIsOpened
-            ? null
-            : DragTarget(
-                builder: (context, incoming, rejected) {
-                  return floatingActionButton(context, incoming.isNotEmpty);
-                },
-                onWillAcceptWithDetails: (data) => true,
-                onAcceptWithDetails: (DragTargetDetails<Object> data) {
-                  final draggableData = data.data;
-                  context
-                      .read<TasksProvider>()
-                      .deleteTask(draggableData as int);
-                }),
-        extendBody: true,
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        bottomNavigationBar: AnimatedBottomNavigationBar(
-            splashRadius: 0,
-            height: 65.0,
-            icons: iconList,
-            activeIndex: _bottomNavIndex,
-            gapLocation: GapLocation.center,
-            leftCornerRadius: 32,
-            rightCornerRadius: 32,
-            notchSmoothness: NotchSmoothness.softEdge,
-            iconSize: 28,
-            activeColor: const Color.fromARGB(255, 0, 73, 133),
-            inactiveColor: Colors.grey,
-            shadow: BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                spreadRadius: 1,
-                blurRadius: 10),
-            onTap: (index) {
-              setState(() {
-                _bottomNavIndex = index;
-              });
-            }
-            //other params
-            ),
-
-        // drawer: const AppDrawer(),
-        body: buildBody(_bottomNavIndex),
+            onPressed: () {
+              showSortView(context);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.calendar_month_rounded),
+            onPressed: () {
+              _showCalendarView();
+            },
+          ),
+        ],
       ),
+      floatingActionButton: keyboardIsOpened
+          ? null
+          : DragTarget(
+              builder: (context, incoming, rejected) {
+                return floatingActionButton(context, incoming.isNotEmpty);
+              },
+              onWillAcceptWithDetails: (data) => true,
+              onAcceptWithDetails: (DragTargetDetails<Object> data) {
+                final draggableData = data.data;
+                context
+                    .read<TasksProvider>()
+                    .deleteTask(draggableData as int);
+              }),
+      extendBody: true,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: AnimatedBottomNavigationBar(
+          splashRadius: 0,
+          height: 65.0,
+          icons: iconList,
+          activeIndex: _bottomNavIndex,
+          gapLocation: GapLocation.center,
+          leftCornerRadius: 32,
+          rightCornerRadius: 32,
+          notchSmoothness: NotchSmoothness.softEdge,
+          iconSize: 28,
+          activeColor: const Color.fromARGB(255, 0, 73, 133),
+          inactiveColor: Colors.grey,
+          shadow: BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 10),
+          onTap: (index) {
+            setState(() {
+              _bottomNavIndex = index;
+            });
+          }
+          //other params
+          ),
+    
+      // drawer: const AppDrawer(),
+      body: buildBody(_bottomNavIndex),
     );
   }
 

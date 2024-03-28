@@ -66,6 +66,14 @@ class NotesProvider extends ChangeNotifier {
       updatedAt: DateTime.now(),
     );
     noteBox.put(note);
+
+    final noteBook = NoteBook(
+      name: 'Test',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+
+    noteBookBox.put(noteBook);
   }
 
   void deleteNote(int id) {

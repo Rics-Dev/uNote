@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:toastification/toastification.dart';
 
+import '../../pages/note_page.dart';
 import '../../providers/note_provider.dart';
 
 class AddNoteView extends StatefulWidget {
@@ -19,6 +21,23 @@ class _AddNoteViewState extends State<AddNoteView> {
     _noteTitleController.dispose();
     _noteContentController.dispose();
     super.dispose();
+  }
+
+  void addNote(String title, String content) {
+    if (title.isEmpty) {
+      toastification.show(
+        type: ToastificationType.warning,
+        style: ToastificationStyle.minimal,
+        context: context,
+        title: const Text("Note must have a title"),
+        autoCloseDuration: const Duration(seconds: 3),
+      );
+    } else {
+      context.read<NotesProvider>().addNote(title, content);
+      _noteContentController.clear();
+      _noteTitleController.clear();
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -48,11 +67,12 @@ class _AddNoteViewState extends State<AddNoteView> {
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
-                context.read<NotesProvider>().addNote(
-                    _noteTitleController.text, _noteContentController.text);
-                _noteContentController.clear();
-                _noteTitleController.clear();
-                Navigator.of(context).pop();
+                addNote(_noteTitleController.text, _noteContentController.text);
+                // context.read<NotesProvider>().addNote(
+                //     _noteTitleController.text, _noteContentController.text);
+                // _noteContentController.clear();
+                // _noteTitleController.clear();
+                // Navigator.of(context).pop();
               },
               child: const Text('Add Note'),
             ),

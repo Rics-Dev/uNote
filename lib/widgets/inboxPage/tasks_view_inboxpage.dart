@@ -40,29 +40,27 @@ class TasksViewInboxPage extends StatelessWidget {
         .toList();
     final doneTasks = tasks.where((task) => task.isDone).toList();
 
-    return Expanded(
-      child: tasks.isEmpty
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('No tasks Yet! Add a task to get started!'),
-                  SizedBox(height: 40),
-                  Icon(
-                    Icons.arrow_downward_rounded,
-                    size: 50,
-                    color: Color.fromARGB(255, 0, 73, 133),
-                  )
-                ],
-              ),
-            )
-          : ListView.builder(
-              itemCount: notDoneTasks.length + (doneTasks.isNotEmpty ? 1 : 0),
-              itemBuilder: (context, index) {
-                return buildTaskItem(context, notDoneTasks, doneTasks, index);
-              },
+    return tasks.isEmpty
+        ? const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('No tasks Yet! Add a task to get started!'),
+                SizedBox(height: 40),
+                Icon(
+                  Icons.arrow_downward_rounded,
+                  size: 50,
+                  color: Color.fromARGB(255, 0, 73, 133),
+                )
+              ],
             ),
-    );
+          )
+        : ListView.builder(
+            itemCount: notDoneTasks.length + (doneTasks.isNotEmpty ? 1 : 0),
+            itemBuilder: (context, index) {
+              return buildTaskItem(context, notDoneTasks, doneTasks, index);
+            },
+          );
   }
 
   Widget buildTaskItem(
