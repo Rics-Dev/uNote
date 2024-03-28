@@ -34,7 +34,7 @@ class SortView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              OutlinedButton(
+              ElevatedButton(
                 onPressed: () {
                   tasksProvider.toggleSortByCreationDate();
                 },
@@ -56,12 +56,16 @@ class SortView extends StatelessWidget {
               Column(
                 children: [
                   const Text('Old'),
-                  IconButton.outlined(
+                  ElevatedButton(
                     onPressed: () {
                       tasksProvider.toggleNewToOld();
                     },
-                    color: const Color.fromARGB(255, 0, 73, 133),
-                    icon: Icon(
+                    style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(), elevation: 3,
+                      // padding: const EdgeInsets.all(10),
+                    ),
+                    // color: const Color.fromARGB(255, 0, 73, 133),
+                    child: Icon(
                       oldToNew
                           ? Icons.arrow_downward_rounded
                           : Icons.arrow_upward_rounded,
@@ -71,7 +75,7 @@ class SortView extends StatelessWidget {
                   const Text('New'),
                 ],
               ),
-              OutlinedButton(
+              ElevatedButton(
                 onPressed: () {
                   tasksProvider.toggleSortByEditionDate();
                 },
@@ -98,7 +102,7 @@ class SortView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              OutlinedButton(
+              ElevatedButton(
                 onPressed: () {
                   tasksProvider.toggleSortByNameAZ();
                 },
@@ -117,7 +121,7 @@ class SortView extends StatelessWidget {
                           : const Color.fromARGB(255, 0, 73, 133),
                     )),
               ),
-              OutlinedButton(
+              ElevatedButton(
                 onPressed: () {
                   tasksProvider.toggleSortByNameZA();
                 },

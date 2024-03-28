@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:searchbar_animation/const/colours.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
 import 'package:utask/providers/note_provider.dart';
 import 'package:utask/widgets/inboxPage/sort_view.dart';
@@ -30,9 +31,13 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           disposition == 'list'
-              ? IconButton.outlined(
-                  color: const Color.fromARGB(255, 0, 73, 133),
-                  icon: const Icon(
+              ? ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 3,
+                    // padding: const EdgeInsets.all(10),
+                    shape: const CircleBorder(),
+                  ),
+                  child: const Icon(
                     Icons.grid_view_rounded,
                     color: Color.fromARGB(255, 0, 73, 133),
                   ),
@@ -40,9 +45,12 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
                     context.read<NotesProvider>().changeView('grid');
                   },
                 )
-              : IconButton.outlined(
-                  color: const Color.fromARGB(255, 0, 73, 133),
-                  icon: const Icon(
+              : ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 3,
+                    shape: const CircleBorder(),
+                  ),
+                  child: const Icon(
                     Icons.list_rounded,
                     color: Color.fromARGB(255, 0, 73, 133),
                   ),
@@ -51,6 +59,9 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
                   },
                 ),
           SearchBarAnimation(
+            // buttonColour: AppColours.white,
+            // enableBoxShadow: false,
+            // enableButtonShadow: false,
             durationInMilliSeconds: 500,
             searchBoxWidth: MediaQuery.of(context).size.width * 0.7,
             isOriginalAnimation: false,

@@ -19,9 +19,11 @@ class NotesPage extends StatefulWidget {
 }
 
 class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
+  TextEditingController noteBookController = TextEditingController();
   TabController? _tabController;
   NoteBookProvider? _noteBookProvider;
   int _selectedTabIndex = 0;
+  int _previouslySelectedTabIndex = 0;
 
   @override
   void initState() {
@@ -39,6 +41,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     _tabController?.dispose();
+    noteBookController.dispose();
     _noteBookProvider?.removeListener(updateTabController);
     super.dispose();
   }
@@ -51,6 +54,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
       final noteBooks = noteBookProvider.noteBooks;
       if (_tabController != null) {
         _selectedTabIndex = _tabController!.index;
+        _previouslySelectedTabIndex = _selectedTabIndex + 1;
       }
 
       _tabController = TabController(
@@ -74,7 +78,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
           child: const Column(
             children: [
               SortAndFilterView(),
-              SizedBox(height: 10),
+              // SizedBox(height: 10),
               HorizontalTagsView(),
             ],
           ),
@@ -85,24 +89,63 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
             color: Colors.white,
           ),
           child: TabBar(
+            // tabAlignment: TabAlignment.start,
             controller: _tabController,
             isScrollable: true,
             indicatorSize: TabBarIndicatorSize.tab,
+            onTap: (index) {
+              if (index == noteBooks.length + 1) {
+                // If "Add Notebook" tab is tapped
+                _showAddNotebookDialog(context);
+                // _selectedTabIndex = noteBooks.length + 1;
+              }
+            },
             tabs: [
               const Tab(text: 'All Notes'),
               ...noteBooks
                   .map(
-                    (noteBook) => Tab(
-                      // text: noteBook.name,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.book_rounded),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          Text(noteBook.name),
-                        ],
+                    (noteBook) => GestureDetector(
+                      onLongPress: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Delete Notebook?'),
+                              content: const Text(
+                                  'Are you sure you want to delete this notebook?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    context
+                                        .read<NotesProvider>()
+                                        .deleteNotebook(noteBook.id);
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: Tab(
+                        // text: noteBook.name,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.book_rounded),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Text(noteBook.name),
+                          ],
+                        ),
                       ),
                     ),
                   )
@@ -124,22 +167,89 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
         ),
         Expanded(
           child: TabBarView(
+            physics: const NeverScrollableScrollPhysics(),
             controller: _tabController,
             children: [
               // TasksViewInboxPage(),
-              const NoteListPage(),
-              ...noteBooks.map((noteBook) => const NoteListPage()).toList(),
-              const NoteListPage(),
+              NoteListPage(NoteBook(
+                  name: 'All Notes Ric',
+                  createdAt: DateTime.now(),
+                  updatedAt: DateTime.now())),
+              ...noteBooks.map((noteBook) => NoteListPage(noteBook)).toList(),
+              _buildAddNotebookPage(),
             ],
           ),
         ),
       ],
     );
   }
+
+  Widget _buildAddNotebookPage() {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {
+          _showAddNotebookDialog(context);
+        },
+        child: const Text('Add Notebook'),
+      ),
+    );
+  }
+
+  void _showAddNotebookDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add Notebook'),
+          content: TextField(
+            controller: noteBookController,
+            autofocus: true,
+            decoration: const InputDecoration(labelText: 'Notebook Name'),
+            onChanged: (value) {
+              // Handle onChanged if needed
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _tabController?.animateTo(
+                  _tabController!.previousIndex, // index of the new notebook
+                  duration: const Duration(
+                      milliseconds: 300), // optional animation duration
+                  curve: Curves.ease, // optional animation curve
+                );
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                context.read<NotesProvider>().addNotebook(NoteBook(
+                    name: noteBookController.text,
+                    createdAt: DateTime.now(),
+                    updatedAt: DateTime.now()));
+                _tabController?.animateTo(
+                  _tabController!.length - 1, // index of the new notebook
+                  duration: const Duration(
+                      milliseconds: 300), // optional animation duration
+                  curve: Curves.ease, // optional animation curve
+                );
+                noteBookController.clear();
+                Navigator.pop(context);
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class NoteListPage extends StatelessWidget {
-  const NoteListPage({
+  final NoteBook noteBook;
+  const NoteListPage(
+    this.noteBook, {
     super.key,
   });
 
@@ -147,7 +257,14 @@ class NoteListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final notesProvider = context.watch<NotesProvider>();
     final disposition = notesProvider.selectedView;
-    final notes = notesProvider.notes;
+    var notes = notesProvider.notes;
+
+    noteBook.name == 'All Notes Ric'
+        ? notes = notesProvider.notes
+        : notes = notesProvider.notes
+            .where((note) => note.notebook.target?.id == noteBook.id)
+            .toList();
+
     return disposition == 'list'
         ? ListView.builder(
             itemCount: notes.length,
@@ -219,6 +336,7 @@ class NoteListPage extends StatelessWidget {
                         ),
                         title: Text(
                           notes[index].title,
+                          // noteBook.notes[index].title,
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.w500),
                           overflow: TextOverflow.ellipsis,
@@ -226,6 +344,7 @@ class NoteListPage extends StatelessWidget {
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
+                            // noteBook.notes[index].content,
                             notes[index].content,
                             style: TextStyle(
                                 fontSize: 14, color: Colors.grey[600]),

@@ -65,19 +65,28 @@ class NotesProvider extends ChangeNotifier {
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
+    note.notebook.target = noteBookBox.get(1);
     noteBox.put(note);
 
-    final noteBook = NoteBook(
-      name: 'Test',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
+    // final noteBook = NoteBook(
+    //   name: 'Test',
+    //   createdAt: DateTime.now(),
+    //   updatedAt: DateTime.now(),
+    // );
 
-    noteBookBox.put(noteBook);
+    // noteBookBox.put(noteBook);
   }
 
   void deleteNote(int id) {
     noteBox.remove(id);
+  }
+
+  void addNotebook(NoteBook noteBook) {
+    noteBookBox.put(noteBook);
+  }
+
+  void deleteNotebook(int id) {
+    noteBookBox.remove(id);
   }
 
   // void remove(Note note) {
