@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   bool addTaskDialogOpened = false;
   int _bottomNavIndex = 1;
   List<IconData> iconList = [
-    Icons.inbox_rounded,
+    Icons.sticky_note_2_rounded,
     Icons.format_list_bulleted_rounded,
   ];
   List<String> appBarTitles = [
@@ -103,9 +103,7 @@ class _HomePageState extends State<HomePage> {
               onWillAcceptWithDetails: (data) => true,
               onAcceptWithDetails: (DragTargetDetails<Object> data) {
                 final draggableData = data.data;
-                context
-                    .read<TasksProvider>()
-                    .deleteTask(draggableData as int);
+                context.read<TasksProvider>().deleteTask(draggableData as int);
               }),
       extendBody: true,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -132,7 +130,7 @@ class _HomePageState extends State<HomePage> {
           }
           //other params
           ),
-    
+
       // drawer: const AppDrawer(),
       body: buildBody(_bottomNavIndex),
     );

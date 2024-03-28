@@ -80,6 +80,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
           ),
         ),
         Container(
+          height: 50,
           decoration: const BoxDecoration(
             color: Colors.white,
           ),
@@ -89,8 +90,35 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
             indicatorSize: TabBarIndicatorSize.tab,
             tabs: [
               const Tab(text: 'All Notes'),
-              ...noteBooks.map((noteBook) => Tab(text: noteBook.name)).toList(),
-              const Tab(icon: Icon(Icons.add)),
+              ...noteBooks
+                  .map(
+                    (noteBook) => Tab(
+                      // text: noteBook.name,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.book_rounded),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Text(noteBook.name),
+                        ],
+                      ),
+                    ),
+                  )
+                  .toList(),
+              const Tab(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.add),
+                    // SizedBox(
+                    //   width: ,
+                    // ),
+                    Text('NoteBook'),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

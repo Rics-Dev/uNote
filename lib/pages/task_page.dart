@@ -45,7 +45,18 @@ class _TasksPageState extends State<TasksPage>
             controller: _tabController,
             indicatorSize: TabBarIndicatorSize.tab,
             isScrollable: false,
-            tabs: const [Tab(text: 'Inbox'), Tab(text: 'Lists')],
+            tabs: const [
+              Tab(
+                iconMargin: EdgeInsets.only(bottom: 2),
+                text: 'Inbox',
+                icon: Icon(Icons.inbox_rounded),
+              ),
+              Tab(
+                text: 'Lists',
+                icon: Icon(Icons.format_list_bulleted_rounded),
+                iconMargin: EdgeInsets.only(bottom: 2),
+              )
+            ],
           ),
         ),
         const SizedBox(height: 20),
