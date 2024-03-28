@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   bool deleteFloatingActionButton = false;
 
   bool addTaskDialogOpened = false;
-  int _bottomNavIndex = 1;
+  int _bottomNavIndex = 0;
   List<IconData> iconList = [
     Icons.sticky_note_2_rounded,
     Icons.format_list_bulleted_rounded,
