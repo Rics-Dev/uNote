@@ -8,6 +8,7 @@ class NotesProvider extends ChangeNotifier {
   Box<Note> noteBox = objectbox.noteBox;
   Box<Tag> tagBox = objectbox.tagBox;
   Box<NoteBook> noteBookBox = objectbox.noteBookBox;
+  bool _isSearchingNotes = false;
 
   String _selectedView = 'list';
 
@@ -15,10 +16,14 @@ class NotesProvider extends ChangeNotifier {
   List<Note> _notes = [];
   List<NoteBook> _noteBooks = [];
 
+  List<Note> _searchedNotes = [];
+
   String get selectedView => _selectedView;
   List<Tag> get tags => _tags;
   List<Note> get notes => _notes;
   List<NoteBook> get noteBooks => _noteBooks;
+  List<Note> get searchedNotes => _searchedNotes;
+  bool get isSearchingNotes => _isSearchingNotes;
 
   NotesProvider() {
     _init();
@@ -65,7 +70,7 @@ class NotesProvider extends ChangeNotifier {
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
-    note.notebook.target = noteBookBox.get(1);
+    note.notebook.target = noteBookBox.get(2);
     noteBox.put(note);
 
     // final noteBook = NoteBook(
@@ -89,8 +94,17 @@ class NotesProvider extends ChangeNotifier {
     noteBookBox.remove(id);
   }
 
-  // void remove(Note note) {
-  //   _notes.remove(note);
-  //   notifyListeners();
-  // }
+  void setIsSearching(bool bool) {
+    _isSearchingNotes = bool;
+    notifyListeners();
+  }
+
+  void setSearchedNotes(List<Note> suggestions) {
+    _isSearchingNotes = true;
+    if (suggestions.isEmpty) {
+      _searchedNotes.clear();
+    }
+    _searchedNotes = suggestions;
+    notifyListeners();
+  }
 }

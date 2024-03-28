@@ -165,6 +165,9 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
             ],
           ),
         ),
+        const SizedBox(
+          height: 10,
+        ),
         Expanded(
           child: TabBarView(
             physics: const NeverScrollableScrollPhysics(),
@@ -265,6 +268,14 @@ class NoteListPage extends StatelessWidget {
             .where((note) => note.notebook.target?.id == noteBook.id)
             .toList();
 
+    if (notesProvider.isSearchingNotes == true) {
+      noteBook.name == 'All Notes Ric'
+          ? notes = notesProvider.searchedNotes
+          : notes = notesProvider.searchedNotes
+              .where((note) => note.notebook.target?.id == noteBook.id)
+              .toList();
+    }
+
     return disposition == 'list'
         ? ListView.builder(
             itemCount: notes.length,
@@ -348,7 +359,8 @@ class NoteListPage extends StatelessWidget {
                             notes[index].content,
                             style: TextStyle(
                                 fontSize: 14, color: Colors.grey[600]),
-                            // overflow: TextOverflow.ellipsis,
+                            overflow: TextOverflow.ellipsis,
+                            // maxLines: 2,
                           ),
                         ),
                       ),
@@ -392,8 +404,12 @@ class NoteListPage extends StatelessWidget {
                           notes[index].title,
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.w500),
+                          maxLines: 2,
                           // overflow: TextOverflow.ellipsis,
                         ),
+                      ),
+                      const SizedBox(
+                        height: 10,
                       ),
                       Flexible(
                         child: Text(
@@ -401,6 +417,7 @@ class NoteListPage extends StatelessWidget {
                           style:
                               TextStyle(fontSize: 14, color: Colors.grey[600]),
                           // overflow: TextOverflow.ellipsis,
+                          // maxLines: 3,
                         ),
                       ),
                     ],

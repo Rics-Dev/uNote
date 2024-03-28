@@ -85,7 +85,7 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
             },
             onCollapseComplete: () {
               searchBar.clear();
-              context.read<TasksAPI>().setIsSearching(false);
+              context.read<NotesProvider>().setIsSearching(false);
             },
             onChanged: (String value) {
               if (mounted) {
@@ -100,15 +100,14 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
 
   void searchTasks(String query) {
     if (query.isEmpty) {
-      context.read<TasksProvider>().setIsSearching(false);
-      context
-          .read<TasksProvider>()
-          .setSearchedTags(context.read<TasksProvider>().tags);
+      context.read<NotesProvider>().setIsSearching(false);
+      // context.read<NotesProvider>().setSearchedTags(context.read<NotesProvider>().tags);
     } else {
-      final suggestions = context.read<TasksProvider>().tasks.where((task) {
-        return task.name.toLowerCase().contains(query.toLowerCase());
+      final suggestions = context.read<NotesProvider>().notes.where((note) {
+        return note.title.toLowerCase().contains(query.toLowerCase()) ||
+            note.content.toLowerCase().contains(query.toLowerCase());
       }).toList();
-      context.read<TasksProvider>().setSearchedTasks(suggestions);
+      context.read<NotesProvider>().setSearchedNotes(suggestions);
     }
   }
 }
