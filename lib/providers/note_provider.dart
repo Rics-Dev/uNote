@@ -90,6 +90,27 @@ class NotesProvider extends ChangeNotifier {
     noteBox.put(note);
   }
 
+  void updateNote(int noteId, String title, String content, String json,
+      int selectedNoteBookIndex) {
+    final updatedNote = noteBox.get(noteId);
+    if (updatedNote != null) {
+      updatedNote.title = title;
+      updatedNote.content = content;
+      updatedNote.json = json;
+      updatedNote.updatedAt = DateTime.now();
+      // if (updatedNote.notebook.target != null) {
+      //   // if (selectedNoteBookIndex > 1 && selectedNoteBookIndex < noteBooks.length + 2) {
+      //   //   final noteBook = noteBooks[selectedNoteBookIndex - 2];
+      //   //   updatedNote.notebook.target = noteBook;
+      //   // }
+      //   final noteBook = updatedNote.notebook.target;
+
+      // }
+
+      noteBox.put(updatedNote);
+    }
+  }
+
   void deleteNote(int id) {
     noteBox.remove(id);
   }

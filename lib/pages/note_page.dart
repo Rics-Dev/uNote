@@ -165,8 +165,10 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
               physics: const NeverScrollableScrollPhysics(),
               controller: _tabController,
               children: [
-                const Placeholder(),
-                // TasksViewInboxPage(),
+                NoteListPage(NoteBook(
+                    name: 'Favorites',
+                    createdAt: DateTime.now(),
+                    updatedAt: DateTime.now())),
                 NoteListPage(NoteBook(
                     name: 'All Notes Ric',
                     createdAt: DateTime.now(),
@@ -280,15 +282,12 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
 
 class NoteListPage extends StatelessWidget {
   final NoteBook noteBook;
-  const NoteListPage(
-    this.noteBook, {
-    super.key,
-  });
+  const NoteListPage(this.noteBook, {super.key });
 
-  Future<dynamic> _showAddNoteDetailsDialog(BuildContext context, int noteId) {
+  Future<dynamic> _showAddNoteDetailsDialog(BuildContext context, Note note) {
     return showModalBottomSheet(
       context: context,
-      builder: (context) => NoteDetailPage(noteId: noteId),
+      builder: (context) => NoteDetailPage(note: note),
       isScrollControlled: true,
       // showDragHandle: true,
     );
@@ -368,16 +367,7 @@ class NoteListPage extends StatelessWidget {
                         ),
                         child: GestureDetector(
                           onTap: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) =>
-                            //         NoteDetailPage(note: notes[index]),
-                            //   ),
-                            // );
-                            // context
-                            //     .go("/noteDetails?noteId=${notes[index].id}");
-                            _showAddNoteDetailsDialog(context, notes[index].id);
+                            _showAddNoteDetailsDialog(context, notes[index]);
                           },
                           onLongPress: () {
                             showDialog(
@@ -474,46 +464,90 @@ class NoteListPage extends StatelessWidget {
                   ).animate(animation),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 4.0),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            spreadRadius: 1,
-                            blurRadius: 5,
-                            offset: const Offset(
-                                0, 5), // changes position of shadow
-                          ),
-                        ],
-                        // color: const Color.fromARGB(255, 245, 245, 245),
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: Column(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              notes[index].title,
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w500),
-                              maxLines: 2,
-                              // overflow: TextOverflow.ellipsis,
+                    child: GestureDetector(
+                      onTap: () {
+                        _showAddNoteDetailsDialog(context, notes[index]);
+                      },
+                      onLongPress: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog.adaptive(
+                              elevation: 5,
+                              // icon: const Icon(Icons.delete,
+                              //     color: Colors.red),
+                              actionsAlignment: MainAxisAlignment.center,
+                              title: const Text('Delete Note?'),
+                              content: const Text(
+                                  'Are you sure you want to delete this note?'),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                  ),
+                                  onPressed: () {
+                                    context
+                                        .read<NotesProvider>()
+                                        .deleteNote(notes[index].id);
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    'Delete',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: const Offset(
+                                  0, 5), // changes position of shadow
                             ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Flexible(
-                            child: Text(
-                              notes[index].content,
-                              style: TextStyle(
-                                  fontSize: 14, color: Colors.grey[600]),
-                              // overflow: TextOverflow.ellipsis,
-                              // maxLines: 3,
+                          ],
+                          // color: const Color.fromARGB(255, 245, 245, 245),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Column(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                notes[index].title,
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500),
+                                maxLines: 2,
+                                // overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Flexible(
+                              child: Text(
+                                notes[index].content,
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.grey[600]),
+                                // overflow: TextOverflow.ellipsis,
+                                // maxLines: 3,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -525,8 +559,8 @@ class NoteListPage extends StatelessWidget {
 }
 
 class NoteDetailPage extends StatefulWidget {
-  const NoteDetailPage({super.key, required this.noteId});
-  final int noteId;
+  const NoteDetailPage({super.key, required this.note});
+  final Note note;
 
   @override
   State<NoteDetailPage> createState() => _NoteDetailPageState();
@@ -536,14 +570,16 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   final TextEditingController _titleController = TextEditingController();
   final QuillController _contentController = QuillController.basic();
   bool _isEditing = false;
-  late Note note;
+
+  FocusNode titleFocusNode = FocusNode();
+  FocusNode contentFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    note = objectbox.noteBox.get(widget.noteId)!;
-    _titleController.text = note.title;
-    final jsonNote = note.json;
+    // note = objectbox.noteBox.get(widget.noteId)!;
+    _titleController.text = widget.note.title;
+    final jsonNote = widget.note.json;
     final json = jsonDecode(jsonNote);
     _contentController.document = Document.fromJson(json);
   }
@@ -552,11 +588,15 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
+    titleFocusNode.dispose();
+    contentFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final notesProvider = context.watch<NotesProvider>();
+    final selectedNoteBookIndex = notesProvider.selectedNoteBook;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.only(top: 24.0),
@@ -565,11 +605,18 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
             elevation: 3,
             title: _isEditing
                 ? TextField(
-                    autofocus: true,
+                    onTapOutside: (event) {
+                      titleFocusNode.unfocus();
+                    },
+                    focusNode: titleFocusNode,
                     controller: _titleController,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Title',
+                    ),
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   )
                 : Text(
@@ -579,18 +626,38 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-            actions: !_isEditing
-                ? [
-                    IconButton(
+            actions: [
+              _isEditing
+                  ? IconButton(
                       onPressed: () {
                         setState(() {
-                          _isEditing = !_isEditing;
+                          _isEditing = false;
+                          final title = _titleController.text;
+                          final content =
+                              _contentController.document.toPlainText().trim();
+                          final json = jsonEncode(
+                              _contentController.document.toDelta().toJson());
+                          if (title.isNotEmpty || content.isNotEmpty) {
+                            context.read<NotesProvider>().updateNote(
+                                widget.note.id,
+                                title,
+                                content,
+                                json,
+                                selectedNoteBookIndex);
+                          }
+                        });
+                      },
+                      icon: const Icon(Icons.done),
+                    )
+                  : IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _isEditing = true;
                         });
                       },
                       icon: const Icon(Icons.edit),
                     ),
-                  ]
-                : [],
+            ],
           ),
           body: Column(
             children: [
@@ -607,13 +674,21 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                 ),
               ),
               Expanded(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8.0, vertical: 24),
-                  child: QuillEditor.basic(
-                    configurations: QuillEditorConfigurations(
-                      readOnly: _isEditing ? false : true,
-                      controller: _contentController,
+                child: Focus(
+                  focusNode: contentFocusNode,
+                  child: GestureDetector(
+                    onTap: () {
+                      titleFocusNode.unfocus();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 24),
+                      child: QuillEditor.basic(
+                        configurations: QuillEditorConfigurations(
+                          readOnly: _isEditing ? false : true,
+                          controller: _contentController,
+                        ),
+                      ),
                     ),
                   ),
                 ),

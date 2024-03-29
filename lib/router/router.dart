@@ -12,15 +12,15 @@ GoRouter buildRouter() {
         builder: (BuildContext context, GoRouterState state) {
           return const HomePage();
         },
-        routes: <RouteBase>[
-          GoRoute(
-            path: 'noteDetails',
-            builder: (BuildContext context, GoRouterState state) {
-              final noteId = int.parse(state.uri.queryParameters['noteId']!);
-              return NoteDetailPage(noteId: noteId);
-            },
-          ),
-        ],
+        // routes: <RouteBase>[
+        //   GoRoute(
+        //     path: 'noteDetails',
+        //     builder: (BuildContext context, GoRouterState state) {
+        //       final noteId = int.parse(state.uri.queryParameters['noteId']!);
+        //       return NoteDetailPage(noteId: noteId);
+        //     },
+        //   ),
+        // ],
       ),
     ],
   );

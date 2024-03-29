@@ -27,6 +27,7 @@ class _AddNoteViewState extends State<AddNoteView> {
   FocusNode titleFocusNode = FocusNode();
   FocusNode contentFocusNode = FocusNode();
   final bool _isToolbarVisible = false;
+  bool _isSaved = false;
 
   @override
   void initState() {
@@ -52,13 +53,6 @@ class _AddNoteViewState extends State<AddNoteView> {
     contentFocusNode.dispose();
     // _retrieveData();
     super.dispose();
-  }
-
-  void _retrieveData() {
-    // Navigator.of(context).pop({'title': title, 'content': content});
-
-    // String title = _titleController.text;
-    // Navigator.of(context).pop({'title': title, 'content': content});
   }
 
   void _onEditorTextChanged() {
@@ -89,97 +83,115 @@ class _AddNoteViewState extends State<AddNoteView> {
     return PopScope(
       onPopInvoked: (isPop) async {
         if (isPop) {
-          final title = _titleController.text;
-          final content = _contentController.document.toPlainText().trim();
-          final json =
-              jsonEncode(_contentController.document.toDelta().toJson());
-          if (title.isNotEmpty || content.isNotEmpty) {
-            context
-                .read<NotesProvider>()
-                .addNote(title, content, json, selectedNoteBookIndex);
+          if (!_isSaved) {
+            final title = _titleController.text;
+            final content = _contentController.document.toPlainText().trim();
+            final json =
+                jsonEncode(_contentController.document.toDelta().toJson());
+            if (title.isNotEmpty || content.isNotEmpty) {
+              context
+                  .read<NotesProvider>()
+                  .addNote(title, content, json, selectedNoteBookIndex);
+            }
           }
         }
       },
       child: SafeArea(
           child: Padding(
-        padding: MediaQuery.of(context).viewInsets, // Adjust for keyboard
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 32),
-          child: Column(
-            children: [
-              // ElevatedButton(
-              //   style: ElevatedButton.styleFrom(
-              //       elevation: 3, padding: const EdgeInsets.all(8)
-              //       // shape: const CircleBorder(),
-              //       ),
-              //   onPressed: () {
-              //     setState(() {
-              //       _isToolbarVisible = !_isToolbarVisible;
-              //     });
-              //   },
-              //   child: Icon(
-              //     _isToolbarVisible
-              //         ? Icons.arrow_drop_up
-              //         : Icons.arrow_drop_down,
-              //   ),
-              // ),
-              QuillToolbar.simple(
-                configurations: QuillSimpleToolbarConfigurations(
-                  multiRowsDisplay: true,
-                  controller: _contentController,
-                  sharedConfigurations: const QuillSharedConfigurations(
-                    locale: Locale('en'),
-                  ),
+        padding: const EdgeInsets.only(top: 30.0),
+        child: Scaffold(
+          appBar: AppBar(
+            title: TextField(
+              onTapOutside: (event) {
+                titleFocusNode.unfocus();
+              },
+              focusNode: titleFocusNode,
+              controller: _titleController,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Title',
+                hintStyle: TextStyle(
+                  // color: Colors.grey,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextField(
-                  onTapOutside: (event) {
-                    titleFocusNode.unfocus();
-                  },
-                  focusNode: titleFocusNode,
-                  controller: _titleController,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Title',
-                    hintStyle: TextStyle(
-                      // color: Colors.grey,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.save),
+                onPressed: () {
+                  setState(() {
+                    _isSaved = true;
+                  });
+                  final title = _titleController.text;
+                  final content =
+                      _contentController.document.toPlainText().trim();
+                  final json = jsonEncode(
+                      _contentController.document.toDelta().toJson());
+                  if (title.isNotEmpty || content.isNotEmpty) {
+                    context
+                        .read<NotesProvider>()
+                        .addNote(title, content, json, selectedNoteBookIndex);
+                    Navigator.of(context).pop();
+                  } else {
+                    toastification.show(
+                      type: ToastificationType.warning,
+                      style: ToastificationStyle.minimal,
+                      context: context,
+                      title: const Text("Note must have a title or content"),
+                      autoCloseDuration: const Duration(seconds: 3),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+          body: Container(
+            padding: const EdgeInsets.symmetric(vertical: 0),
+            child: Column(
+              children: [
+                QuillToolbar.simple(
+                  configurations: QuillSimpleToolbarConfigurations(
+                    multiRowsDisplay: true,
+                    controller: _contentController,
+                    sharedConfigurations: const QuillSharedConfigurations(
+                      locale: Locale('en'),
                     ),
                   ),
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
-              ),
-              Expanded(
-                child: Focus(
-                  focusNode: contentFocusNode,
-                  child: GestureDetector(
-                    onTap: () {
-                      titleFocusNode.unfocus(); // Request focus
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: QuillEditor.basic(
-                        configurations: QuillEditorConfigurations(
-                          placeholder: 'Add your note here...',
-                          autoFocus: false,
-                          controller: _contentController,
-                          readOnly: false,
-                          sharedConfigurations: const QuillSharedConfigurations(
-                            locale: Locale('en'),
+                Expanded(
+                  child: Focus(
+                    focusNode: contentFocusNode,
+                    child: GestureDetector(
+                      onTap: () {
+                        titleFocusNode.unfocus(); // Request focus
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 24.0),
+                        child: QuillEditor.basic(
+                          configurations: QuillEditorConfigurations(
+                            placeholder: 'Add your note here...',
+                            autoFocus: false,
+                            controller: _contentController,
+                            readOnly: false,
+                            sharedConfigurations:
+                                const QuillSharedConfigurations(
+                              locale: Locale('en'),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       )),
