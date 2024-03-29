@@ -123,7 +123,7 @@
     },
     {
       "id": "4:6582988619389156410",
-      "lastPropertyId": "6:5639902291895940951",
+      "lastPropertyId": "7:1490756995180579565",
       "name": "Note",
       "properties": [
         {
@@ -159,6 +159,11 @@
           "flags": 520,
           "indexId": "4:6158637978171915309",
           "relationTarget": "NoteBook"
+        },
+        {
+          "id": "7:1490756995180579565",
+          "name": "json",
+          "type": 9
         }
       ],
       "relations": []

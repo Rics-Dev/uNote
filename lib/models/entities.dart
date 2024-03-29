@@ -46,6 +46,7 @@ class Note{
 
   String title;
   String content;
+  String json;
 
   @Property(type: PropertyType.date)
   DateTime createdAt;
@@ -63,6 +64,7 @@ class Note{
     this.id = 0,
     required this.title,
     required this.content,
+    required this.json,
     required this.createdAt,
     required this.updatedAt,
   });

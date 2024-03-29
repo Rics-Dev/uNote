@@ -32,8 +32,13 @@ class _AddNoteViewState extends State<AddNoteView> {
   void initState() {
     super.initState();
     _titleController.addListener(_onEditorTextChanged);
-    // _titleController.addListener(_onTitleChanged);
     _contentController.addListener(_onEditorTextChanged);
+    // final notesProvider =
+    //       Provider.of<NotesProvider>(context, listen: false);
+    // final note = notesProvider.notes[0];
+    // final jsonNote = note.json;
+    // final json = jsonDecode(jsonNote);
+    // _contentController.document = Document.fromJson(json);
   }
 
   @override
@@ -86,8 +91,12 @@ class _AddNoteViewState extends State<AddNoteView> {
         if (isPop) {
           final title = _titleController.text;
           final content = _contentController.document.toPlainText().trim();
+          final json =
+              jsonEncode(_contentController.document.toDelta().toJson());
           if (title.isNotEmpty || content.isNotEmpty) {
-            context.read<NotesProvider>().addNote(title, content, selectedNoteBookIndex);
+            context
+                .read<NotesProvider>()
+                .addNote(title, content, json, selectedNoteBookIndex);
           }
         }
       },

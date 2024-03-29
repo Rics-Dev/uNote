@@ -32,6 +32,7 @@ class NotesProvider extends ChangeNotifier {
   }
 
   void _init() async {
+    // noteBox.removeAll();
     // final noteBooks = noteBookBox.getAll();
     final tasksStream = objectbox.getNotes();
     tasksStream.listen(_onNotesChanged);
@@ -66,10 +67,11 @@ class NotesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addNote(String title, String content, int selectedNoteBook) {
+  void addNote(String title, String content, String json, int selectedNoteBook) {
     final note = Note(
       title: title,
       content: content,
+      json: json,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
