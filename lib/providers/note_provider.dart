@@ -9,6 +9,7 @@ class NotesProvider extends ChangeNotifier {
   Box<Tag> tagBox = objectbox.tagBox;
   Box<NoteBook> noteBookBox = objectbox.noteBookBox;
   bool _isSearchingNotes = false;
+  int _selectedNoteBook = 0;
 
   String _selectedView = 'list';
 
@@ -24,12 +25,14 @@ class NotesProvider extends ChangeNotifier {
   List<NoteBook> get noteBooks => _noteBooks;
   List<Note> get searchedNotes => _searchedNotes;
   bool get isSearchingNotes => _isSearchingNotes;
+  int get selectedNoteBook => _selectedNoteBook;
 
   NotesProvider() {
     _init();
   }
 
   void _init() async {
+    // final noteBooks = noteBookBox.getAll();
     final tasksStream = objectbox.getNotes();
     tasksStream.listen(_onNotesChanged);
     final tagsStream = objectbox.getTags();
@@ -63,16 +66,19 @@ class NotesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addNote(String title, String content) {
+  void addNote(String title, String content, int selectedNoteBook) {
     final note = Note(
       title: title,
       content: content,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
-    noteBox.put(note);
 
-    // note.notebook.target = noteBookBox.get(2);
+    if (selectedNoteBook > 0 && selectedNoteBook < noteBooks.length + 1) {
+      final noteBook = noteBooks[selectedNoteBook - 1];
+      note.notebook.target = noteBook;
+    }
+    noteBox.put(note);
 
     // final noteBook = NoteBook(
     //   name: 'Test',
@@ -106,6 +112,11 @@ class NotesProvider extends ChangeNotifier {
       _searchedNotes.clear();
     }
     _searchedNotes = suggestions;
+    notifyListeners();
+  }
+
+  void setSelectedNoteBook(int index) {
+    _selectedNoteBook = index;
     notifyListeners();
   }
 }

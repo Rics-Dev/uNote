@@ -497,4 +497,6 @@ class TasksProvider extends ChangeNotifier {
     isEditingTask[index][taskId] = bool;
     notifyListeners();
   }
+
+  void setSelectedNoteBook(int index) {}
 }

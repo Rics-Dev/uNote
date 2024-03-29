@@ -25,7 +25,8 @@ class _HomePageState extends State<HomePage> {
   int _bottomNavIndex = 0;
   List<IconData> iconList = [
     Icons.sticky_note_2_rounded,
-    Icons.format_list_bulleted_rounded,
+    // Icons.format_list_bulleted_rounded,
+    Icons.done_all_rounded,
   ];
   List<String> appBarTitles = [
     'Your Notes',

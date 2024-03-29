@@ -24,7 +24,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
   TabController? _tabController;
   NoteBookProvider? _noteBookProvider;
   int _selectedTabIndex = 0;
-  int _previouslySelectedTabIndex = 0;
+  final int _previouslySelectedTabIndex = 0;
 
   @override
   void initState() {
@@ -49,13 +49,12 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
 
   void updateTabController() {
     if (mounted) {
-      // Check if the widget is still mounted
       final noteBookProvider =
           Provider.of<NotesProvider>(context, listen: false);
       final noteBooks = noteBookProvider.noteBooks;
       if (_tabController != null) {
         _selectedTabIndex = _tabController!.index;
-        _previouslySelectedTabIndex = _selectedTabIndex + 1;
+        noteBookProvider.setSelectedNoteBook(_tabController!.index);
       }
 
       _tabController = TabController(
@@ -109,6 +108,9 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
                   // If "Add Notebook" tab is tapped
                   _showAddNotebookDialog(context);
                   // _selectedTabIndex = noteBooks.length + 1;
+                }
+                if (index > 0 && index < noteBooks.length + 1) {
+                  context.read<NotesProvider>().setSelectedNoteBook(index);
                 }
               },
               tabs: [
