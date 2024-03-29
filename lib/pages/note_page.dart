@@ -285,6 +285,15 @@ class NoteListPage extends StatelessWidget {
     super.key,
   });
 
+  Future<dynamic> _showAddNoteDetailsDialog(BuildContext context, int noteId) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) => NoteDetailPage(noteId: noteId),
+      isScrollControlled: true,
+      // showDragHandle: true,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final notesProvider = context.watch<NotesProvider>();
@@ -366,8 +375,9 @@ class NoteListPage extends StatelessWidget {
                             //         NoteDetailPage(note: notes[index]),
                             //   ),
                             // );
-                            context
-                                .go("/noteDetails?noteId=${notes[index].id}");
+                            // context
+                            //     .go("/noteDetails?noteId=${notes[index].id}");
+                            _showAddNoteDetailsDialog(context, notes[index].id);
                           },
                           onLongPress: () {
                             showDialog(
@@ -547,65 +557,70 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 3,
-        title: _isEditing
-            ? TextField(
-                autofocus: true,
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Title',
-                ),
-              )
-            : Text(
-                _titleController.text,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-        actions: !_isEditing
-            ? [
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = !_isEditing;
-                    });
-                  },
-                  icon: const Icon(Icons.edit),
-                ),
-              ]
-            : [],
-      ),
-      body: Column(
-        children: [
-          Visibility(
-            visible: _isEditing,
-            child: QuillToolbar.simple(
-              configurations: QuillSimpleToolbarConfigurations(
-                multiRowsDisplay: true,
-                controller: _contentController,
-                sharedConfigurations: const QuillSharedConfigurations(
-                  locale: Locale('en'),
-                ),
-              ),
-            ),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 24.0),
+        child: Scaffold(
+          appBar: AppBar(
+            elevation: 3,
+            title: _isEditing
+                ? TextField(
+                    autofocus: true,
+                    controller: _titleController,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Title',
+                    ),
+                  )
+                : Text(
+                    _titleController.text,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+            actions: !_isEditing
+                ? [
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _isEditing = !_isEditing;
+                        });
+                      },
+                      icon: const Icon(Icons.edit),
+                    ),
+                  ]
+                : [],
           ),
-          Expanded(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 24),
-              child: QuillEditor.basic(
-                configurations: QuillEditorConfigurations(
-                  readOnly: _isEditing ? false : true,
-                  controller: _contentController,
+          body: Column(
+            children: [
+              Visibility(
+                visible: _isEditing,
+                child: QuillToolbar.simple(
+                  configurations: QuillSimpleToolbarConfigurations(
+                    multiRowsDisplay: true,
+                    controller: _contentController,
+                    sharedConfigurations: const QuillSharedConfigurations(
+                      locale: Locale('en'),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              Expanded(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8.0, vertical: 24),
+                  child: QuillEditor.basic(
+                    configurations: QuillEditorConfigurations(
+                      readOnly: _isEditing ? false : true,
+                      controller: _contentController,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
