@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../pages/home_page.dart';
+import '../pages/note_page.dart';
 import '../pages/pomodoro_page.dart';
 
 GoRouter buildRouter() {
@@ -11,16 +12,16 @@ GoRouter buildRouter() {
         builder: (BuildContext context, GoRouterState state) {
           return const HomePage();
         },
-      ),
-      GoRoute(
-        path: '/pomodoro',
-        builder: (BuildContext context, GoRouterState state) {
-          return const PomodoroPage();
-        },
+        routes: <RouteBase>[
+          GoRoute(
+            path: 'noteDetails',
+            builder: (BuildContext context, GoRouterState state) {
+              final noteId = int.parse(state.uri.queryParameters['noteId']!);
+              return NoteDetailPage(noteId: noteId);
+            },
+          ),
+        ],
       ),
     ],
   );
 }
-
-
-

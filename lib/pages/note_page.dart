@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:auto_animated/auto_animated.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:utask/main.dart';
 import 'package:utask/models/entities.dart';
 import 'package:utask/objectbox.g.dart';
 
@@ -23,7 +28,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
   TextEditingController noteBookController = TextEditingController();
   TabController? _tabController;
   NoteBookProvider? _noteBookProvider;
-  int _selectedTabIndex = 0;
+  int _selectedTabIndex = 1;
   final int _previouslySelectedTabIndex = 0;
 
   @override
@@ -58,7 +63,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
       }
 
       _tabController = TabController(
-          length: noteBooks.length + 2,
+          length: noteBooks.length + 3,
           vsync: this,
           initialIndex: _selectedTabIndex);
     }
@@ -80,8 +85,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
             child: const Column(
               children: [
                 SortAndFilterView(),
-                // SizedBox(height: 10),
-                HorizontalTagsView(),
+                // HorizontalTagsView(),
               ],
             ),
           ),
@@ -99,21 +103,24 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
               color: Colors.white,
             ),
             child: TabBar(
-              // tabAlignment: TabAlignment.start,
+              tabAlignment: TabAlignment.start,
               controller: _tabController,
               isScrollable: true,
               indicatorSize: TabBarIndicatorSize.tab,
               onTap: (index) {
-                if (index == noteBooks.length + 1) {
+                if (index == noteBooks.length + 2) {
                   // If "Add Notebook" tab is tapped
                   _showAddNotebookDialog(context);
                   // _selectedTabIndex = noteBooks.length + 1;
                 }
-                if (index > 0 && index < noteBooks.length + 1) {
-                  context.read<NotesProvider>().setSelectedNoteBook(index);
-                }
+                // if (index > 1 && index < noteBooks.length + 2) {
+                context.read<NotesProvider>().setSelectedNoteBook(index);
+                // }
               },
               tabs: [
+                const Tab(
+                  icon: Icon(Icons.star),
+                ),
                 const Tab(text: 'All Notes'),
                 ...noteBooks
                     .map(
@@ -158,6 +165,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
               physics: const NeverScrollableScrollPhysics(),
               controller: _tabController,
               children: [
+                const Placeholder(),
                 // TasksViewInboxPage(),
                 NoteListPage(NoteBook(
                     name: 'All Notes Ric',
@@ -177,22 +185,30 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
     return showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Delete Notebook?'),
-          content: const Text('Are you sure you want to delete this notebook?'),
+        return AlertDialog.adaptive(
+          elevation: 5,
+          actionsAlignment: MainAxisAlignment.center,
+          title: const Text('Delete NoteBook?'),
+          content: const Text('Are you sure you want to delete this Notebook?'),
           actions: [
-            TextButton(
+            ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
               onPressed: () {
                 context.read<NotesProvider>().deleteNotebook(noteBook.id);
-                Navigator.pop(context);
+                Navigator.of(context).pop();
               },
-              child: const Text('Delete'),
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );
@@ -342,6 +358,17 @@ class NoteListPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: GestureDetector(
+                          onTap: () {
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) =>
+                            //         NoteDetailPage(note: notes[index]),
+                            //   ),
+                            // );
+                            context
+                                .go("/noteDetails?noteId=${notes[index].id}");
+                          },
                           onLongPress: () {
                             showDialog(
                               context: context,
@@ -484,5 +511,102 @@ class NoteListPage extends StatelessWidget {
               );
             },
           );
+  }
+}
+
+class NoteDetailPage extends StatefulWidget {
+  const NoteDetailPage({super.key, required this.noteId});
+  final int noteId;
+
+  @override
+  State<NoteDetailPage> createState() => _NoteDetailPageState();
+}
+
+class _NoteDetailPageState extends State<NoteDetailPage> {
+  final TextEditingController _titleController = TextEditingController();
+  final QuillController _contentController = QuillController.basic();
+  bool _isEditing = false;
+  late Note note;
+
+  @override
+  void initState() {
+    super.initState();
+    note = objectbox.noteBox.get(widget.noteId)!;
+    _titleController.text = note.title;
+    final jsonNote = note.json;
+    final json = jsonDecode(jsonNote);
+    _contentController.document = Document.fromJson(json);
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _contentController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 3,
+        title: _isEditing
+            ? TextField(
+                autofocus: true,
+                controller: _titleController,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Title',
+                ),
+              )
+            : Text(
+                _titleController.text,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+        actions: !_isEditing
+            ? [
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isEditing = !_isEditing;
+                    });
+                  },
+                  icon: const Icon(Icons.edit),
+                ),
+              ]
+            : [],
+      ),
+      body: Column(
+        children: [
+          Visibility(
+            visible: _isEditing,
+            child: QuillToolbar.simple(
+              configurations: QuillSimpleToolbarConfigurations(
+                multiRowsDisplay: true,
+                controller: _contentController,
+                sharedConfigurations: const QuillSharedConfigurations(
+                  locale: Locale('en'),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 24),
+              child: QuillEditor.basic(
+                configurations: QuillEditorConfigurations(
+                  readOnly: _isEditing ? false : true,
+                  controller: _contentController,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

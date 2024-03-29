@@ -46,6 +46,7 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (context) => const AddNoteView(),
       isScrollControlled: true,
+      // showDragHandle: true,
     );
   }
 
@@ -68,6 +69,18 @@ class _HomePageState extends State<HomePage> {
     final taskLists = tasksProvider.taskLists;
     final noteBooks = notesProvider.noteBooks;
     bool keyboardIsOpened = MediaQuery.of(context).viewInsets.bottom != 0.0;
+
+    if (_bottomNavIndex == 0) {
+      if (notesProvider.selectedNoteBook > 1 &&
+          notesProvider.selectedNoteBook < noteBooks.length + 2) {
+        appBarTitles[_bottomNavIndex] =
+            noteBooks[notesProvider.selectedNoteBook - 2].name;
+      } else if (notesProvider.selectedNoteBook == 0) {
+        appBarTitles[_bottomNavIndex] = 'Favorites';
+      } else {
+        appBarTitles[_bottomNavIndex] = 'Your Notes';
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(

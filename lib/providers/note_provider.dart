@@ -83,19 +83,11 @@ class NotesProvider extends ChangeNotifier {
       updatedAt: DateTime.now(),
     );
 
-    if (selectedNoteBook > 0 && selectedNoteBook < noteBooks.length + 1) {
-      final noteBook = noteBooks[selectedNoteBook - 1];
+    if (selectedNoteBook > 1 && selectedNoteBook < noteBooks.length + 2) {
+      final noteBook = noteBooks[selectedNoteBook - 2];
       note.notebook.target = noteBook;
     }
     noteBox.put(note);
-
-    // final noteBook = NoteBook(
-    //   name: 'Test',
-    //   createdAt: DateTime.now(),
-    //   updatedAt: DateTime.now(),
-    // );
-
-    // noteBookBox.put(noteBook);
   }
 
   void deleteNote(int id) {

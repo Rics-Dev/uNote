@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:utask/providers/note_provider.dart';
 import 'package:searchbar_animation/searchbar_animation.dart';
 
-
 class SortAndFilterView extends StatefulWidget {
   const SortAndFilterView({
     super.key,
@@ -29,7 +28,7 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
               ? ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     elevation: 3,
-                    // padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(8),
                     shape: const CircleBorder(),
                   ),
                   child: const Icon(
@@ -43,6 +42,7 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
               : ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     elevation: 3,
+                    padding: const EdgeInsets.all(8),
                     shape: const CircleBorder(),
                   ),
                   child: const Icon(

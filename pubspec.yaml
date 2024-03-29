@@ -59,6 +59,7 @@ dependencies:
   easy_radio: ^0.0.3
   auto_animated: any
   flutter_quill: ^9.3.5
+  animations: ^2.0.11
   # database Part
   objectbox: ^2.5.1
   objectbox_flutter_libs: any
