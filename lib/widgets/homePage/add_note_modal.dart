@@ -26,13 +26,13 @@ class _AddNoteViewState extends State<AddNoteView> {
   final ScrollController _scrollController = ScrollController();
   FocusNode titleFocusNode = FocusNode();
   FocusNode contentFocusNode = FocusNode();
-  bool _isToolbarVisible = false;
+  final bool _isToolbarVisible = false;
 
   @override
   void initState() {
     super.initState();
-    _titleController.addListener(_onEditorTextChanged);
-    _contentController.addListener(_onEditorTextChanged);
+    // _titleController.addListener(_onEditorTextChanged);
+    // _contentController.addListener(_onEditorTextChanged);
     // final notesProvider =
     //       Provider.of<NotesProvider>(context, listen: false);
     // final note = notesProvider.notes[0];
@@ -107,93 +107,76 @@ class _AddNoteViewState extends State<AddNoteView> {
           padding: const EdgeInsets.symmetric(vertical: 32),
           child: Column(
             children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    elevation: 3, padding: const EdgeInsets.all(8)
-                    // shape: const CircleBorder(),
-                    ),
-                onPressed: () {
-                  setState(() {
-                    _isToolbarVisible = !_isToolbarVisible;
-                  });
-                },
-                child: Icon(
-                  _isToolbarVisible
-                      ? Icons.arrow_drop_up
-                      : Icons.arrow_drop_down,
+              // ElevatedButton(
+              //   style: ElevatedButton.styleFrom(
+              //       elevation: 3, padding: const EdgeInsets.all(8)
+              //       // shape: const CircleBorder(),
+              //       ),
+              //   onPressed: () {
+              //     setState(() {
+              //       _isToolbarVisible = !_isToolbarVisible;
+              //     });
+              //   },
+              //   child: Icon(
+              //     _isToolbarVisible
+              //         ? Icons.arrow_drop_up
+              //         : Icons.arrow_drop_down,
+              //   ),
+              // ),
+              QuillToolbar.simple(
+                configurations: QuillSimpleToolbarConfigurations(
+                  multiRowsDisplay: true,
+                  controller: _contentController,
+                  sharedConfigurations: const QuillSharedConfigurations(
+                    locale: Locale('en'),
+                  ),
                 ),
               ),
-              Visibility(
-                visible: _isToolbarVisible,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 1000),
-                  opacity: _isToolbarVisible ? 1.0 : 0.0,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 1000),
-                    height: _isToolbarVisible ? 200 : 0,
-                    child: QuillToolbar.simple(
-                      configurations: QuillSimpleToolbarConfigurations(
-                        multiRowsDisplay: true,
-                        controller: _contentController,
-                        sharedConfigurations: const QuillSharedConfigurations(
-                          locale: Locale('en'),
-                        ),
-                      ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  onTapOutside: (event) {
+                    titleFocusNode.unfocus();
+                  },
+                  focusNode: titleFocusNode,
+                  controller: _titleController,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Title',
+                    hintStyle: TextStyle(
+                      // color: Colors.grey,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
+                  ),
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               Expanded(
-                child: ListView(
-                  controller: _scrollController,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: TextField(
-                        onTapOutside: (event) {
-                          titleFocusNode.unfocus();
-                        },
-                        focusNode: titleFocusNode,
-                        controller: _titleController,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Title',
-                          hintStyle: TextStyle(
-                            // color: Colors.grey,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Focus(
-                      focusNode: contentFocusNode,
-                      child: GestureDetector(
-                        onTap: () {
-                          titleFocusNode.unfocus(); // Request focus
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: QuillEditor.basic(
-                            configurations: QuillEditorConfigurations(
-                              placeholder: 'Add your note here...',
-                              autoFocus: false,
-                              controller: _contentController,
-                              readOnly: false,
-                              sharedConfigurations:
-                                  const QuillSharedConfigurations(
-                                locale: Locale('en'),
-                              ),
-                            ),
+                child: Focus(
+                  focusNode: contentFocusNode,
+                  child: GestureDetector(
+                    onTap: () {
+                      titleFocusNode.unfocus(); // Request focus
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: QuillEditor.basic(
+                        configurations: QuillEditorConfigurations(
+                          placeholder: 'Add your note here...',
+                          autoFocus: false,
+                          controller: _contentController,
+                          readOnly: false,
+                          sharedConfigurations: const QuillSharedConfigurations(
+                            locale: Locale('en'),
                           ),
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ],

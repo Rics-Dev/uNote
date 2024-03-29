@@ -377,6 +377,7 @@ class NoteListPage extends StatelessWidget {
                             );
                           },
                           child: ListTile(
+                            // visualDensity: VisualDensity.compact,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             ),
@@ -390,6 +391,7 @@ class NoteListPage extends StatelessWidget {
                             subtitle: Padding(
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text(
+                                maxLines: 1,
                                 // noteBook.notes[index].content,
                                 notes[index].content,
                                 style: TextStyle(
