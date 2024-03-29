@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:utask/providers/note_provider.dart';
 
 import '../../providers/taskProvider.dart';
 
@@ -11,6 +12,7 @@ class SortView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tasksProvider = context.watch<TasksProvider>();
+    final notesProvider = context.watch<NotesProvider>();
     final oldToNew = tasksProvider.oldToNew;
 
     SortCriteria sortCriteria = tasksProvider.sortCriteria;
@@ -37,6 +39,7 @@ class SortView extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   tasksProvider.toggleSortByCreationDate();
+                  notesProvider.toggleSortByCreationDate();   
                 },
                 style: sortCriteria == SortCriteria.creationDate
                     ? ButtonStyle(
@@ -59,6 +62,7 @@ class SortView extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       tasksProvider.toggleNewToOld();
+                      notesProvider.toggleNewToOld();
                     },
                     style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(), elevation: 3,
@@ -78,6 +82,8 @@ class SortView extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   tasksProvider.toggleSortByEditionDate();
+                  notesProvider.toggleSortByEditionDate();
+
                 },
                 style: sortCriteria == SortCriteria.editionDate
                     ? ButtonStyle(
@@ -105,6 +111,8 @@ class SortView extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   tasksProvider.toggleSortByNameAZ();
+                  notesProvider.toggleSortByNameAZ();
+
                 },
                 style: sortCriteria == SortCriteria.nameAZ
                     ? ButtonStyle(
@@ -124,6 +132,8 @@ class SortView extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   tasksProvider.toggleSortByNameZA();
+                  notesProvider.toggleSortByNameZA();
+
                 },
                 style: sortCriteria == SortCriteria.nameZA
                     ? ButtonStyle(

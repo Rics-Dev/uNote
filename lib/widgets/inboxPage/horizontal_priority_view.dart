@@ -12,12 +12,9 @@ class HorizontalPriorityView extends StatelessWidget {
   Widget build(BuildContext context) {
     final tasksProvider = context.watch<TasksProvider>();
 
-    final tags = tasksProvider.tags;
-    final selectedTags = tasksProvider.selectedTags;
     final selectedPriority = tasksProvider.selectedPriority;
 
     final allTasks = tasksProvider.tasks;
-    FilterCriteria filterCriteria = tasksProvider.filterCriteria;
     final priority = tasksProvider.priority;
 
     return Row(
@@ -31,7 +28,7 @@ class HorizontalPriorityView extends StatelessWidget {
                 .isNotEmpty
             ? badges.Badge(
                 badgeStyle: const badges.BadgeStyle(
-                    badgeColor: Color.fromARGB(255, 0, 73, 133)),
+                    badgeColor: Color.fromARGB(255, 39, 86, 125)),
                 position: badges.BadgePosition.topEnd(top: -5, end: 0),
                 badgeContent: Text(
                   allTasks

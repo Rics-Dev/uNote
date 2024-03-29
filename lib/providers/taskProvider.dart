@@ -13,10 +13,10 @@ enum SortCriteria {
   nameZA,
 }
 
-enum FilterCriteria {
-  tags,
-  priority,
-}
+// enum FilterCriteria {
+//   tags,
+//   priority,
+// }
 
 class TasksProvider extends ChangeNotifier {
   Box<Task> taskBox = objectbox.taskBox;
@@ -31,7 +31,7 @@ class TasksProvider extends ChangeNotifier {
   final List<Tag> _searchedTags = [];
   String? _temporarySelectedPriority;
   DateTime? _dueDate;
-  bool _oldToNew = true;
+  bool _oldToNew = false;
   String _disposition = 'List';
   final List<Tag> _selectedTags = [];
   final List<String> _selectedPriority = [];
@@ -46,7 +46,7 @@ class TasksProvider extends ChangeNotifier {
   List<List<bool>> isEditingTask = [];
 
   SortCriteria _sortCriteria = SortCriteria.creationDate;
-  FilterCriteria _filterCriteria = FilterCriteria.priority;
+  // FilterCriteria _filterCriteria = FilterCriteria.priority;
 
   List<Task> get tasks => _tasks;
   List<Task> get filteredTasks => _filteredTasks;
@@ -61,12 +61,17 @@ class TasksProvider extends ChangeNotifier {
   List<String> get priority => _priority;
   bool get isSearchingTasks => _isSearchingTasks;
   SortCriteria get sortCriteria => _sortCriteria;
-  FilterCriteria get filterCriteria => _filterCriteria;
+  // FilterCriteria get filterCriteria => _filterCriteria;
   bool get isTimeSet => _isTimeSet;
   TaskList get temporarilyAddedList => _temporarilyAddedList;
   List<TaskList> get taskLists => _taskLists;
   String get disposition => _disposition;
   bool get oldToNew => _oldToNew;
+
+
+  set sortCriteria(SortCriteria value) { // Setter
+  _sortCriteria = value;
+}
 
   TasksProvider() {
     _init();
@@ -84,7 +89,7 @@ class TasksProvider extends ChangeNotifier {
   }
 
   void _onTasksChanged(List<Task> tasks) {
-    _tasks = tasks;
+    _tasks = tasks.reversed.toList();
     notifyListeners();
   }
 
@@ -94,7 +99,7 @@ class TasksProvider extends ChangeNotifier {
   }
 
   void _onTaskListsChanged(List<TaskList> taskLists) {
-    _taskLists = taskLists;
+    _taskLists = taskLists.reversed.toList();
     isKeyBoardOpenedList = List.filled(_taskLists.length, false);
     isEditingTask = List.generate(
         _taskLists.length,
@@ -161,6 +166,9 @@ class TasksProvider extends ChangeNotifier {
 
     taskBox.put(task);
 
+
+
+    _oldToNew = false;
     _selectedTags.clear();
     _selectedPriority.clear();
     _temporarilyAddedList.id = 0;
@@ -311,15 +319,15 @@ class TasksProvider extends ChangeNotifier {
 
   // ----------------- Filter and Search Section ------------------------------
 
-  void toggleFilterByTags() {
-    _filterCriteria = FilterCriteria.tags;
-    notifyListeners();
-  }
+  // void toggleFilterByTags() {
+  //   _filterCriteria = FilterCriteria.tags;
+  //   notifyListeners();
+  // }
 
-  void toggleFilterByPriority() {
-    _filterCriteria = FilterCriteria.priority;
-    notifyListeners();
-  }
+  // void toggleFilterByPriority() {
+  //   _filterCriteria = FilterCriteria.priority;
+  //   notifyListeners();
+  // }
 
   //Done
   void toggleTagSelection(Tag tag) {

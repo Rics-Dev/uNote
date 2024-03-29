@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:searchbar_animation/const/colours.dart';
-import 'package:top_modal_sheet/top_modal_sheet.dart';
 import 'package:utask/providers/note_provider.dart';
-import 'package:utask/widgets/inboxPage/sort_view.dart';
 import 'package:searchbar_animation/searchbar_animation.dart';
 
-import '../../providers/taskProvider.dart';
-import '../../providers/task_provider.dart';
 
 class SortAndFilterView extends StatefulWidget {
   const SortAndFilterView({

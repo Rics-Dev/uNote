@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import '../models/entities.dart';
 import '../objectbox.g.dart';
+import 'taskProvider.dart';
 
 class NotesProvider extends ChangeNotifier {
   Box<Note> noteBox = objectbox.noteBox;
@@ -10,6 +11,10 @@ class NotesProvider extends ChangeNotifier {
   Box<NoteBook> noteBookBox = objectbox.noteBookBox;
   bool _isSearchingNotes = false;
   int _selectedNoteBook = 0;
+  List<Note> _filteredNotes = [];
+
+  TasksProvider tasksProvider = TasksProvider();
+  bool oldToNew = TasksProvider().oldToNew;
 
   String _selectedView = 'list';
 
@@ -24,6 +29,7 @@ class NotesProvider extends ChangeNotifier {
   List<Note> get notes => _notes;
   List<NoteBook> get noteBooks => _noteBooks;
   List<Note> get searchedNotes => _searchedNotes;
+  List<Note> get filteredNotes => _filteredNotes;
   bool get isSearchingNotes => _isSearchingNotes;
   int get selectedNoteBook => _selectedNoteBook;
 
@@ -67,7 +73,8 @@ class NotesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addNote(String title, String content, String json, int selectedNoteBook) {
+  void addNote(
+      String title, String content, String json, int selectedNoteBook) {
     final note = Note(
       title: title,
       content: content,
@@ -120,5 +127,68 @@ class NotesProvider extends ChangeNotifier {
   void setSelectedNoteBook(int index) {
     _selectedNoteBook = index;
     notifyListeners();
+  }
+
+  //Sort View for notes section
+
+  void toggleNewToOld() {
+    tasksProvider.toggleNewToOld();
+    sortNotes();
+    notifyListeners();
+  }
+
+  void toggleSortByCreationDate() {
+    tasksProvider.sortCriteria = SortCriteria.creationDate;
+    sortNotes();
+    notifyListeners();
+  }
+
+  void toggleSortByEditionDate() {
+    tasksProvider.sortCriteria = SortCriteria.editionDate;
+    sortNotes();
+    notifyListeners();
+  }
+
+  void toggleSortByNameAZ() {
+    tasksProvider.sortCriteria = SortCriteria.nameAZ;
+    sortNotes();
+    notifyListeners();
+  }
+
+  void toggleSortByNameZA() {
+    tasksProvider.sortCriteria = SortCriteria.nameZA;
+    sortNotes();
+    notifyListeners();
+  }
+
+  void sortNotes() {
+    List<Note> notesToSort = filteredNotes.isNotEmpty ? filteredNotes : notes;
+
+    notesToSort.sort((a, b) {
+      switch (tasksProvider.sortCriteria) {
+        case SortCriteria.creationDate:
+          return sortByDate(a.createdAt, b.createdAt);
+        case SortCriteria.editionDate:
+          return sortByDate(a.updatedAt, b.updatedAt);
+        case SortCriteria.nameAZ:
+          return a.title.compareTo(b.title);
+        case SortCriteria.nameZA:
+          return b.title.compareTo(a.title);
+        default:
+          return 0;
+      }
+    });
+
+    if (filteredNotes.isNotEmpty) {
+      _filteredNotes = notesToSort;
+    } else {
+      _notes = notesToSort;
+    }
+
+    notifyListeners();
+  }
+
+  int sortByDate(DateTime a, DateTime b) {
+    return tasksProvider.oldToNew ? a.compareTo(b) : b.compareTo(a);
   }
 }

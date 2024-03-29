@@ -288,6 +288,11 @@ class NoteListPage extends StatelessWidget {
               .where((note) => note.notebook.target?.id == noteBook.id)
               .toList();
     }
+
+    if (notesProvider.filteredNotes.isNotEmpty) {
+      notes = notesProvider.filteredNotes;
+    }
+
     const options = LiveOptions(
       delay: Duration(seconds: -5),
       showItemInterval: Duration(milliseconds: 100),
