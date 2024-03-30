@@ -160,14 +160,6 @@ class NotesProvider extends ChangeNotifier {
       updatedNote.content = content;
       updatedNote.json = json;
       updatedNote.updatedAt = DateTime.now();
-      // if (updatedNote.notebook.target != null) {
-      //   // if (selectedNoteBookIndex > 1 && selectedNoteBookIndex < noteBooks.length + 2) {
-      //   //   final noteBook = noteBooks[selectedNoteBookIndex - 2];
-      //   //   updatedNote.notebook.target = noteBook;
-      //   // }
-      //   final noteBook = updatedNote.notebook.target;
-
-      // }
 
       noteBox.put(updatedNote);
       notifyListeners();
