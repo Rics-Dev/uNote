@@ -52,7 +52,6 @@ class _AddNoteViewState extends State<AddNoteView> {
     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
   }
 
-
   @override
   Widget build(BuildContext context) {
     final notesProvider = context.watch<NotesProvider>();
@@ -77,7 +76,9 @@ class _AddNoteViewState extends State<AddNoteView> {
           child: Padding(
         padding: const EdgeInsets.only(top: 30.0),
         child: Scaffold(
+          // resizeToAvoidBottomInset: false,
           appBar: AppBar(
+            elevation: 1,
             title: TextField(
               onTapOutside: (event) {
                 titleFocusNode.unfocus();
@@ -129,14 +130,16 @@ class _AddNoteViewState extends State<AddNoteView> {
             ],
           ),
           body: Container(
-            padding: const EdgeInsets.symmetric(vertical: 0),
+            padding: const EdgeInsets.symmetric(vertical: 5),
             child: Column(
               children: [
                 QuillToolbar.simple(
                   configurations: QuillSimpleToolbarConfigurations(
+                    toolbarSectionSpacing: -10,
+
                     // axis: Axis.horizontal,
                     // toolbarSize: 36.0,
-                    multiRowsDisplay: true,
+                    multiRowsDisplay: false,
                     controller: _contentController,
                     sharedConfigurations: const QuillSharedConfigurations(
                       locale: Locale('en'),
@@ -156,7 +159,7 @@ class _AddNoteViewState extends State<AddNoteView> {
                         child: QuillEditor.basic(
                           configurations: QuillEditorConfigurations(
                             placeholder: 'Add your note here...',
-                            autoFocus: false,
+                            autoFocus: true,
                             controller: _contentController,
                             readOnly: false,
                             sharedConfigurations:

@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:auto_animated/auto_animated.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:go_router/go_router.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:utask/main.dart';
 import 'package:utask/models/entities.dart';
@@ -16,6 +18,12 @@ import '../providers/notebook.dart';
 import '../providers/taskProvider.dart';
 import '../widgets/inboxPage/horizontal_tags_view.dart';
 import '../widgets/inboxPage/search_disposition_view.dart';
+
+enum _SupportState {
+  unknown,
+  supported,
+  unsupported,
+}
 
 class NotesPage extends StatefulWidget {
   const NotesPage({super.key});
@@ -31,10 +39,135 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
   int _selectedTabIndex = 1;
   final int _previouslySelectedTabIndex = 0;
 
+  final LocalAuthentication auth = LocalAuthentication();
+  final _SupportState _supportState = _SupportState.unknown;
+  bool? _canCheckBiometrics;
+  List<BiometricType>? _availableBiometrics;
+  String _authorized = 'Not Authorized';
+  bool _isAuthenticating = false;
+
+  bool showSecondTabBar = false;
+
+  // TabController? _tabController2;
+
   @override
   void initState() {
     super.initState();
+    // _tabController2 = TabController(length: 1, vsync: this);
     updateTabController();
+    // auth.isDeviceSupported().then(
+    //       (bool isSupported) => setState(() => _supportState = isSupported
+    //           ? _SupportState.supported
+    //           : _SupportState.unsupported),
+    //     );
+  }
+
+  Future<void> _checkBiometrics() async {
+    late bool canCheckBiometrics;
+    try {
+      canCheckBiometrics = await auth.canCheckBiometrics;
+    } on PlatformException catch (e) {
+      canCheckBiometrics = false;
+      print(e);
+    }
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _canCheckBiometrics = canCheckBiometrics;
+    });
+  }
+
+  Future<void> _getAvailableBiometrics() async {
+    late List<BiometricType> availableBiometrics;
+    try {
+      availableBiometrics = await auth.getAvailableBiometrics();
+    } on PlatformException catch (e) {
+      availableBiometrics = <BiometricType>[];
+      print(e);
+    }
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _availableBiometrics = availableBiometrics;
+    });
+  }
+
+  Future<void> _authenticate() async {
+    bool authenticated = false;
+    try {
+      setState(() {
+        _isAuthenticating = true;
+        _authorized = 'Authenticating';
+      });
+      authenticated = await auth.authenticate(
+        localizedReason: 'Let OS determine authentication method',
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+        ),
+      );
+      setState(() {
+        _isAuthenticating = false;
+      });
+    } on PlatformException catch (e) {
+      print(e);
+      setState(() {
+        _isAuthenticating = false;
+        _authorized = 'Error - ${e.message}';
+      });
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+
+    setState(
+        () => _authorized = authenticated ? 'Authorized' : 'Not Authorized');
+  }
+
+  Future<void> _authenticateWithBiometrics() async {
+    bool authenticated = false;
+    try {
+      setState(() {
+        _isAuthenticating = true;
+        _authorized = 'Authenticating';
+      });
+      authenticated = await auth.authenticate(
+        localizedReason:
+            'Scan your fingerprint (or face or whatever) to authenticate',
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
+      );
+      setState(() {
+        _isAuthenticating = false;
+        _authorized = 'Authenticating';
+      });
+    } on PlatformException catch (e) {
+      print(e);
+      setState(() {
+        _isAuthenticating = false;
+        _authorized = 'Error - ${e.message}';
+      });
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+
+    final String message = authenticated ? 'Authorized' : 'Not Authorized';
+    setState(() {
+      _authorized = message;
+    });
+  }
+
+  Future<void> _cancelAuthentication() async {
+    await auth.stopAuthentication();
+    setState(() => _isAuthenticating = false);
   }
 
   @override
@@ -63,9 +196,10 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
       }
 
       _tabController = TabController(
-          length: noteBooks.length + 3,
-          vsync: this,
-          initialIndex: _selectedTabIndex);
+        length: noteBooks.length + 3,
+        vsync: this,
+        initialIndex: _selectedTabIndex,
+      );
     }
   }
 
@@ -123,13 +257,32 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
                   _showAddNotebookDialog(context);
                   // _selectedTabIndex = noteBooks.length + 1;
                 }
-                // if (index > 1 && index < noteBooks.length + 2) {
+
                 context.read<NotesProvider>().setSelectedNoteBook(index);
+
+                // if (index > 1 && index < noteBooks.length + 2) {
+                //   setState(() {
+                //     showSecondTabBar = true;
+                //   });
+                // } else {
+                //   setState(() {
+                //     showSecondTabBar = false;
+                //   });
+                // }
+
+                // if (index == 0) {
+                //   _checkBiometrics();
+                //   _getAvailableBiometrics();
+                //   _authenticate();
+                //   _authenticateWithBiometrics();
                 // }
               },
               tabs: [
                 const Tab(
-                  icon: Icon(Icons.star),
+                  icon: Icon(
+                    Icons.star,
+                    size: 20,
+                  ),
                 ),
                 const Tab(text: 'All Notes'),
                 ...noteBooks
@@ -169,6 +322,36 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
               ],
             ),
           ),
+          // AnimatedContainer(
+          //   duration: const Duration(milliseconds: 300),
+          //   height: showSecondTabBar ? 40 : 0,
+          //   child: showSecondTabBar
+          //       ? Container(
+          //           height: 40,
+          //           decoration: BoxDecoration(
+          //             boxShadow: [
+          //               BoxShadow(
+          //                 color: Colors.grey.shade300,
+          //                 spreadRadius: 1,
+          //                 blurRadius: 10,
+          //                 offset: const Offset(0, 10),
+          //               ),
+          //             ],
+          //             color: Colors.white,
+          //           ),
+          //           child: TabBar(
+          //             tabAlignment: TabAlignment.start,
+          //             controller: _tabController2,
+          //             isScrollable: true,
+          //             tabs: const [
+          //               Tab(
+          //                 icon: Icon(Icons.star),
+          //               ),
+          //             ],
+          //           ),
+          //         )
+          //       : const SizedBox.shrink(),
+          // ),
           const SizedBox(height: 10),
           Expanded(
             child: TabBarView(
@@ -320,6 +503,7 @@ class NoteListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final notesProvider = context.watch<NotesProvider>();
     final disposition = notesProvider.selectedView;
+    final selectedNoteBook = notesProvider.selectedNoteBook;
     var notes = notesProvider.notes;
     var allNoteBooks = notesProvider.noteBooks;
 
@@ -433,12 +617,13 @@ class NoteListPage extends StatelessWidget {
                             );
                           },
                           child: ListTile(
-                            trailing: notes[index].notebook.target != null
+                            trailing: notes[index].notebook.target != null &&
+                                    selectedNoteBook <= 1
                                 ? Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       SizedBox(
-                                        height: 35,
+                                        height: 32,
                                         width: 75,
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
@@ -482,9 +667,10 @@ class NoteListPage extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(
-                                        height: 5,
-                                      ),
+                                      // const SizedBox(
+                                      //   height: 5,
+                                      // ),
+                                      const Spacer(),
                                       Text(
                                         // DateFormat.yMMMd().format(notes[index].updatedAt),
                                         notes[index]
@@ -534,9 +720,9 @@ class NoteListPage extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                     // maxLines: 2,
                                   ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
+                                  // const SizedBox(
+                                  //   height: 10,
+                                  // ),
                                   // Text(
                                   //   // DateFormat.yMMMd().format(notes[index].updatedAt),
                                   //   notes[index]
@@ -682,12 +868,14 @@ class NoteDetailPage extends StatefulWidget {
 }
 
 class _NoteDetailPageState extends State<NoteDetailPage> {
-  final TextEditingController _titleController = TextEditingController();
   final QuillController _contentController = QuillController.basic();
+  final TextEditingController _titleController = TextEditingController();
+  FocusNode contentFocusNode = FocusNode();
+
   bool _isEditing = false;
 
-  FocusNode titleFocusNode = FocusNode();
-  FocusNode contentFocusNode = FocusNode();
+  // FocusNode titleFocusNode = FocusNode();
+  // FocusNode contentFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -702,7 +890,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
-    titleFocusNode.dispose();
+    // titleFocusNode.dispose();
     contentFocusNode.dispose();
     super.dispose();
   }
@@ -717,29 +905,19 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
         child: Scaffold(
           appBar: AppBar(
             elevation: 3,
-            title: _isEditing
-                ? TextField(
-                    onTapOutside: (event) {
-                      titleFocusNode.unfocus();
-                    },
-                    focusNode: titleFocusNode,
-                    controller: _titleController,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Title',
-                    ),
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                : Text(
-                    _titleController.text,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+            title: TextField(
+              readOnly: _isEditing ? false : true,
+              // focusNode: titleFocusNode,
+              controller: _titleController,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Title',
+              ),
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             actions: [
               _isEditing
                   ? IconButton(
@@ -775,11 +953,45 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
           ),
           body: Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 2,
+                        textStyle:
+                            const TextStyle(overflow: TextOverflow.ellipsis),
+                        padding: const EdgeInsets.all(4),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.book_rounded),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Text(widget.note.notebook.target?.name ?? ''),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
+                    const Icon(
+                      Icons.star_border_outlined,
+                      size: 28,
+                    ),
+                  ],
+                ),
+              ),
               Visibility(
                 visible: _isEditing,
                 child: QuillToolbar.simple(
                   configurations: QuillSimpleToolbarConfigurations(
-                    multiRowsDisplay: true,
+                    multiRowsDisplay: false,
                     controller: _contentController,
                     sharedConfigurations: const QuillSharedConfigurations(
                       locale: Locale('en'),
@@ -787,21 +999,36 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                   ),
                 ),
               ),
+              Padding(
+                padding:
+                    const EdgeInsets.only(left: 8.0, top: 12.0, right: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Words: ${_contentController.document.toPlainText().split(RegExp(r'\s+')).length}',
+                    ),
+                    Text(
+                      widget.note.updatedAt.toString().substring(0, 16),
+                    ),
+                  ],
+                ),
+              ),
               Expanded(
                 child: Focus(
                   focusNode: contentFocusNode,
-                  child: GestureDetector(
-                    onTap: () {
-                      titleFocusNode.unfocus();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 24),
-                      child: QuillEditor.basic(
-                        configurations: QuillEditorConfigurations(
-                          readOnly: _isEditing ? false : true,
-                          controller: _contentController,
-                        ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 14),
+                    child: QuillEditor.basic(
+                      configurations: QuillEditorConfigurations(
+                        // onImagePaste: (imageBytes) {
+
+                        // },
+                        placeholder: 'Note Content...',
+                        readOnly: _isEditing ? false : true,
+                        // autoFocus: true,
+                        controller: _contentController,
                       ),
                     ),
                   ),
