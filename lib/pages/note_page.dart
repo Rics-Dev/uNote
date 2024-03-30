@@ -33,7 +33,6 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
   TabController? _tabController;
   NoteBookProvider? _noteBookProvider;
   int _selectedTabIndex = 1;
-  final int _previouslySelectedTabIndex = 0;
 
   final LocalAuthentication auth = LocalAuthentication();
   _SupportState _supportState = _SupportState.unknown;
@@ -315,6 +314,13 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
                       (noteBook) => GestureDetector(
                         onLongPress: () {
                           deleteNoteBook(context, noteBook);
+                          _tabController?.animateTo(
+                            _selectedTabIndex - 1, // index of the new notebook
+                            duration: const Duration(
+                                milliseconds:
+                                    300), // optional animation duration
+                            curve: Curves.ease, // optional animation curve
+                          );
                         },
                         child: Tab(
                           // text: noteBook.name,
