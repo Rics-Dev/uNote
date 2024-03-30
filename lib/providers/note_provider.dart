@@ -75,10 +75,19 @@ class NotesProvider extends ChangeNotifier {
   }
 
   void changeView(String view) {
-    if (view == 'list') {
-      _selectedView = 'list';
-    } else {
-      _selectedView = 'grid';
+    switch (view) {
+      case 'list':
+        _selectedView = 'list';
+        break;
+      case 'compactList':
+        _selectedView = 'compactList';
+        break;
+      case 'grid':
+        _selectedView = 'grid';
+        break;
+      
+      default:
+        _selectedView = 'list';
     }
     notifyListeners();
   }

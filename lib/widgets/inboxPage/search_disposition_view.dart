@@ -24,35 +24,7 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          disposition == 'list'
-              ? ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    elevation: 3,
-                    padding: const EdgeInsets.all(8),
-                    shape: const CircleBorder(),
-                  ),
-                  child: const Icon(
-                    Icons.grid_view_rounded,
-                    color: Color.fromARGB(255, 0, 73, 133),
-                  ),
-                  onPressed: () {
-                    context.read<NotesProvider>().changeView('grid');
-                  },
-                )
-              : ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    elevation: 3,
-                    padding: const EdgeInsets.all(8),
-                    shape: const CircleBorder(),
-                  ),
-                  child: const Icon(
-                    Icons.list_rounded,
-                    color: Color.fromARGB(255, 0, 73, 133),
-                  ),
-                  onPressed: () {
-                    context.read<NotesProvider>().changeView('list');
-                  },
-                ),
+          buildDispositionButtons(disposition, context),
           SearchBarAnimation(
             // buttonColour: AppColours.white,
             // enableBoxShadow: false,
@@ -90,6 +62,46 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildDispositionButtons(String disposition, BuildContext context) {
+    IconData icon;
+    String nextDisposition;
+    switch (disposition) {
+      case 'list':
+        icon = Icons.view_stream;
+        nextDisposition = 'compactList';
+        break;
+      case 'compactList':
+        icon = Icons.grid_view_rounded;
+        nextDisposition = 'grid';
+        break;
+      case 'grid':
+        icon = Icons.view_list_rounded;
+        nextDisposition = 'list';
+        break;
+      default:
+        return Container();
+    }
+    return buildDispositionButton(disposition, icon, nextDisposition, context);
+  }
+
+  Widget buildDispositionButton(String disposition, IconData icon,
+      String nextDisposition, BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        elevation: 3,
+        padding: const EdgeInsets.all(8),
+        shape: const CircleBorder(),
+      ),
+      child: Icon(
+        icon,
+        color: const Color.fromARGB(255, 0, 73, 133),
+      ),
+      onPressed: () {
+        context.read<NotesProvider>().changeView(nextDisposition);
+      },
     );
   }
 
