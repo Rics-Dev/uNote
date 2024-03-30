@@ -14,6 +14,13 @@ class NotesProvider extends ChangeNotifier {
   List<Note> _filteredNotes = [];
   List<NoteBook> _searchedNoteBooks = [];
 
+  Note _newNote = Note(
+      title: '',
+      content: '',
+      json: '',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now());
+
   TasksProvider tasksProvider = TasksProvider();
   bool oldToNew = TasksProvider().oldToNew;
 
@@ -34,6 +41,8 @@ class NotesProvider extends ChangeNotifier {
   bool get isSearchingNotes => _isSearchingNotes;
   int get selectedNoteBook => _selectedNoteBook;
   List<NoteBook> get searchedNoteBooks => _searchedNoteBooks;
+
+  Note get newNote => _newNote;
 
   NotesProvider() {
     _init();
@@ -85,7 +94,7 @@ class NotesProvider extends ChangeNotifier {
       case 'grid':
         _selectedView = 'grid';
         break;
-      
+
       default:
         _selectedView = 'list';
     }
@@ -94,35 +103,52 @@ class NotesProvider extends ChangeNotifier {
 
   void addNote(String title, String content, String json, bool isSecured,
       bool isFavorite, int selectedNoteBook) {
-    final note = Note(
-      title: title,
-      content: content,
-      json: json,
-      isSecured: isSecured,
-      isFavorite: isFavorite,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
+    _newNote.title = title;
+    _newNote.content = content;
+    _newNote.json = json;
+    _newNote.isSecured = isSecured;
+    _newNote.isFavorite = isFavorite;
+    _newNote.createdAt = DateTime.now();
+    _newNote.updatedAt = DateTime.now();
 
-    if (selectedNoteBook > 1 && selectedNoteBook < noteBooks.length + 2) {
-      final noteBook = noteBooks[selectedNoteBook - 2];
-      note.notebook.target = noteBook;
+    if (_newNote.isSecured) {
+      _newNote.notebook.target = null;
     }
-    noteBox.put(note);
+
+    noteBox.put(_newNote);
+
+    _newNote = Note(
+        title: '',
+        content: '',
+        json: '',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now());
   }
 
   void addNoteToNoteBook(int noteBookId, int noteId) {
     final noteBook = noteBookBox.get(noteBookId);
-    final note = noteBox.get(noteId);
-    if (note != null) {
-      if (note.notebook.target?.id == noteBook?.id) {
-        note.notebook.target = null;
-        noteBox.put(note);
+
+    //if new note
+    if (noteId == 0) {
+      if (newNote.notebook.target?.id == noteBook?.id) {
+        _newNote.notebook.target = null;
       } else {
-        note.notebook.target = noteBook;
-        noteBox.put(note);
+        _newNote.notebook.target = noteBook;
       }
       notifyListeners();
+    } else {
+      //if existing note
+      final note = noteBox.get(noteId);
+      if (note != null) {
+        if (note.notebook.target?.id == noteBook?.id) {
+          note.notebook.target = null;
+          noteBox.put(note);
+        } else {
+          note.notebook.target = noteBook;
+          noteBox.put(note);
+        }
+        notifyListeners();
+      }
     }
   }
 

@@ -931,7 +931,6 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   final QuillController _contentController = QuillController.basic();
   final TextEditingController _titleController = TextEditingController();
   FocusNode contentFocusNode = FocusNode();
-  // late Note _note;
 
   bool _isEditing = false;
 
@@ -939,8 +938,6 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   void initState() {
     super.initState();
     _titleController.text = widget.note.title;
-    // final notesProvider = context.read<NotesProvider>();
-    // _note = notesProvider.getNoteById(widget.note.id);
     final jsonNote = widget.note.json;
     final json = jsonDecode(jsonNote);
     _contentController.document = Document.fromJson(json);
@@ -950,7 +947,6 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
-    // titleFocusNode.dispose();
     contentFocusNode.dispose();
     super.dispose();
   }

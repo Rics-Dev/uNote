@@ -32,28 +32,6 @@ class _AddNoteViewState extends State<AddNoteView> {
 
   int _wordCount = 0;
 
-  Note currentNote = Note(
-      title: '',
-      content: '',
-      json: '',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now());
-
-  @override
-  void initState() {
-    super.initState();
-    final notesProvider = Provider.of<NotesProvider>(context, listen: false);
-    final selectedNoteBookIndex = notesProvider.selectedNoteBook;
-    if (selectedNoteBookIndex == 0) {
-      setState(() {
-        currentNote.isSecured = true;
-      });
-    }
-    // _contentController.addListener(_updateWordCount);
-    // _titleController.addListener(_onEditorTextChanged);
-    // _contentController.addListener(_onEditorTextChanged);
-  }
-
   @override
   void dispose() {
     _noteTitleController.dispose();
@@ -73,11 +51,11 @@ class _AddNoteViewState extends State<AddNoteView> {
   @override
   Widget build(BuildContext context) {
     final notesProvider = context.watch<NotesProvider>();
+    final newNote = notesProvider.newNote;
     final selectedNoteBookIndex = notesProvider.selectedNoteBook;
-    NoteBook selectedNoteBook = NoteBook(
-        name: '', createdAt: DateTime.now(), updatedAt: DateTime.now());
-    if (selectedNoteBookIndex > 1) {
-      selectedNoteBook = notesProvider.noteBooks[selectedNoteBookIndex - 2];
+
+    if (selectedNoteBookIndex == 0) {
+      newNote.isSecured = true;
     }
 
     return PopScope(
@@ -89,13 +67,8 @@ class _AddNoteViewState extends State<AddNoteView> {
             final json =
                 jsonEncode(_contentController.document.toDelta().toJson());
             if (title.isNotEmpty || content.isNotEmpty) {
-              context.read<NotesProvider>().addNote(
-                  title,
-                  content,
-                  json,
-                  currentNote.isSecured,
-                  currentNote.isFavorite,
-                  selectedNoteBookIndex);
+              context.read<NotesProvider>().addNote(title, content, json,
+                  newNote.isSecured, newNote.isFavorite, selectedNoteBookIndex);
             }
           }
         }
@@ -144,8 +117,8 @@ class _AddNoteViewState extends State<AddNoteView> {
                         title,
                         content,
                         json,
-                        currentNote.isSecured,
-                        currentNote.isFavorite,
+                        newNote.isSecured,
+                        newNote.isFavorite,
                         selectedNoteBookIndex);
                     Navigator.of(context).pop();
                   } else {
@@ -171,7 +144,7 @@ class _AddNoteViewState extends State<AddNoteView> {
                   child: Row(
                     children: [
                       Visibility(
-                        visible: !currentNote.isSecured,
+                        visible: !newNote.isSecured,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             elevation: 2,
@@ -183,7 +156,7 @@ class _AddNoteViewState extends State<AddNoteView> {
                             ),
                           ),
                           onPressed: () {
-                            // showAddNoteBookDialog(context, currentNote);
+                            showAddNoteBookDialog(context, newNote);
                           },
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -193,8 +166,10 @@ class _AddNoteViewState extends State<AddNoteView> {
                                 width: 5,
                               ),
                               Text(
-                                selectedNoteBook.name.isNotEmpty
-                                    ? selectedNoteBook.name
+                                newNote.notebook.target != null
+                                    ? newNote.notebook.target!.name.isNotEmpty
+                                        ? newNote.notebook.target!.name
+                                        : '+ Notebook'
                                     : '+ Notebook',
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -206,10 +181,10 @@ class _AddNoteViewState extends State<AddNoteView> {
                       IconButton(
                         onPressed: () {
                           setState(() {
-                            currentNote.isSecured = !currentNote.isSecured;
+                            newNote.isSecured = !newNote.isSecured;
                           });
                         },
-                        icon: currentNote.isSecured
+                        icon: newNote.isSecured
                             ? const Icon(
                                 Icons.shield_rounded,
                                 size: 28,
@@ -255,7 +230,7 @@ class _AddNoteViewState extends State<AddNoteView> {
                         'Words: $_wordCount',
                       ),
                       Text(
-                        currentNote.createdAt.toString().substring(0, 16),
+                        newNote.createdAt.toString().substring(0, 16),
                       ),
                     ],
                   ),
@@ -313,6 +288,8 @@ class _AddNoteViewState extends State<AddNoteView> {
       context: context,
       builder: (context) => AddNoteBook(note: note),
       isScrollControlled: true,
+      showDragHandle: true,
+      useSafeArea: true,
     );
   }
 }
