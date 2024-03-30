@@ -141,7 +141,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(4, 6582988619389156410),
       name: 'Note',
-      lastPropertyId: const obx_int.IdUid(7, 1490756995180579565),
+      lastPropertyId: const obx_int.IdUid(9, 1200123794600520156),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -180,6 +180,16 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(7, 1490756995180579565),
             name: 'json',
             type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(8, 4814409593105775692),
+            name: 'isSecured',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(9, 1200123794600520156),
+            name: 'isFavorite',
+            type: 1,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -424,7 +434,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final titleOffset = fbb.writeString(object.title);
           final contentOffset = fbb.writeString(object.content);
           final jsonOffset = fbb.writeString(object.json);
-          fbb.startTable(8);
+          fbb.startTable(10);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, titleOffset);
           fbb.addOffset(2, contentOffset);
@@ -432,6 +442,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addInt64(4, object.updatedAt.millisecondsSinceEpoch);
           fbb.addInt64(5, object.notebook.targetId);
           fbb.addOffset(6, jsonOffset);
+          fbb.addBool(7, object.isSecured);
+          fbb.addBool(8, object.isFavorite);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -446,6 +458,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
               .vTableGet(buffer, rootOffset, 8, '');
           final jsonParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 16, '');
+          final isSecuredParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 18, false);
+          final isFavoriteParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 20, false);
           final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
           final updatedAtParam = DateTime.fromMillisecondsSinceEpoch(
@@ -455,6 +471,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
               title: titleParam,
               content: contentParam,
               json: jsonParam,
+              isSecured: isSecuredParam,
+              isFavorite: isFavoriteParam,
               createdAt: createdAtParam,
               updatedAt: updatedAtParam);
           object.notebook.targetId =
@@ -617,6 +635,14 @@ class Note_ {
 
   /// see [Note.json]
   static final json = obx.QueryStringProperty<Note>(_entities[3].properties[6]);
+
+  /// see [Note.isSecured]
+  static final isSecured =
+      obx.QueryBooleanProperty<Note>(_entities[3].properties[7]);
+
+  /// see [Note.isFavorite]
+  static final isFavorite =
+      obx.QueryBooleanProperty<Note>(_entities[3].properties[8]);
 }
 
 /// [NoteBook] entity fields to define ObjectBox queries.

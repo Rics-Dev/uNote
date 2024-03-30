@@ -48,6 +48,9 @@ class Note{
   String content;
   String json;
 
+  bool isSecured;
+  bool isFavorite;
+
   @Property(type: PropertyType.date)
   DateTime createdAt;
 
@@ -65,6 +68,8 @@ class Note{
     required this.title,
     required this.content,
     required this.json,
+    this.isSecured = false,
+    this.isFavorite = false,
     required this.createdAt,
     required this.updatedAt,
   });

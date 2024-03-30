@@ -1,22 +1,17 @@
 import 'dart:convert';
 
 import 'package:auto_animated/auto_animated.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:utask/main.dart';
+import 'package:toastification/toastification.dart';
 import 'package:utask/models/entities.dart';
-import 'package:utask/objectbox.g.dart';
 
 import '../providers/note_provider.dart';
 import '../providers/notebook.dart';
-import '../providers/taskProvider.dart';
-import '../widgets/inboxPage/horizontal_tags_view.dart';
 import '../widgets/inboxPage/search_disposition_view.dart';
 
 enum _SupportState {
@@ -40,7 +35,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
   final int _previouslySelectedTabIndex = 0;
 
   final LocalAuthentication auth = LocalAuthentication();
-  final _SupportState _supportState = _SupportState.unknown;
+  _SupportState _supportState = _SupportState.unknown;
   bool? _canCheckBiometrics;
   List<BiometricType>? _availableBiometrics;
   String _authorized = 'Not Authorized';
@@ -55,11 +50,11 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
     super.initState();
     // _tabController2 = TabController(length: 1, vsync: this);
     updateTabController();
-    // auth.isDeviceSupported().then(
-    //       (bool isSupported) => setState(() => _supportState = isSupported
-    //           ? _SupportState.supported
-    //           : _SupportState.unsupported),
-    //     );
+    auth.isDeviceSupported().then(
+          (bool isSupported) => setState(() => _supportState = isSupported
+              ? _SupportState.supported
+              : _SupportState.unsupported),
+        );
   }
 
   Future<void> _checkBiometrics() async {
@@ -126,6 +121,10 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
 
     setState(
         () => _authorized = authenticated ? 'Authorized' : 'Not Authorized');
+
+    if (_authorized == 'Not Authorized') {
+      failedAuthetication();
+    }
   }
 
   Future<void> _authenticateWithBiometrics() async {
@@ -163,6 +162,10 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
     setState(() {
       _authorized = message;
     });
+
+    if (_authorized == 'Not Authorized') {
+      failedAuthetication();
+    }
   }
 
   Future<void> _cancelAuthentication() async {
@@ -210,7 +213,28 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
         duration: const Duration(milliseconds: 300),
         curve: Curves.ease,
       );
+      context.read<NotesProvider>().setSelectedNoteBook(noteBookPosition + 2);
     }
+  }
+
+  void failedAuthetication() {
+    if (_tabController != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _tabController!.animateTo(
+          1,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.ease,
+        );
+        context.read<NotesProvider>().setSelectedNoteBook(1);
+      });
+    }
+    toastification.show(
+      type: ToastificationType.error,
+      style: ToastificationStyle.flat,
+      context: context,
+      title: const Text('Unable to authenticate'),
+      autoCloseDuration: const Duration(seconds: 5),
+    );
   }
 
   @override
@@ -270,17 +294,17 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
                 //   });
                 // }
 
-                // if (index == 0) {
-                //   _checkBiometrics();
-                //   _getAvailableBiometrics();
-                //   _authenticate();
-                //   _authenticateWithBiometrics();
-                // }
+                if (index == 0) {
+                  // _checkBiometrics();
+                  // _getAvailableBiometrics();
+                  _authenticate();
+                  // _authenticateWithBiometrics();
+                }
               },
               tabs: [
                 const Tab(
                   icon: Icon(
-                    Icons.star,
+                    Icons.shield_outlined,
                     size: 20,
                   ),
                 ),
@@ -358,13 +382,18 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
               physics: const NeverScrollableScrollPhysics(),
               controller: _tabController,
               children: [
-                NoteListPage(
-                  NoteBook(
-                      name: 'Favorites',
-                      createdAt: DateTime.now(),
-                      updatedAt: DateTime.now()),
-                  onNavigateToNoteBook: handleTabControllerUpdate,
-                ),
+                _isAuthenticating
+                    ? const Center(child: CircularProgressIndicator())
+                    : _authorized == 'Authorized'
+                        ? NoteListPage(
+                            NoteBook(
+                              name: 'All Notes Ric are secured',
+                              createdAt: DateTime.now(),
+                              updatedAt: DateTime.now(),
+                            ),
+                            onNavigateToNoteBook: handleTabControllerUpdate,
+                          )
+                        : const SizedBox(),
                 NoteListPage(
                   NoteBook(
                       name: 'All Notes Ric',
@@ -504,19 +533,25 @@ class NoteListPage extends StatelessWidget {
     final notesProvider = context.watch<NotesProvider>();
     final disposition = notesProvider.selectedView;
     final selectedNoteBook = notesProvider.selectedNoteBook;
-    var notes = notesProvider.notes;
-    var allNoteBooks = notesProvider.noteBooks;
+    List<Note> notes = notesProvider.notes;
+    List<NoteBook> allNoteBooks = notesProvider.noteBooks;
 
-    noteBook.name == 'All Notes Ric'
-        ? notes = notesProvider.notes
-        : notes = notesProvider.notes
-            .where((note) => note.notebook.target?.id == noteBook.id)
-            .toList();
+    if (noteBook.name == 'All Notes Ric') {
+      notes = notesProvider.notes.where((note) => !note.isSecured).toList();
+    } else if (noteBook.name == 'All Notes Ric are secured') {
+      notes = notesProvider.notes.where((note) => note.isSecured).toList();
+    } else {
+      notes = notesProvider.notes
+          .where((note) => note.notebook.target?.id == noteBook.id)
+          .toList();
+    }
 
-    if (notesProvider.isSearchingNotes == true) {
-      noteBook.name == 'All Notes Ric'
-          ? notes = notesProvider.searchedNotes
-          : notes = notesProvider.searchedNotes
+    if (notesProvider.isSearchingNotes) {
+      notes = noteBook.name == 'All Notes Ric'
+          ? notesProvider.searchedNotes
+              .where((note) => !note.isSecured)
+              .toList()
+          : notesProvider.searchedNotes
               .where((note) => note.notebook.target?.id == noteBook.id)
               .toList();
     }
@@ -871,16 +906,16 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   final QuillController _contentController = QuillController.basic();
   final TextEditingController _titleController = TextEditingController();
   FocusNode contentFocusNode = FocusNode();
+  // late Note _note;
 
   bool _isEditing = false;
-
-  // FocusNode titleFocusNode = FocusNode();
-  // FocusNode contentFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _titleController.text = widget.note.title;
+    // final notesProvider = context.read<NotesProvider>();
+    // _note = notesProvider.getNoteById(widget.note.id);
     final jsonNote = widget.note.json;
     final json = jsonDecode(jsonNote);
     _contentController.document = Document.fromJson(json);
@@ -898,6 +933,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   @override
   Widget build(BuildContext context) {
     final notesProvider = context.watch<NotesProvider>();
+    final note = notesProvider.getNoteById(widget.note.id);
     final selectedNoteBookIndex = notesProvider.selectedNoteBook;
     return SafeArea(
       child: Padding(
@@ -930,12 +966,8 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                           final json = jsonEncode(
                               _contentController.document.toDelta().toJson());
                           if (title.isNotEmpty || content.isNotEmpty) {
-                            context.read<NotesProvider>().updateNote(
-                                widget.note.id,
-                                title,
-                                content,
-                                json,
-                                selectedNoteBookIndex);
+                            context.read<NotesProvider>().updateNote(note.id,
+                                title, content, json, selectedNoteBookIndex);
                           }
                         });
                       },
@@ -957,32 +989,53 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
                   children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 2,
-                        textStyle:
-                            const TextStyle(overflow: TextOverflow.ellipsis),
-                        padding: const EdgeInsets.all(4),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.book_rounded),
-                          const SizedBox(
-                            width: 5,
+                    Visibility(
+                      visible: !note.isSecured,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          elevation: 2,
+                          textStyle:
+                              const TextStyle(overflow: TextOverflow.ellipsis),
+                          padding: const EdgeInsets.all(4),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
-                          Text(widget.note.notebook.target?.name ?? ''),
-                        ],
+                        ),
+                        onPressed: () {
+                          showAddNoteBookDialog(context);
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.book_rounded),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(note.notebook.target?.name ?? '+ Notebook'),
+                          ],
+                        ),
                       ),
                     ),
                     const Spacer(),
-                    const Icon(
-                      Icons.star_border_outlined,
-                      size: 28,
+                    IconButton(
+                      onPressed: () {
+                        context.read<NotesProvider>().updateSecuredNote(
+                              note.id,
+                            );
+                      },
+                      icon: note.isSecured
+                          ? const Icon(Icons.shield_rounded, size: 28)
+                          : const Icon(Icons.shield_outlined, size: 28),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        context.read<NotesProvider>().updateFavoriteNote(
+                              note.id,
+                            );
+                      },
+                      icon: note.isFavorite
+                          ? const Icon(Icons.star, size: 28)
+                          : const Icon(Icons.star_border_outlined, size: 28),
                     ),
                   ],
                 ),
@@ -1006,10 +1059,10 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Words: ${_contentController.document.toPlainText().split(RegExp(r'\s+')).length}',
+                      'Words: ${note.content.trim().isNotEmpty ? note.content.trim().split(RegExp(r'\s+')).length : 0}',
                     ),
                     Text(
-                      widget.note.updatedAt.toString().substring(0, 16),
+                      note.updatedAt.toString().substring(0, 16),
                     ),
                   ],
                 ),
@@ -1040,4 +1093,161 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
       ),
     );
   }
+
+  Future<dynamic> showAddNoteBookDialog(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) => const AddNoteBook(),
+      isScrollControlled: true,
+    );
+  }
+}
+
+class AddNoteBook extends StatefulWidget {
+  const AddNoteBook({super.key});
+
+  @override
+  State<AddNoteBook> createState() => _AddNoteBookState();
+}
+
+class _AddNoteBookState extends State<AddNoteBook> {
+  final TextEditingController noteBookController = TextEditingController();
+
+  @override
+  void dispose() {
+    noteBookController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final noteBooks = context.watch<NotesProvider>().noteBooks;
+
+    return SafeArea(
+      child: Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: SizedBox(
+          // width: MediaQuery.of(context).size.width * 0.90,
+          height: MediaQuery.of(context).size.height * 0.6,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Container(
+                  width: 100,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Add NoteBook',
+                style: TextStyle(
+                  fontSize: 20.0,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: SizedBox(
+                  height: 40,
+                  child: TextField(
+                    controller: noteBookController,
+                    decoration: const InputDecoration(
+                      labelText: 'Add NoteBook or select already existing ones',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.done,
+                    onChanged: (String value) {
+                      // searchTags(noteBookController.text);
+                    },
+                    onSubmitted: (_) {
+                      if (_.isNotEmpty) {
+                        noteBookController.clear();
+                      }
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10.0),
+              Expanded(
+                child: GridView.extent(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  childAspectRatio: 2.5,
+                  maxCrossAxisExtent: 150.0,
+                  mainAxisSpacing: 12.0, // spacing between rows
+                  crossAxisSpacing: 8.0, // spacing between columns
+                  children: noteBooks.isEmpty
+                      ? [const Text('Add a new NoteBook')]
+                      : [
+                          // Container(
+                          //   padding: const EdgeInsets.all(4),
+                          //   child: ElevatedButton.icon(
+                          //     onPressed: () {},
+                          //     icon: const Icon(
+                          //       Icons.book_rounded,
+                          //       size: 18,
+                          //     ),
+                          //     label: const Text(
+                          //       'Vault',
+                          //     ),
+                          //     style: ElevatedButton.styleFrom(
+                          //       elevation: 3,
+                          //       shape: RoundedRectangleBorder(
+                          //         borderRadius: BorderRadius.circular(8.0),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          ...noteBooks.map((noteBook) {
+                            // final isSelected = temporarilyAddedTags
+                            //     .any((element) => element.name == tag.name);
+                            return Container(
+                              padding: const EdgeInsets.all(4),
+                              child: ElevatedButton.icon(
+                                onPressed: () {},
+                                icon: const Icon(
+                                  Icons.book_rounded,
+                                  size: 18,
+                                ),
+                                label: Text(
+                                  noteBook.name,
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 3,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // void searchTags(String query) {
+  //   if (query.isEmpty) {
+  //     // If the query is empty, show all tags
+  //     context
+  //         .read<TasksProvider>()
+  //         .setSearchedTags(context.read<TasksProvider>().tags);
+  //   } else {
+  //     // search tags based on the query
+  //     final suggestions = context.read<TasksProvider>().tags.where((tag) {
+  //       return tag.name.toLowerCase().contains(query.toLowerCase());
+  //     }).toList();
+  //     context.read<TasksProvider>().setSearchedTags(suggestions);
+  //   }
+  // }
 }

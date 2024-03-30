@@ -39,6 +39,7 @@ class NotesProvider extends ChangeNotifier {
 
   void _init() async {
     // noteBox.removeAll();
+    // noteBookBox.removeAll();
     // final noteBooks = noteBookBox.getAll();
     final tasksStream = objectbox.getNotes();
     tasksStream.listen(_onNotesChanged);
@@ -62,6 +63,10 @@ class NotesProvider extends ChangeNotifier {
   void _onNoteBooksChanged(List<NoteBook> noteBooks) {
     _noteBooks = noteBooks;
     notifyListeners();
+  }
+
+  Note getNoteById(int noteId) {
+    return notes.firstWhere((note) => note.id == noteId);
   }
 
   void changeView(String view) {
@@ -108,6 +113,25 @@ class NotesProvider extends ChangeNotifier {
       // }
 
       noteBox.put(updatedNote);
+      notifyListeners();
+    }
+  }
+
+  void updateSecuredNote(int id) {
+    final note = noteBox.get(id);
+    if (note != null) {
+      note.isSecured = !note.isSecured;
+      noteBox.put(note);
+      notifyListeners();
+    }
+  }
+
+  void updateFavoriteNote(int id) {
+    final note = noteBox.get(id);
+    if (note != null) {
+      note.isFavorite = !note.isFavorite;
+      noteBox.put(note);
+      notifyListeners();
     }
   }
 
