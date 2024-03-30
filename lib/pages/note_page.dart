@@ -1049,17 +1049,17 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                             )
                           : const Icon(Icons.shield_outlined, size: 28),
                     ),
-                    IconButton(
-                      onPressed: () {
-                        context.read<NotesProvider>().updateFavoriteNote(
-                              note.id,
-                            );
-                      },
-                      icon: note.isFavorite
-                          ? const Icon(Icons.star,
-                              size: 28, color: Color.fromARGB(255, 0, 73, 133))
-                          : const Icon(Icons.star_border_outlined, size: 28),
-                    ),
+                    // IconButton(
+                    //   onPressed: () {
+                    //     context.read<NotesProvider>().updateFavoriteNote(
+                    //           note.id,
+                    //         );
+                    //   },
+                    //   icon: note.isFavorite
+                    //       ? const Icon(Icons.star,
+                    //           size: 28, color: Color.fromARGB(255, 0, 73, 133))
+                    //       : const Icon(Icons.star_border_outlined, size: 28),
+                    // ),
                   ],
                 ),
               ),

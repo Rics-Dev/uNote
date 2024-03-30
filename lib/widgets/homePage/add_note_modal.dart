@@ -42,6 +42,13 @@ class _AddNoteViewState extends State<AddNoteView> {
   @override
   void initState() {
     super.initState();
+    final notesProvider = Provider.of<NotesProvider>(context, listen: false);
+    final selectedNoteBookIndex = notesProvider.selectedNoteBook;
+    if (selectedNoteBookIndex == 0) {
+      setState(() {
+        currentNote.isSecured = true;
+      });
+    }
     // _contentController.addListener(_updateWordCount);
     // _titleController.addListener(_onEditorTextChanged);
     // _contentController.addListener(_onEditorTextChanged);
@@ -210,18 +217,18 @@ class _AddNoteViewState extends State<AddNoteView> {
                               )
                             : const Icon(Icons.shield_outlined, size: 28),
                       ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            currentNote.isFavorite = !currentNote.isFavorite;
-                          });
-                        },
-                        icon: currentNote.isFavorite
-                            ? const Icon(Icons.star,
-                                size: 28,
-                                color: Color.fromARGB(255, 0, 73, 133))
-                            : const Icon(Icons.star_border_outlined, size: 28),
-                      ),
+                      // IconButton(
+                      //   onPressed: () {
+                      //     setState(() {
+                      //       currentNote.isFavorite = !currentNote.isFavorite;
+                      //     });
+                      //   },
+                      //   icon: currentNote.isFavorite
+                      //       ? const Icon(Icons.star,
+                      //           size: 28,
+                      //           color: Color.fromARGB(255, 0, 73, 133))
+                      //       : const Icon(Icons.star_border_outlined, size: 28),
+                      // ),
                     ],
                   ),
                 ),
