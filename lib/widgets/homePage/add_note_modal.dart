@@ -34,12 +34,6 @@ class _AddNoteViewState extends State<AddNoteView> {
     super.initState();
     // _titleController.addListener(_onEditorTextChanged);
     // _contentController.addListener(_onEditorTextChanged);
-    // final notesProvider =
-    //       Provider.of<NotesProvider>(context, listen: false);
-    // final note = notesProvider.notes[0];
-    // final jsonNote = note.json;
-    // final json = jsonDecode(jsonNote);
-    // _contentController.document = Document.fromJson(json);
   }
 
   @override
@@ -51,7 +45,6 @@ class _AddNoteViewState extends State<AddNoteView> {
     _scrollController.dispose();
     titleFocusNode.dispose();
     contentFocusNode.dispose();
-    // _retrieveData();
     super.dispose();
   }
 
@@ -59,22 +52,6 @@ class _AddNoteViewState extends State<AddNoteView> {
     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
   }
 
-  // void addNote(String title, String content) {
-  //   if (title.isEmpty) {
-  //     toastification.show(
-  //       type: ToastificationType.warning,
-  //       style: ToastificationStyle.minimal,
-  //       context: context,
-  //       title: const Text("Note must have a title"),
-  //       autoCloseDuration: const Duration(seconds: 3),
-  //     );
-  //   } else {
-  //     context.read<NotesProvider>().addNote(title, content);
-  //     _noteContentController.clear();
-  //     _noteTitleController.clear();
-  //     Navigator.of(context).pop();
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -157,6 +134,8 @@ class _AddNoteViewState extends State<AddNoteView> {
               children: [
                 QuillToolbar.simple(
                   configurations: QuillSimpleToolbarConfigurations(
+                    // axis: Axis.horizontal,
+                    // toolbarSize: 36.0,
                     multiRowsDisplay: true,
                     controller: _contentController,
                     sharedConfigurations: const QuillSharedConfigurations(

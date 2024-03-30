@@ -69,6 +69,16 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
     }
   }
 
+  void handleTabControllerUpdate(int noteBookPosition) {
+    if (_tabController != null) {
+      _tabController!.animateTo(
+        noteBookPosition + 2,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final notesProvider = context.watch<NotesProvider>();
@@ -165,15 +175,26 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
               physics: const NeverScrollableScrollPhysics(),
               controller: _tabController,
               children: [
-                NoteListPage(NoteBook(
-                    name: 'Favorites',
-                    createdAt: DateTime.now(),
-                    updatedAt: DateTime.now())),
-                NoteListPage(NoteBook(
-                    name: 'All Notes Ric',
-                    createdAt: DateTime.now(),
-                    updatedAt: DateTime.now())),
-                ...noteBooks.map((noteBook) => NoteListPage(noteBook)).toList(),
+                NoteListPage(
+                  NoteBook(
+                      name: 'Favorites',
+                      createdAt: DateTime.now(),
+                      updatedAt: DateTime.now()),
+                  onNavigateToNoteBook: handleTabControllerUpdate,
+                ),
+                NoteListPage(
+                  NoteBook(
+                      name: 'All Notes Ric',
+                      createdAt: DateTime.now(),
+                      updatedAt: DateTime.now()),
+                  onNavigateToNoteBook: handleTabControllerUpdate,
+                ),
+                ...noteBooks
+                    .map((noteBook) => NoteListPage(
+                          noteBook,
+                          onNavigateToNoteBook: handleTabControllerUpdate,
+                        ))
+                    .toList(),
                 _buildAddNotebookPage(),
               ],
             ),
@@ -282,7 +303,9 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
 
 class NoteListPage extends StatelessWidget {
   final NoteBook noteBook;
-  const NoteListPage(this.noteBook, {super.key });
+  final Function(int) onNavigateToNoteBook;
+  const NoteListPage(this.noteBook,
+      {super.key, required this.onNavigateToNoteBook});
 
   Future<dynamic> _showAddNoteDetailsDialog(BuildContext context, Note note) {
     return showModalBottomSheet(
@@ -298,6 +321,7 @@ class NoteListPage extends StatelessWidget {
     final notesProvider = context.watch<NotesProvider>();
     final disposition = notesProvider.selectedView;
     var notes = notesProvider.notes;
+    var allNoteBooks = notesProvider.noteBooks;
 
     noteBook.name == 'All Notes Ric'
         ? notes = notesProvider.notes
@@ -409,6 +433,79 @@ class NoteListPage extends StatelessWidget {
                             );
                           },
                           child: ListTile(
+                            trailing: notes[index].notebook.target != null
+                                ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        height: 35,
+                                        width: 75,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 2,
+                                            textStyle: const TextStyle(
+                                                overflow:
+                                                    TextOverflow.ellipsis),
+                                            padding: const EdgeInsets.all(4),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            final noteBook =
+                                                notes[index].notebook.target;
+
+                                            final noteBookPosition =
+                                                allNoteBooks.indexWhere((nb) =>
+                                                    nb.id == noteBook!.id);
+                                            if (noteBookPosition != -1) {
+                                              onNavigateToNoteBook(
+                                                  noteBookPosition);
+                                            }
+                                          },
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Icon(Icons.book_rounded),
+                                              const SizedBox(
+                                                width: 5,
+                                              ),
+                                              Flexible(
+                                                child: Text(notes[index]
+                                                        .notebook
+                                                        .target
+                                                        ?.name ??
+                                                    ''),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        // DateFormat.yMMMd().format(notes[index].updatedAt),
+                                        notes[index]
+                                            .createdAt
+                                            .toString()
+                                            .substring(0, 10),
+                                      ),
+                                      // const Icon(Icons.more_horiz_rounded),
+                                    ],
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                          // DateFormat.yMMMd().format(notes[index].updatedAt),
+                                          notes[index]
+                                              .createdAt
+                                              .toString()
+                                              .substring(0, 10)),
+                                    ],
+                                  ),
                             // visualDensity: VisualDensity.compact,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0),
@@ -421,15 +518,33 @@ class NoteListPage extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                             subtitle: Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Text(
-                                maxLines: 1,
-                                // noteBook.notes[index].content,
-                                notes[index].content,
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.grey[600]),
-                                overflow: TextOverflow.ellipsis,
-                                // maxLines: 2,
+                              padding:
+                                  const EdgeInsets.only(top: 8.0, bottom: 0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    maxLines: 1,
+                                    // noteBook.notes[index].content,
+                                    notes[index].content,
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.grey[600]),
+                                    overflow: TextOverflow.ellipsis,
+                                    // maxLines: 2,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  // Text(
+                                  //   // DateFormat.yMMMd().format(notes[index].updatedAt),
+                                  //   notes[index]
+                                  //       .updatedAt
+                                  //       .toString()
+                                  //       .substring(0, 10),
+                                  // ),
+                                ],
                               ),
                             ),
                           ),
@@ -577,7 +692,6 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   @override
   void initState() {
     super.initState();
-    // note = objectbox.noteBox.get(widget.noteId)!;
     _titleController.text = widget.note.title;
     final jsonNote = widget.note.json;
     final json = jsonDecode(jsonNote);
