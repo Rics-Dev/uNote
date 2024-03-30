@@ -12,6 +12,7 @@ class NotesProvider extends ChangeNotifier {
   bool _isSearchingNotes = false;
   int _selectedNoteBook = 0;
   List<Note> _filteredNotes = [];
+  List<NoteBook> _searchedNoteBooks = [];
 
   TasksProvider tasksProvider = TasksProvider();
   bool oldToNew = TasksProvider().oldToNew;
@@ -32,6 +33,7 @@ class NotesProvider extends ChangeNotifier {
   List<Note> get filteredNotes => _filteredNotes;
   bool get isSearchingNotes => _isSearchingNotes;
   int get selectedNoteBook => _selectedNoteBook;
+  List<NoteBook> get searchedNoteBooks => _searchedNoteBooks;
 
   NotesProvider() {
     _init();
@@ -62,11 +64,14 @@ class NotesProvider extends ChangeNotifier {
 
   void _onNoteBooksChanged(List<NoteBook> noteBooks) {
     _noteBooks = noteBooks;
+    _searchedNoteBooks = noteBooks;
     notifyListeners();
   }
 
-  Note getNoteById(int noteId) {
-    return notes.firstWhere((note) => note.id == noteId);
+  Note? getNoteById(int noteId) {
+    // return notes.firstWhere((note) => note.id == noteId);
+    final note = noteBox.get(noteId);
+    return note;
   }
 
   void changeView(String view) {
@@ -78,12 +83,14 @@ class NotesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addNote(
-      String title, String content, String json, int selectedNoteBook) {
+  void addNote(String title, String content, String json, bool isSecured,
+      bool isFavorite, int selectedNoteBook) {
     final note = Note(
       title: title,
       content: content,
       json: json,
+      isSecured: isSecured,
+      isFavorite: isFavorite,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
@@ -93,6 +100,21 @@ class NotesProvider extends ChangeNotifier {
       note.notebook.target = noteBook;
     }
     noteBox.put(note);
+  }
+
+  void addNoteToNoteBook(int noteBookId, int noteId) {
+    final noteBook = noteBookBox.get(noteBookId);
+    final note = noteBox.get(noteId);
+    if (note != null) {
+      if (note.notebook.target?.id == noteBook?.id) {
+        note.notebook.target = null;
+        noteBox.put(note);
+      } else {
+        note.notebook.target = noteBook;
+        noteBox.put(note);
+      }
+      notifyListeners();
+    }
   }
 
   void updateNote(int noteId, String title, String content, String json,
@@ -121,6 +143,7 @@ class NotesProvider extends ChangeNotifier {
     final note = noteBox.get(id);
     if (note != null) {
       note.isSecured = !note.isSecured;
+      note.notebook.target = null;
       noteBox.put(note);
       notifyListeners();
     }
@@ -139,8 +162,10 @@ class NotesProvider extends ChangeNotifier {
     noteBox.remove(id);
   }
 
-  void addNotebook(NoteBook noteBook) {
+  int addNotebook(NoteBook noteBook) {
     noteBookBox.put(noteBook);
+    final noteBookId = noteBookBox.query().build().find().last.id;
+    return noteBookId;
   }
 
   void deleteNotebook(int id) {
@@ -227,5 +252,10 @@ class NotesProvider extends ChangeNotifier {
 
   int sortByDate(DateTime a, DateTime b) {
     return tasksProvider.oldToNew ? a.compareTo(b) : b.compareTo(a);
+  }
+
+  void setSearchedNoteBooks(List<NoteBook> noteBooks) {
+    _searchedNoteBooks = noteBooks;
+    notifyListeners();
   }
 }

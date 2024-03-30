@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
         appBarTitles[_bottomNavIndex] =
             noteBooks[notesProvider.selectedNoteBook - 2].name;
       } else if (notesProvider.selectedNoteBook == 0) {
-        appBarTitles[_bottomNavIndex] = 'Favorites';
+        appBarTitles[_bottomNavIndex] = 'Vault';
       } else {
         appBarTitles[_bottomNavIndex] = 'Your Notes';
       }
