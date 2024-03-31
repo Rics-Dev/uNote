@@ -6,6 +6,7 @@ import 'database/objectbox.dart';
 import 'providers/notebook.dart';
 import 'providers/task_provider.dart';
 import 'router/router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 late ObjectBox objectbox;
 void main() async {
@@ -39,8 +40,8 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
           useMaterial3: true,
-          // textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
-          fontFamily: 'Onest',
+          textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+          // fontFamily: 'Onest',
         ),
         routerConfig: widget.router);
   }
