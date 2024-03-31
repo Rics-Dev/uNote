@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/taskPageWidgets/horizontal_priority_view.dart';
-import '../widgets/taskPageWidgets/task_inbox.dart';
+import '../widgets/taskPageWidgets/task_inbox_page.dart';
 import '../widgets/taskPageWidgets/task_tab_bar.dart';
-import 'list_page.dart';
+import '../widgets/taskPageWidgets/task_list_page.dart';
 
 class TasksPage extends StatefulWidget {
   const TasksPage({super.key});
@@ -40,8 +40,8 @@ class _TasksPageState extends State<TasksPage>
           child: TabBarView(
             controller: _tabController,
             children: const [
-              TasksInbox(),
-              ListPage(),
+              TaskInboxPage(),
+              TaskListPage(),
             ],
           ),
         ),

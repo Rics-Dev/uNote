@@ -61,6 +61,7 @@ dependencies:
   flutter_quill: ^9.3.5
   animations: ^2.0.11
   local_auth: ^2.2.0
+  roundcheckbox: ^2.0.5
   # database Part
   objectbox: ^2.5.1
   objectbox_flutter_libs: any

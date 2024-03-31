@@ -68,18 +68,16 @@ class TasksProvider extends ChangeNotifier {
   String get disposition => _disposition;
   bool get oldToNew => _oldToNew;
 
-
-  set sortCriteria(SortCriteria value) { // Setter
-  _sortCriteria = value;
-}
+  set sortCriteria(SortCriteria value) {
+    // Setter
+    _sortCriteria = value;
+  }
 
   TasksProvider() {
     _init();
   }
 
   void _init() async {
-    // taskListBox.removeAll();
-    // final taskList = taskListBox.getAll();
     final tasksStream = objectbox.getTasks();
     tasksStream.listen(_onTasksChanged);
     final tagsStream = objectbox.getTags();
@@ -166,8 +164,6 @@ class TasksProvider extends ChangeNotifier {
 
     taskBox.put(task);
 
-
-
     _oldToNew = false;
     _selectedTags.clear();
     _selectedPriority.clear();
@@ -236,21 +232,36 @@ class TasksProvider extends ChangeNotifier {
       }
     }
     taskBox.remove(taskId);
+    
+
+    _filteredTasks.removeWhere((task) => task.id == taskId);
+    if (filteredTasks.isEmpty) {
+      _selectedPriority.clear();
+      _filteredTasks.clear();
+    }
+
+    notifyListeners();
   }
 
   void updateTask(int taskId, bool isDone) async {
+    //first part
+    final task = tasks.firstWhere((task) => task.id == taskId);
+    task.isDone = isDone;
+    notifyListeners();
+
+    //second part
     final updatedTask = taskBox.get(taskId);
     if (updatedTask != null) {
       updatedTask.isDone = isDone;
       updatedTask.updatedAt = DateTime.now();
+
       if (updatedTask.list.target != null) {
         final taskList = updatedTask.list.target!;
         taskList.updatedAt = DateTime.now();
         taskListBox.put(taskList);
       }
-      taskBox.put(updatedTask);
+      taskBox.putAsync(updatedTask);
     }
-    notifyListeners();
   }
 
   void updateTaskName(int id, String value) {

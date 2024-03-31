@@ -1,24 +1,22 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 import 'package:utask/providers/taskProvider.dart';
 
-import '../models/entities.dart';
+import '../../models/entities.dart';
 import 'package:toastification/toastification.dart';
 
 
-class ListPage extends StatefulWidget {
-  const ListPage({super.key});
+class TaskListPage extends StatefulWidget {
+  const TaskListPage({super.key});
 
   @override
-  State<ListPage> createState() => _ListPageState();
+  State<TaskListPage> createState() => _TaskListPageState();
 }
 
-class _ListPageState extends State<ListPage> {
+class _TaskListPageState extends State<TaskListPage> {
   final ExpansionTileController controller = ExpansionTileController();
   final TextEditingController listController = TextEditingController();
 
@@ -45,7 +43,6 @@ class _ListPageState extends State<ListPage> {
         autoCloseDuration: const Duration(seconds: 3),
       );
     }
-    // Add list to the database
   }
 
   @override
@@ -313,12 +310,6 @@ class _ListPageState extends State<ListPage> {
                               leading: MSHCheckbox(
                                 size: 24,
                                 value: taskLists[index].tasks[taskIndex].isDone,
-                                colorConfig:
-                                    MSHColorConfig.fromCheckedUncheckedDisabled(
-                                        // checkedColor:
-                                        // const Color.fromARGB(255, 0, 73, 133),
-                                        // Colors.white,
-                                        ),
                                 style: MSHCheckboxStyle.fillScaleCheck,
                                 onChanged: (selected) {
                                   context.read<TasksProvider>().updateTask(
@@ -327,16 +318,6 @@ class _ListPageState extends State<ListPage> {
                                 },
                               ),
                               textColor: Colors.white,
-                              // subtitle: taskLists[index]
-                              //             .tasks[taskIndex]
-                              //             .dueDate !=
-                              //         null
-                              //     ? Text(taskLists[index]
-                              //         .tasks[taskIndex]
-                              //         .dueDate!
-                              //         .day
-                              //         .toString())
-                              //     : null,
                               title: GestureDetector(
                                 onTap: () {
                                   context
