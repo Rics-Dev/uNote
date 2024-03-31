@@ -764,7 +764,7 @@ class NoteListPage extends StatelessWidget {
                               notes[index].title,
                               // noteBook.notes[index].title,
                               style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w500),
+                                  fontSize: 18, fontWeight: FontWeight.w600),
                               overflow: TextOverflow.ellipsis,
                             ),
                             subtitle: Visibility(
@@ -876,46 +876,37 @@ class NoteListPage extends StatelessWidget {
                           },
                         );
                       },
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 5,
-                              offset: const Offset(
-                                  0, 5), // changes position of shadow
-                            ),
-                          ],
-                          // color: const Color.fromARGB(255, 245, 245, 245),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: Column(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                notes[index].title,
-                                style: const TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500),
-                                maxLines: 2,
-                                // overflow: TextOverflow.ellipsis,
+                      child: Card(
+                        surfaceTintColor: Colors.white,
+                        elevation: 5,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  notes[index].title,
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600),
+                                  maxLines: 2,
+                                  // overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Flexible(
-                              child: Text(
-                                notes[index].content,
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.grey[600]),
-                                // overflow: TextOverflow.ellipsis,
-                                // maxLines: 3,
+                              const SizedBox(
+                                height: 10,
                               ),
-                            ),
-                          ],
+                              Flexible(
+                                child: Text(
+                                  notes[index].content,
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.grey[600]),
+                                  // overflow: TextOverflow.ellipsis,
+                                  // maxLines: 3,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

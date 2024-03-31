@@ -82,6 +82,7 @@ class _AddNoteViewState extends State<AddNoteView> {
               onTapOutside: (event) {
                 titleFocusNode.unfocus();
               },
+              autofocus: true,
               focusNode: titleFocusNode,
               controller: _titleController,
               decoration: const InputDecoration(
@@ -260,7 +261,7 @@ class _AddNoteViewState extends State<AddNoteView> {
                               });
                             },
                             placeholder: 'Add your note here...',
-                            autoFocus: true,
+                            // autoFocus: true,
                             controller: _contentController,
                             readOnly: false,
                             sharedConfigurations:
