@@ -64,7 +64,7 @@ class _AddNoteViewState extends State<AddNoteView> {
             final content = _contentController.document.toPlainText().trim();
             final json =
                 jsonEncode(_contentController.document.toDelta().toJson());
-            if (title.isNotEmpty || content.isNotEmpty) {
+            if (title.isNotEmpty) {
               context.read<NotesProvider>().addNote(title, content, json,
                   newNote.isSecured, newNote.isFavorite, selectedNoteBookIndex);
             }
@@ -110,7 +110,7 @@ class _AddNoteViewState extends State<AddNoteView> {
                       _contentController.document.toPlainText().trim();
                   final json = jsonEncode(
                       _contentController.document.toDelta().toJson());
-                  if (title.isNotEmpty || content.isNotEmpty) {
+                  if (title.isNotEmpty) {
                     context.read<NotesProvider>().addNote(
                         title,
                         content,
@@ -124,7 +124,7 @@ class _AddNoteViewState extends State<AddNoteView> {
                       type: ToastificationType.warning,
                       style: ToastificationStyle.flat,
                       context: context,
-                      title: const Text("Note must have a title or content"),
+                      title: const Text("Note must have a title"),
                       autoCloseDuration: const Duration(seconds: 3),
                     );
                   }
