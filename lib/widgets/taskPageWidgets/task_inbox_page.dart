@@ -104,7 +104,6 @@ class TaskInboxPage extends StatelessWidget {
                             showTaskDetails(context, tasks[index]);
                           },
                         ),
-                        const PullDownMenuDivider(),
                         PullDownMenuItem(
                           icon: Icons.delete,
                           isDestructive: true,

@@ -8,7 +8,6 @@ import 'package:utask/providers/taskProvider.dart';
 import '../../models/entities.dart';
 import 'package:toastification/toastification.dart';
 
-
 class TaskListPage extends StatefulWidget {
   const TaskListPage({super.key});
 
@@ -55,7 +54,6 @@ class _TaskListPageState extends State<TaskListPage> {
 
     return Column(
       children: [
-        // const SizedBox(height: 20),
         GestureDetector(
           onTap: () {
             setState(() {
@@ -123,7 +121,7 @@ class _TaskListPageState extends State<TaskListPage> {
                 padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 12),
                 child: GestureDetector(
                   onLongPress: () {
-                    deleteList(context, taskLists, index);
+                    deleteListDialog(context, taskLists, index);
                   },
                   child: Dismissible(
                     direction: DismissDirection.endToStart,
@@ -134,7 +132,7 @@ class _TaskListPageState extends State<TaskListPage> {
                           .deleteList(taskLists[index].id);
                     },
                     confirmDismiss: (direction) {
-                      return deleteList(context, taskLists, index);
+                      return deleteListDialog(context, taskLists, index);
                     },
                     background: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -264,49 +262,6 @@ class _TaskListPageState extends State<TaskListPage> {
                                   ),
                                 ),
                               ),
-                              // trailing: PopupMenuButton(
-                              //   shape: RoundedRectangleBorder(
-                              //     borderRadius: BorderRadius.circular(15.0),
-                              //   ),
-                              //   icon: const Icon(Icons.more_vert),
-                              //   itemBuilder: (BuildContext context) =>
-                              //       <PopupMenuEntry>[
-                              //     const PopupMenuItem(
-                              //       child: ListTile(
-                              //         trailing: Icon(Icons.delete,
-                              //             color: Colors.red),
-                              //         // leading: Icon(Icons.delete),
-                              //         title: Text(
-                              //           'Delete',
-                              //           style: TextStyle(color: Colors.red),
-                              //         ),
-                              //       ),
-                              //     ),
-                              //     const PopupMenuDivider(),
-                              //     PopupMenuItem<String>(
-                              //       child: PopupMenuButton(
-                              //           child: const SizedBox(
-                              //             width: 200,
-                              //             child: ListTile(
-                              //               title: Text('Move to'),
-                              //               trailing: Icon(
-                              //                   Icons.arrow_forward_ios),
-                              //             ),
-                              //           ),
-                              //           itemBuilder:
-                              //               (BuildContext context) {
-                              //             return [1, 2, 3, 4]
-                              //                 .map((e) =>
-                              //                     PopupMenuItem<int>(
-                              //                       value: e,
-                              //                       child:
-                              //                           Text(e.toString()),
-                              //                     ))
-                              //                 .toList();
-                              //           }),
-                              //     )
-                              //   ],
-                              // ),
                               leading: MSHCheckbox(
                                 size: 24,
                                 value: taskLists[index].tasks[taskIndex].isDone,
@@ -507,7 +462,7 @@ class _TaskListPageState extends State<TaskListPage> {
     );
   }
 
-  Future<bool?> deleteList(
+  Future<bool?> deleteListDialog(
       BuildContext context, List<TaskList> taskLists, int index) {
     return showDialog(
       context: context,
