@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:toastification/toastification.dart';
 
 import '../../models/entities.dart';
-import '../../pages/note_page.dart';
 import '../../providers/note_provider.dart';
+import 'add_note_to_book.dart';
 
 class AddNoteView extends StatefulWidget {
   const AddNoteView({super.key});
@@ -285,7 +285,7 @@ class _AddNoteViewState extends State<AddNoteView> {
   Future<dynamic> showAddNoteBookDialog(BuildContext context, Note note) {
     return showModalBottomSheet(
       context: context,
-      builder: (context) => AddNoteBook(note: note),
+      builder: (context) => AddNoteToBook(note: note),
       isScrollControlled: true,
       showDragHandle: true,
       useSafeArea: true,
@@ -293,12 +293,12 @@ class _AddNoteViewState extends State<AddNoteView> {
   }
 }
 
-class NoteController {
-  final TextEditingController titleController;
-  final QuillController contentController;
+// class NoteController {
+//   final TextEditingController titleController;
+//   final QuillController contentController;
 
-  NoteController({
-    required this.titleController,
-    required this.contentController,
-  });
-}
+//   NoteController({
+//     required this.titleController,
+//     required this.contentController,
+//   });
+// }

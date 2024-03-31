@@ -50,4 +50,17 @@ class _TasksPageState extends State<TasksPage>
   }
 }
 
-
+        // SegmentedButton(
+        //   segments: const [
+        //     ButtonSegment(value: 0, label: Text('Inbox')),
+        //     ButtonSegment(value: 1, label: Text('List')),
+        //   ],
+        //   selected: const {0},
+        //   onSelectionChanged: (value) {
+        //     if (value.contains(0)) {
+        //       _tabController.animateTo(0);
+        //     } else {
+        //       _tabController.animateTo(1);
+        //     }
+        //   },
+        // ),
