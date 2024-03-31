@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../pages/home_page.dart';
-import '../pages/note_page.dart';
-import '../pages/pomodoro_page.dart';
 
 GoRouter buildRouter() {
   return GoRouter(
