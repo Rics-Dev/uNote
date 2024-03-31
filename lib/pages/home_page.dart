@@ -154,8 +154,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  
-
   Widget floatingActionButton(BuildContext context, bool isNotEmpty) {
     final isDragging = Provider.of<DragStateProvider>(context).isDragging;
     return isDragging
