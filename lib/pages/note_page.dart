@@ -559,13 +559,17 @@ class NoteListPage extends StatelessWidget {
           ? notesProvider.searchedNotes
               .where((note) => !note.isSecured)
               .toList()
-          : notesProvider.searchedNotes
-              .where((note) => note.notebook.target?.id == noteBook.id)
-              .toList();
+          : noteBook.name == 'All Notes Ric are secured'
+              ? notesProvider.searchedNotes
+                  .where((note) => note.isSecured)
+                  .toList()
+              : notesProvider.searchedNotes
+                  .where((note) => note.notebook.target?.id == noteBook.id)
+                  .toList();
     }
 
-    if (notesProvider.filteredNotes.isNotEmpty) {
-      notes = notesProvider.filteredNotes;
+    if (notesProvider.sortedNotes.isNotEmpty) {
+      notes = notesProvider.sortedNotes;
     }
 
     const options = LiveOptions(

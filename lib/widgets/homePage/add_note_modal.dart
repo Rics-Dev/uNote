@@ -1,9 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import 'package:toastification/toastification.dart';
@@ -27,7 +24,6 @@ class _AddNoteViewState extends State<AddNoteView> {
   final ScrollController _scrollController = ScrollController();
   FocusNode titleFocusNode = FocusNode();
   FocusNode contentFocusNode = FocusNode();
-  final bool _isToolbarVisible = false;
   bool _isSaved = false;
 
   int _wordCount = 0;
@@ -44,9 +40,9 @@ class _AddNoteViewState extends State<AddNoteView> {
     super.dispose();
   }
 
-  void _onEditorTextChanged() {
-    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-  }
+  // void _onEditorTextChanged() {
+  //   _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +50,11 @@ class _AddNoteViewState extends State<AddNoteView> {
     final newNote = notesProvider.newNote;
     final selectedNoteBookIndex = notesProvider.selectedNoteBook;
 
-    if (selectedNoteBookIndex == 0) {
-      newNote.isSecured = true;
-    }
+    // if (selectedNoteBookIndex == 0) {
+    //   newNote.isSecured = true;
+    // }else{
+    //   newNote.isSecured = false;
+    // }
 
     return PopScope(
       onPopInvoked: (isPop) async {

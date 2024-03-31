@@ -39,8 +39,19 @@ class _TasksPageState extends State<TasksPage>
         const SizedBox(height: 10),
         const HorizontalPriorityView(),
         const SizedBox(height: 10),
-        SizedBox(
+        Container(
           height: 50,
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.shade300,
+                spreadRadius: 1,
+                blurRadius: 10,
+                offset: const Offset(0, 10), // changes position of shadow
+              ),
+            ],
+            color: Colors.white,
+          ),
           child: TabBar(
             controller: _tabController,
             indicatorSize: TabBarIndicatorSize.tab,

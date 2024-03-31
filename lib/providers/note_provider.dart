@@ -11,7 +11,7 @@ class NotesProvider extends ChangeNotifier {
   Box<NoteBook> noteBookBox = objectbox.noteBookBox;
   bool _isSearchingNotes = false;
   int _selectedNoteBook = 0;
-  List<Note> _filteredNotes = [];
+  List<Note> _sortedNotes = [];
   List<NoteBook> _searchedNoteBooks = [];
 
   Note _newNote = Note(
@@ -37,7 +37,7 @@ class NotesProvider extends ChangeNotifier {
   List<Note> get notes => _notes;
   List<NoteBook> get noteBooks => _noteBooks;
   List<Note> get searchedNotes => _searchedNotes;
-  List<Note> get filteredNotes => _filteredNotes;
+  List<Note> get sortedNotes => _sortedNotes;
   bool get isSearchingNotes => _isSearchingNotes;
   int get selectedNoteBook => _selectedNoteBook;
   List<NoteBook> get searchedNoteBooks => _searchedNoteBooks;
@@ -251,7 +251,7 @@ class NotesProvider extends ChangeNotifier {
   }
 
   void sortNotes() {
-    List<Note> notesToSort = filteredNotes.isNotEmpty ? filteredNotes : notes;
+    List<Note> notesToSort = sortedNotes.isNotEmpty ? sortedNotes : notes;
 
     notesToSort.sort((a, b) {
       switch (tasksProvider.sortCriteria) {
@@ -268,8 +268,8 @@ class NotesProvider extends ChangeNotifier {
       }
     });
 
-    if (filteredNotes.isNotEmpty) {
-      _filteredNotes = notesToSort;
+    if (sortedNotes.isNotEmpty) {
+      _sortedNotes = notesToSort;
     } else {
       _notes = notesToSort;
     }
