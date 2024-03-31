@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:utask/widgets/homePage/add_task_widgets/add_tast_to_list_modal.dart';
+import 'package:utask/widgets/homePageWidgets/add_task_widgets/add_tast_to_list_modal.dart';
 
 import '../../../providers/taskProvider.dart';
 import '../../../providers/task_provider.dart';
@@ -36,13 +36,11 @@ class _AddTaskViewState extends State<AddTaskView> {
   @override
   Widget build(BuildContext context) {
     final tasksProvider = context.watch<TasksProvider>();
-    // final temporarilyAddedTags = tasksAPI.temporarilyAddedTags;
 
     final dueDate = tasksProvider.dueDate;
     String? formattedDate =
         dueDate != null ? DateFormat('E d / M').format(dueDate) : null;
 
-    final temporarilyAddedTags = tasksProvider.temporarilyAddedTags;
     final temporarilyAddedList = tasksProvider.temporarilyAddedList;
     final temporarySelectedPriority = tasksProvider.temporarySelectedPriority;
 
