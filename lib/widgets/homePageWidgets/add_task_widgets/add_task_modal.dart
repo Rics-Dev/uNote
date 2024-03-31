@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:utask/widgets/homePageWidgets/add_task_widgets/add_tast_to_list_modal.dart';
 
 import '../../../providers/taskProvider.dart';
-import '../../../providers/task_provider.dart';
 import 'package:toastification/toastification.dart';
 
 import 'add_date.dart';
@@ -249,7 +248,7 @@ class _AddTaskViewState extends State<AddTaskView> {
       context: context,
       builder: (context) => const AddTagView(),
       isScrollControlled: true,
-    ).whenComplete(() => clearSearchedTags());
+    );
   }
 
   Future<dynamic> showAddListDialog(context) {
@@ -257,7 +256,7 @@ class _AddTaskViewState extends State<AddTaskView> {
       context: context,
       builder: (context) => const AddTaskToListView(),
       isScrollControlled: true,
-    ).whenComplete(() => clearSearchedTags());
+    );
   }
 
   Future<dynamic> showAddDueDateDialog(context) {
@@ -266,7 +265,7 @@ class _AddTaskViewState extends State<AddTaskView> {
       builder: (context) => const AddDueDateView(),
       isScrollControlled: true,
       useSafeArea: true,
-    ).whenComplete(() => clearSearchedTags());
+    );
   }
 
   Future<dynamic> showAddPriorityDialog(context) {
@@ -274,7 +273,7 @@ class _AddTaskViewState extends State<AddTaskView> {
       context: context,
       builder: (context) => const AddPriorityView(),
       isScrollControlled: true,
-    ).whenComplete(() => clearSearchedTags());
+    );
   }
 
   ToastificationItem toastEmptyTask(BuildContext context) {
@@ -303,9 +302,5 @@ class _AddTaskViewState extends State<AddTaskView> {
             ],
           );
         });
-  }
-
-  clearSearchedTags() {
-    context.read<TasksAPI>().setSearchedTags(context.read<TasksAPI>().tags);
   }
 }

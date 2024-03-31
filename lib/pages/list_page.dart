@@ -8,10 +8,8 @@ import 'package:pull_down_button/pull_down_button.dart';
 import 'package:utask/providers/taskProvider.dart';
 
 import '../models/entities.dart';
-import '../providers/list_provider.dart';
 import 'package:toastification/toastification.dart';
 
-import '../providers/task_provider.dart';
 
 class ListPage extends StatefulWidget {
   const ListPage({super.key});

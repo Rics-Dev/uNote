@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../../../models/entities.dart';
 import '../../../providers/taskProvider.dart';
-import '../../../providers/task_provider.dart';
 
 class AddTagView extends StatefulWidget {
   const AddTagView({super.key});

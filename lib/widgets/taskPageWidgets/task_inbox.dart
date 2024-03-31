@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 
-// import '../../models/tasks.dart';
 import '../../models/entities.dart';
 import '../../providers/drag_provider.dart';
 import '../../providers/taskProvider.dart';
-import '../../providers/task_provider.dart';
-import 'horizontal_tags_view.dart';
-import 'search_disposition_view.dart';
 
-class TasksViewInboxPage extends StatelessWidget {
-  const TasksViewInboxPage({
+class TasksInbox extends StatelessWidget {
+  const TasksInbox({
     Key? key,
   }) : super(key: key);
 

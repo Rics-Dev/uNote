@@ -4,11 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:utask/providers/note_provider.dart';
 import 'database/objectbox.dart';
 import 'providers/drag_provider.dart';
-import 'providers/list_provider.dart';
 import 'providers/notebook.dart';
 import 'providers/taskProvider.dart';
 import 'router/router.dart';
-import 'providers/task_provider.dart';
 
 late ObjectBox objectbox;
 void main() async {
@@ -17,7 +15,6 @@ void main() async {
   final GoRouter router = buildRouter();
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider<TasksAPI>(create: (context) => TasksAPI()),
       ChangeNotifierProvider<TasksProvider>(create: (context) => TasksProvider()),
       ChangeNotifierProvider<NotesProvider>(create: (context) => NotesProvider()),
       ChangeNotifierProvider<NoteBookProvider>(create: (context) => NoteBookProvider()),
