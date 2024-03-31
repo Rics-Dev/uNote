@@ -266,6 +266,7 @@ class _TaskListPageState extends State<TaskListPage> {
                                       taskLists[index].tasks[taskIndex].id,
                                       selected);
                                 },
+                                
                               ),
                               textColor: Colors.white,
                               title: GestureDetector(
