@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_down_button/pull_down_button.dart';
@@ -134,17 +133,13 @@ class _TaskListPageState extends State<TaskListPage> {
                     confirmDismiss: (direction) {
                       return deleteListDialog(context, taskLists, index);
                     },
-                    background: Row(
+                    background: const Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 20),
-                          child: SvgPicture.asset(
-                            'assets/trash-2.svg',
-                            // ignore: deprecated_member_use
-                            color: Colors.red,
-                          ),
-                        ),
+                        Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        )
                       ],
                     ),
                     child: ExpansionTile(
@@ -495,15 +490,14 @@ class _TaskListPageState extends State<TaskListPage> {
                           .deleteList(taskLists[index].id);
                       Navigator.pop(context);
                     },
-                    child: Row(
+                    child: const Row(
                       children: [
-                        SvgPicture.asset(
-                          'assets/trash-2.svg',
-                          // ignore: deprecated_member_use
+                        Icon(
+                          Icons.delete,
                           color: Colors.white,
                         ),
-                        const SizedBox(width: 5),
-                        const Text(
+                        SizedBox(width: 5),
+                        Text(
                           'Delete',
                           style: TextStyle(color: Colors.white),
                         ),
