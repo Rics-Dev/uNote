@@ -258,14 +258,14 @@ class _TaskListPageState extends State<TaskListPage> {
                                 ),
                               ),
                               leading: MSHCheckbox(
-                                size: 24,
+                                size: 27,
                                 value: taskLists[index].tasks[taskIndex].isDone,
                                 style: MSHCheckboxStyle.fillScaleCheck,
                                 onChanged: (selected) {
                                   context.read<TasksProvider>().updateTask(
                                       taskLists[index].tasks[taskIndex].id,
                                       selected);
-                                },                                
+                                },
                               ),
                               textColor: Colors.white,
                               title: GestureDetector(
@@ -275,9 +275,12 @@ class _TaskListPageState extends State<TaskListPage> {
                                       .setIsEditingTask(true, index, taskIndex);
                                 },
                                 child: isEditingTask[index][taskIndex]
-                                    ? TextField(
+                                    ? TextFormField(
+                                        initialValue: taskLists[index]
+                                            .tasks[taskIndex]
+                                            .name,
                                         autofocus: true,
-                                        onSubmitted: (value) {
+                                        onFieldSubmitted: (value) {
                                           context
                                               .read<TasksProvider>()
                                               .updateTaskName(
@@ -293,37 +296,17 @@ class _TaskListPageState extends State<TaskListPage> {
                                         cursorColor: Colors.white,
                                         style: const TextStyle(
                                             color: Colors.white),
-                                        decoration: InputDecoration(
-                                          suffix: const Text('Edit'),
-                                          suffixIcon: GestureDetector(
-                                            onTap: () {
-                                              context
-                                                  .read<TasksProvider>()
-                                                  .updateTaskName(
-                                                      taskLists[index]
-                                                          .tasks[taskIndex]
-                                                          .id,
-                                                      listController.text);
-                                              context
-                                                  .read<TasksProvider>()
-                                                  .setIsEditingTask(
-                                                      false, index, taskIndex);
-                                            },
-                                            child: const Icon(
-                                              Icons.edit,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          hintStyle: const TextStyle(
+                                        decoration: const InputDecoration(
+                                          hintStyle: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w400,
                                             color:
                                                 Color.fromARGB(255, 0, 73, 133),
                                           ),
                                           filled: false,
-                                          fillColor: const Color.fromARGB(
+                                          fillColor: Color.fromARGB(
                                               255, 235, 235, 235),
-                                          border: const OutlineInputBorder(
+                                          border: OutlineInputBorder(
                                             borderSide: BorderSide.none,
                                             borderRadius: BorderRadius.all(
                                               Radius.circular(20),
