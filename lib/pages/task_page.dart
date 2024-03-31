@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/taskProvider.dart';
-import '../widgets/inboxPage/horizontal_priority_view.dart';
+import '../widgets/taskPageWidgets/horizontal_priority_view.dart';
 import '../widgets/inboxPage/tasks_view_inboxpage.dart';
 import 'list_page.dart';
 
@@ -30,8 +28,6 @@ class _TasksPageState extends State<TasksPage>
 
   @override
   Widget build(BuildContext context) {
-    final tasksProvider = context.watch<TasksProvider>();
-    final taskLists = tasksProvider.taskLists;
     return Column(
       children: [
         const SizedBox(height: 10),
