@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/taskProvider.dart';
+import '../../providers/task_provider.dart';
 
 class AddPriorityView extends StatelessWidget {
   const AddPriorityView({super.key});

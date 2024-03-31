@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:utask/providers/note_provider.dart';
 
-import '../../providers/taskProvider.dart';
+import '../../providers/task_provider.dart';
 
 class SortView extends StatelessWidget {
   const SortView({

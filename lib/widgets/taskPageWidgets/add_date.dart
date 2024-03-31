@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../../providers/taskProvider.dart';
+import '../../providers/task_provider.dart';
 import 'package:intl/intl.dart';
 
 class AddDueDateView extends StatefulWidget {
@@ -53,7 +53,7 @@ class _AddDueDateViewState extends State<AddDueDateView> {
   @override
   Widget build(BuildContext context) {
     final dueDate = context.watch<TasksProvider>().dueDate;
-    final isTimeSet = context.watch<TasksProvider>().isTimeSet;
+    // final isTimeSet = context.watch<TasksProvider>().isTimeSet;
     DateTime today = dueDate ?? DateTime.now();
     String? formattedTime =
         dueDate != null ? DateFormat('HH:mm').format(dueDate) : null;

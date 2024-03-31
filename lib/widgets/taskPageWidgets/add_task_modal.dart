@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:utask/widgets/taskPageWidgets/add_tast_to_list_modal.dart';
 
-import '../../providers/taskProvider.dart';
+import '../../providers/task_provider.dart';
 import 'package:toastification/toastification.dart';
 
 import 'add_date.dart';

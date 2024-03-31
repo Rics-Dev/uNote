@@ -1,4 +1,4 @@
-package com.ricsdev.utask
+package com.ricsdev.unote
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 
