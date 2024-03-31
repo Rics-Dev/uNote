@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
-import '../providers/drag_provider.dart';
 import '../providers/note_provider.dart';
 import '../providers/taskProvider.dart';
 import '../widgets/notePageWidgets/add_note_modal.dart';
@@ -155,7 +154,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget floatingActionButton(BuildContext context, bool isNotEmpty) {
-    final isDragging = Provider.of<DragStateProvider>(context).isDragging;
+    final isDragging = Provider.of<TasksProvider>(context).isDragging;
     return isDragging
         ? isNotEmpty
             ? AnimatedContainer(

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 
 import '../../models/entities.dart';
-import '../../providers/drag_provider.dart';
 import '../../providers/taskProvider.dart';
 
 class TaskInboxPage extends StatelessWidget {
@@ -56,10 +55,10 @@ class TaskInboxPage extends StatelessWidget {
                 key: ValueKey(tasks[index]),
                 data: tasks[index].id,
                 onDragStarted: () {
-                  context.read<DragStateProvider>().startDrag(index);
+                  context.read<TasksProvider>().startDrag(index);
                 },
                 onDragEnd: (data) {
-                  context.read<DragStateProvider>().endDrag();
+                  context.read<TasksProvider>().endDrag();
                 },
                 feedback: Card(
                   color: Colors.blue[100],

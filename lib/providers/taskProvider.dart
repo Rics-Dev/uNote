@@ -13,11 +13,6 @@ enum SortCriteria {
   nameZA,
 }
 
-// enum FilterCriteria {
-//   tags,
-//   priority,
-// }
-
 class TasksProvider extends ChangeNotifier {
   Box<Task> taskBox = objectbox.taskBox;
   Box<Tag> tagBox = objectbox.tagBox;
@@ -41,6 +36,9 @@ class TasksProvider extends ChangeNotifier {
   List<TaskList> _taskLists = [];
   TaskList _temporarilyAddedList =
       TaskList(name: '', createdAt: DateTime.now(), updatedAt: DateTime.now());
+
+          bool isDragging = false;
+  int originalIndex = -1;
 
   List<bool> isKeyBoardOpenedList = [];
   List<List<bool>> isEditingTask = [];
@@ -517,5 +515,17 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedNoteBook(int index) {}
+
+
+  void startDrag(int index) {
+    isDragging = true;
+    originalIndex = index;
+    notifyListeners();
+  }
+
+  void endDrag() {
+    isDragging = false;
+    originalIndex = -1;
+    notifyListeners();
+  }
 }
