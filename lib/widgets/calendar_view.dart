@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../../models/entities.dart';
-import '../../providers/taskProvider.dart';
+import '../models/entities.dart';
+import '../providers/taskProvider.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView({super.key});

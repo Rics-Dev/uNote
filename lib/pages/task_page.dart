@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/taskProvider.dart';
 import '../widgets/inboxPage/horizontal_priority_view.dart';
-import '../widgets/inboxPage/horizontal_tags_view.dart';
-import '../widgets/inboxPage/search_disposition_view.dart';
 import '../widgets/inboxPage/tasks_view_inboxpage.dart';
 import 'list_page.dart';
 

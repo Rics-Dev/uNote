@@ -7,9 +7,10 @@ import '../providers/note_provider.dart';
 import '../providers/taskProvider.dart';
 import '../widgets/homePage/add_note_modal.dart';
 import '../widgets/homePage/add_task_widgets/add_task_modal.dart';
-import '../widgets/homePage/build_body_home_page.dart';
-import '../widgets/homePage/calendar_view.dart';
+import '../widgets/calendar_view.dart';
 import '../widgets/inboxPage/sort_view.dart';
+import 'note_page.dart';
+import 'task_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -200,7 +201,7 @@ class _HomePageState extends State<HomePage> {
               )
         : FloatingActionButton(
             shape: const CircleBorder(),
-            tooltip: 'add task',
+            tooltip: _bottomNavIndex == 0 ? 'add note' : 'add task',
             backgroundColor: const Color.fromARGB(255, 0, 73, 133),
             child: const Icon(Icons.add_rounded, color: Colors.white, size: 38),
             onPressed: () {
@@ -211,5 +212,16 @@ class _HomePageState extends State<HomePage> {
               }
             },
           );
+  }
+
+  Widget buildBody(int bottomNavIndex) {
+    switch (bottomNavIndex) {
+      case 0:
+        return const NotesPage();
+      case 1:
+        return const TasksPage();
+      default:
+        return const NotesPage();
+    }
   }
 }
