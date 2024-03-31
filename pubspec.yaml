@@ -79,6 +79,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
   change_app_package_name: ^1.1.0
+  flutter_launcher_icons: "^0.13.1"
   #database part
   build_runner: ^2.0.0
   objectbox_generator: any
@@ -96,8 +97,7 @@ flutter:
   assets:
     - assets/
     - assets/fonts/
-# flutter_launcher_icons:
-#   android: "launcher_icon"
+
 #   ios: true
 #   image_path: "assets/ic_launcher.png"
 # fonts:
