@@ -5,10 +5,10 @@ import 'package:top_modal_sheet/top_modal_sheet.dart';
 import '../providers/drag_provider.dart';
 import '../providers/note_provider.dart';
 import '../providers/taskProvider.dart';
-import '../widgets/homePageWidgets/add_note_modal.dart';
-import '../widgets/homePageWidgets/add_task_widgets/add_task_modal.dart';
+import '../widgets/notePageWidgets/add_note_modal.dart';
+import '../widgets/taskPageWidgets/add_task_modal.dart';
 import '../widgets/homePageWidgets/calendar_view.dart';
-import '../widgets/inboxPage/sort_view.dart';
+import '../widgets/homePageWidgets/sort_view.dart';
 import 'note_page.dart';
 import 'task_page.dart';
 

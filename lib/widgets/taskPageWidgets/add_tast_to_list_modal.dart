@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
 
-import '../../../providers/taskProvider.dart';
+import '../../providers/taskProvider.dart';
 
 class AddTaskToListView extends StatefulWidget {
   const AddTaskToListView({super.key});

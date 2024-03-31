@@ -13,7 +13,7 @@ import 'package:utask/models/entities.dart';
 
 import '../providers/note_provider.dart';
 import '../providers/notebook.dart';
-import '../widgets/inboxPage/search_disposition_view.dart';
+import '../widgets/notePageWidgets/search_disposition_view.dart';
 
 enum _SupportState {
   unknown,

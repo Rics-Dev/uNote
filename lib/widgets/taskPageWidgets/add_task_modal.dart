@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:utask/widgets/homePageWidgets/add_task_widgets/add_tast_to_list_modal.dart';
+import 'package:utask/widgets/taskPageWidgets/add_tast_to_list_modal.dart';
 
-import '../../../providers/taskProvider.dart';
+import '../../providers/taskProvider.dart';
 import 'package:toastification/toastification.dart';
 
 import 'add_date.dart';
 import 'add_priority.dart';
-import 'add_tag_modal.dart';
+import '../notePageWidgets/add_tag_modal.dart';
 import 'package:intl/intl.dart';
 
 class AddTaskView extends StatefulWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../models/entities.dart';
-import '../../../providers/taskProvider.dart';
+import '../../models/entities.dart';
+import '../../providers/taskProvider.dart';
 
 class AddTagView extends StatefulWidget {
   const AddTagView({super.key});
