@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../providers/task_provider.dart';
+import '../../providers/taskProvider.dart';
 
 class AddPriorityView extends StatelessWidget {
   const AddPriorityView({super.key});
@@ -39,7 +39,7 @@ class AddPriorityView extends StatelessWidget {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      context.read<TasksAPI>().setTemporarySelectedPriority('Low');
+                      context.read<TasksProvider>().setTemporarySelectedPriority('Low');
                       Navigator.pop(context);
                     },
                     child: const Text('Low'),
@@ -47,14 +47,14 @@ class AddPriorityView extends StatelessWidget {
                   
                   ElevatedButton(
                     onPressed: () {
-                      context.read<TasksAPI>().setTemporarySelectedPriority('Medium');
+                      context.read<TasksProvider>().setTemporarySelectedPriority('Medium');
                       Navigator.pop(context);
                     },
                     child: const Text('Medium'),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<TasksAPI>().setTemporarySelectedPriority('High');
+                      context.read<TasksProvider>().setTemporarySelectedPriority('High');
                       Navigator.pop(context);
                     },
                     child: const Text('High'),
@@ -66,7 +66,7 @@ class AddPriorityView extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: OutlinedButton(
                   onPressed: () {
-                    context.read<TasksAPI>().setTemporarySelectedPriority(null);
+                    context.read<TasksProvider>().setTemporarySelectedPriority(null);
                     Navigator.pop(context);
                   },
                   child: const Text('Clear'),

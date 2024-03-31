@@ -1,0 +1,226 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:2525910216294555939",
+      "lastPropertyId": "2:1342849585998960233",
+      "name": "Tag",
+      "properties": [
+        {
+          "id": "1:874380121498479823",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1342849585998960233",
+          "name": "name",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "3:9194883798312277152"
+        }
+      ],
+      "relations": [
+        {
+          "id": "2:785102049100997188",
+          "name": "tasks",
+          "targetId": "2:7031062309905276887"
+        },
+        {
+          "id": "3:6593666496360618030",
+          "name": "notes",
+          "targetId": "4:6582988619389156410"
+        }
+      ]
+    },
+    {
+      "id": "2:7031062309905276887",
+      "lastPropertyId": "9:7171793210229252129",
+      "name": "Task",
+      "properties": [
+        {
+          "id": "1:3810691487880848457",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1479964507661502863",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:1782731273622668282",
+          "name": "details",
+          "type": 9
+        },
+        {
+          "id": "4:663130033217488082",
+          "name": "isDone",
+          "type": 1
+        },
+        {
+          "id": "5:139932126585363655",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "6:4684119550418647710",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "7:3187731120692335531",
+          "name": "dueDate",
+          "type": 10
+        },
+        {
+          "id": "8:1759390588833332395",
+          "name": "priority",
+          "type": 9
+        },
+        {
+          "id": "9:7171793210229252129",
+          "name": "listId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "1:7409048701794538828",
+          "relationTarget": "TaskList"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:2058075289807397123",
+      "lastPropertyId": "4:7528955827386445251",
+      "name": "TaskList",
+      "properties": [
+        {
+          "id": "1:5373579064961947165",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4591405483709773286",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:4021608252984671368",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:7528955827386445251",
+          "name": "updatedAt",
+          "type": 10
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:6582988619389156410",
+      "lastPropertyId": "9:1200123794600520156",
+      "name": "Note",
+      "properties": [
+        {
+          "id": "1:1744807741711115826",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:3709443565666971693",
+          "name": "title",
+          "type": 9
+        },
+        {
+          "id": "3:5790417944814782457",
+          "name": "content",
+          "type": 9
+        },
+        {
+          "id": "4:6017248645263383727",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "5:8674644191856380858",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "6:5639902291895940951",
+          "name": "notebookId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "4:6158637978171915309",
+          "relationTarget": "NoteBook"
+        },
+        {
+          "id": "7:1490756995180579565",
+          "name": "json",
+          "type": 9
+        },
+        {
+          "id": "8:4814409593105775692",
+          "name": "isSecured",
+          "type": 1
+        },
+        {
+          "id": "9:1200123794600520156",
+          "name": "isFavorite",
+          "type": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:1891198414133088334",
+      "lastPropertyId": "4:7425348356299112206",
+      "name": "NoteBook",
+      "properties": [
+        {
+          "id": "1:6296233523745376924",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:6533682516401497984",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:8314748196248704566",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:7425348356299112206",
+          "name": "updatedAt",
+          "type": 10
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "5:1891198414133088334",
+  "lastIndexId": "4:6158637978171915309",
+  "lastRelationId": "3:6593666496360618030",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [
+    5318798887338303490
+  ],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [
+    1612697448648994606
+  ],
+  "version": 1
+}

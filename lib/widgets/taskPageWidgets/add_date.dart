@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../../../providers/task_provider.dart';
+import '../../providers/taskProvider.dart';
 import 'package:intl/intl.dart';
 
 class AddDueDateView extends StatefulWidget {
@@ -30,18 +30,18 @@ class _AddDueDateViewState extends State<AddDueDateView> {
         selectedTime = timeOfDay;
       });
       if (context.mounted) {
-        context.read<TasksAPI>().setTimeSet(true);
-        context.read<TasksAPI>().setDueDate(
+        context.read<TasksProvider>().setTimeSet(true);
+        context.read<TasksProvider>().setDueDate(
               DateTime(
-                context.read<TasksAPI>().dueDate?.year == null
+                context.read<TasksProvider>().dueDate?.year == null
                     ? today.year
-                    : context.read<TasksAPI>().dueDate!.year,
-                context.read<TasksAPI>().dueDate?.month == null
+                    : context.read<TasksProvider>().dueDate!.year,
+                context.read<TasksProvider>().dueDate?.month == null
                     ? today.month
-                    : context.read<TasksAPI>().dueDate!.month,
-                context.read<TasksAPI>().dueDate?.day == null
+                    : context.read<TasksProvider>().dueDate!.month,
+                context.read<TasksProvider>().dueDate?.day == null
                     ? today.day
-                    : context.read<TasksAPI>().dueDate!.day,
+                    : context.read<TasksProvider>().dueDate!.day,
                 selectedTime.hour,
                 selectedTime.minute,
               ),
@@ -52,8 +52,8 @@ class _AddDueDateViewState extends State<AddDueDateView> {
 
   @override
   Widget build(BuildContext context) {
-    final dueDate = context.watch<TasksAPI>().dueDate;
-    final isTimeSet = context.watch<TasksAPI>().isTimeSet;
+    final dueDate = context.watch<TasksProvider>().dueDate;
+    final isTimeSet = context.watch<TasksProvider>().isTimeSet;
     DateTime today = dueDate ?? DateTime.now();
     String? formattedTime =
         dueDate != null ? DateFormat('HH:mm').format(dueDate) : null;
@@ -93,8 +93,8 @@ class _AddDueDateViewState extends State<AddDueDateView> {
                       height: 30,
                       child: OutlinedButton(
                         onPressed: () {
-                          context.read<TasksAPI>().setDueDate(null);
-                          context.read<TasksAPI>().setTimeSet(false);
+                          context.read<TasksProvider>().setDueDate(null);
+                          context.read<TasksProvider>().setTimeSet(false);
                           Navigator.pop(context);
                         },
                         child: const Text('Clear'),
@@ -136,7 +136,7 @@ class _AddDueDateViewState extends State<AddDueDateView> {
                     today = DateTime(
                         selectedDay.year, selectedDay.month, selectedDay.day);
                   });
-                  context.read<TasksAPI>().setDueDate(
+                  context.read<TasksProvider>().setDueDate(
                         DateTime(
                           selectedDay.year,
                           selectedDay.month,
@@ -146,27 +146,42 @@ class _AddDueDateViewState extends State<AddDueDateView> {
                 },
               ),
               const SizedBox(height: 40),
-              isTimeSet == false
-                  ? IconButton.outlined(
-                      icon: const Icon(
+              formattedTime == null
+                  ? ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 3.0,
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(8),
+                      ),
+                      onPressed: () {
+                        selectTime(context);
+                      },
+                      child: const Icon(
                         Icons.access_time_rounded,
                         color: Color.fromARGB(255, 0, 73, 133),
                         size: 40,
                       ),
-                      onPressed: () {
-                        selectTime(context);
-                      },
                     )
-                  : OutlinedButton.icon(
+                  : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 3.0,
+                        padding: const EdgeInsets.all(8),
+                      ),
                       onPressed: () {
                         selectTime(context);
                       },
-                      icon: const Icon(
-                        Icons.access_time_rounded,
-                        color: Color.fromARGB(255, 0, 73, 133),
-                        size: 30,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.access_time_rounded,
+                            color: Color.fromARGB(255, 0, 73, 133),
+                            size: 30,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(formattedTime),
+                        ],
                       ),
-                      label: Text(formattedTime!),
                     )
             ],
           ),

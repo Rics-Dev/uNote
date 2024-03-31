@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../../models/tasks.dart';
-import '../../providers/task_provider.dart';
+import '../../models/entities.dart';
+import '../../providers/taskProvider.dart';
+
 
 class CalendarView extends StatefulWidget {
   const CalendarView({super.key});
@@ -20,8 +21,7 @@ class _CalendarViewState extends State<CalendarView> {
 
   @override
   Widget build(BuildContext context) {
-    final tasksAPI = context.watch<TasksAPI>();
-    final tasks = tasksAPI.tasks;
+    final tasks = context.watch<TasksProvider>().tasks;
 // Filter tasks with due date equals today
     final todayTasks = tasks
         .where((task) =>
@@ -138,7 +138,7 @@ class _CalendarViewState extends State<CalendarView> {
                     itemBuilder: (context, index) {
                       final task = todayTasks[index];
                       return ListTile(
-                        title: Text(task.content),
+                        title: Text(task.name),
                         subtitle: task.dueDate!.hour != 0 &&
                                 task.dueDate!.minute != 0
                             ? Text(

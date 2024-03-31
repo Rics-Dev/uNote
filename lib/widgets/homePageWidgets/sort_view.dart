@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:utask/providers/note_provider.dart';
 
-import '../../providers/task_provider.dart';
+import '../../providers/taskProvider.dart';
 
 class SortView extends StatelessWidget {
   const SortView({
@@ -10,10 +11,11 @@ class SortView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tasksAPI = context.watch<TasksAPI>();
-    final oldToNew = tasksAPI.oldToNew;
+    final tasksProvider = context.watch<TasksProvider>();
+    final notesProvider = context.watch<NotesProvider>();
+    final oldToNew = tasksProvider.oldToNew;
 
-    SortCriteria sortCriteria = tasksAPI.sortCriteria;
+    SortCriteria sortCriteria = tasksProvider.sortCriteria;
 
     return SafeArea(
         child: SizedBox(
@@ -34,9 +36,10 @@ class SortView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              OutlinedButton(
+              ElevatedButton(
                 onPressed: () {
-                  tasksAPI.toggleSortByCreationDate();
+                  tasksProvider.toggleSortByCreationDate();
+                  notesProvider.toggleSortByCreationDate();   
                 },
                 style: sortCriteria == SortCriteria.creationDate
                     ? ButtonStyle(
@@ -56,12 +59,17 @@ class SortView extends StatelessWidget {
               Column(
                 children: [
                   const Text('Old'),
-                  IconButton.outlined(
+                  ElevatedButton(
                     onPressed: () {
-                      tasksAPI.toggleNewToOld();
+                      tasksProvider.toggleNewToOld();
+                      notesProvider.toggleNewToOld();
                     },
-                    color: const Color.fromARGB(255, 0, 73, 133),
-                    icon: Icon(
+                    style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(), elevation: 3,
+                      // padding: const EdgeInsets.all(10),
+                    ),
+                    // color: const Color.fromARGB(255, 0, 73, 133),
+                    child: Icon(
                       oldToNew
                           ? Icons.arrow_downward_rounded
                           : Icons.arrow_upward_rounded,
@@ -71,9 +79,11 @@ class SortView extends StatelessWidget {
                   const Text('New'),
                 ],
               ),
-              OutlinedButton(
+              ElevatedButton(
                 onPressed: () {
-                  tasksAPI.toggleSortByEditionDate();
+                  tasksProvider.toggleSortByEditionDate();
+                  notesProvider.toggleSortByEditionDate();
+
                 },
                 style: sortCriteria == SortCriteria.editionDate
                     ? ButtonStyle(
@@ -98,9 +108,11 @@ class SortView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              OutlinedButton(
+              ElevatedButton(
                 onPressed: () {
-                  tasksAPI.toggleSortByNameAZ();
+                  tasksProvider.toggleSortByNameAZ();
+                  notesProvider.toggleSortByNameAZ();
+
                 },
                 style: sortCriteria == SortCriteria.nameAZ
                     ? ButtonStyle(
@@ -117,9 +129,11 @@ class SortView extends StatelessWidget {
                           : const Color.fromARGB(255, 0, 73, 133),
                     )),
               ),
-              OutlinedButton(
+              ElevatedButton(
                 onPressed: () {
-                  tasksAPI.toggleSortByNameZA();
+                  tasksProvider.toggleSortByNameZA();
+                  notesProvider.toggleSortByNameZA();
+
                 },
                 style: sortCriteria == SortCriteria.nameZA
                     ? ButtonStyle(
@@ -143,7 +157,7 @@ class SortView extends StatelessWidget {
           ),
           // const Text('Filter by',
           //     style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
-          
+
           const Spacer(),
           Container(
             width: 100,
