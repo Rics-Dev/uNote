@@ -97,13 +97,13 @@ class TaskInboxPage extends StatelessWidget {
                     ),
                     trailing: PullDownButton(
                       itemBuilder: (context) => [
-                        PullDownMenuItem(
-                          icon: Icons.edit,
-                          title: 'Edit',
-                          onTap: () {
-                            showTaskDetails(context, tasks[index]);
-                          },
-                        ),
+                        // PullDownMenuItem(
+                        //   icon: Icons.edit,
+                        //   title: 'Edit',
+                        //   onTap: () {
+                        //     showTaskDetails(context, tasks[index]);
+                        //   },
+                        // ),
                         PullDownMenuItem(
                           icon: Icons.delete,
                           isDestructive: true,
