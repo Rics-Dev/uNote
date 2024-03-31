@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 import '../main.dart';
@@ -37,7 +35,7 @@ class TasksProvider extends ChangeNotifier {
   TaskList _temporarilyAddedList =
       TaskList(name: '', createdAt: DateTime.now(), updatedAt: DateTime.now());
 
-          bool isDragging = false;
+  bool isDragging = false;
   int originalIndex = -1;
 
   List<bool> isKeyBoardOpenedList = [];
@@ -58,6 +56,7 @@ class TasksProvider extends ChangeNotifier {
   List<String> get selectedPriority => _selectedPriority;
   List<String> get priority => _priority;
   bool get isSearchingTasks => _isSearchingTasks;
+  // ignore: unnecessary_getters_setters
   SortCriteria get sortCriteria => _sortCriteria;
   // FilterCriteria get filterCriteria => _filterCriteria;
   bool get isTimeSet => _isTimeSet;
@@ -230,7 +229,6 @@ class TasksProvider extends ChangeNotifier {
       }
     }
     taskBox.remove(taskId);
-    
 
     _filteredTasks.removeWhere((task) => task.id == taskId);
     if (filteredTasks.isEmpty) {
@@ -514,8 +512,6 @@ class TasksProvider extends ChangeNotifier {
     isEditingTask[index][taskId] = bool;
     notifyListeners();
   }
-
-
 
   void startDrag(int index) {
     isDragging = true;

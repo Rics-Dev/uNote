@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_down_button/pull_down_button.dart';
-import 'package:utask/providers/taskProvider.dart';
+import 'package:utask/providers/task_provider.dart';
 
 import '../../models/entities.dart';
 import 'package:toastification/toastification.dart';

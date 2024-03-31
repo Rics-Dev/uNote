@@ -33,9 +33,10 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
   int _selectedTabIndex = 1;
 
   final LocalAuthentication auth = LocalAuthentication();
+  // ignore: unused_field
   _SupportState _supportState = _SupportState.unknown;
-  bool? _canCheckBiometrics;
-  List<BiometricType>? _availableBiometrics;
+  // bool? _canCheckBiometrics;
+  // List<BiometricType>? _availableBiometrics;
   String _authorized = 'Not Authorized';
   bool _isAuthenticating = false;
 
@@ -55,39 +56,39 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
         );
   }
 
-  Future<void> _checkBiometrics() async {
-    late bool canCheckBiometrics;
-    try {
-      canCheckBiometrics = await auth.canCheckBiometrics;
-    } on PlatformException catch (e) {
-      canCheckBiometrics = false;
-      print(e);
-    }
-    if (!mounted) {
-      return;
-    }
+  // Future<void> _checkBiometrics() async {
+  //   late bool canCheckBiometrics;
+  //   try {
+  //     canCheckBiometrics = await auth.canCheckBiometrics;
+  //   } on PlatformException catch (e) {
+  //     canCheckBiometrics = false;
+  //     print(e);
+  //   }
+  //   if (!mounted) {
+  //     return;
+  //   }
 
-    setState(() {
-      _canCheckBiometrics = canCheckBiometrics;
-    });
-  }
+  //   setState(() {
+  //     _canCheckBiometrics = canCheckBiometrics;
+  //   });
+  // }
 
-  Future<void> _getAvailableBiometrics() async {
-    late List<BiometricType> availableBiometrics;
-    try {
-      availableBiometrics = await auth.getAvailableBiometrics();
-    } on PlatformException catch (e) {
-      availableBiometrics = <BiometricType>[];
-      print(e);
-    }
-    if (!mounted) {
-      return;
-    }
+  // Future<void> _getAvailableBiometrics() async {
+  //   late List<BiometricType> availableBiometrics;
+  //   try {
+  //     availableBiometrics = await auth.getAvailableBiometrics();
+  //   } on PlatformException catch (e) {
+  //     availableBiometrics = <BiometricType>[];
+  //     print(e);
+  //   }
+  //   if (!mounted) {
+  //     return;
+  //   }
 
-    setState(() {
-      _availableBiometrics = availableBiometrics;
-    });
-  }
+  //   setState(() {
+  //     _availableBiometrics = availableBiometrics;
+  //   });
+  // }
 
   Future<void> _authenticate() async {
     bool authenticated = false;
@@ -106,7 +107,6 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
         _isAuthenticating = false;
       });
     } on PlatformException catch (e) {
-      print(e);
       setState(() {
         _isAuthenticating = false;
         _authorized = 'Error - ${e.message}';
@@ -125,51 +125,51 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> _authenticateWithBiometrics() async {
-    bool authenticated = false;
-    try {
-      setState(() {
-        _isAuthenticating = true;
-        _authorized = 'Authenticating';
-      });
-      authenticated = await auth.authenticate(
-        localizedReason:
-            'Scan your fingerprint (or face or whatever) to authenticate',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
-      );
-      setState(() {
-        _isAuthenticating = false;
-        _authorized = 'Authenticating';
-      });
-    } on PlatformException catch (e) {
-      print(e);
-      setState(() {
-        _isAuthenticating = false;
-        _authorized = 'Error - ${e.message}';
-      });
-      return;
-    }
-    if (!mounted) {
-      return;
-    }
+  // Future<void> _authenticateWithBiometrics() async {
+  //   bool authenticated = false;
+  //   try {
+  //     setState(() {
+  //       _isAuthenticating = true;
+  //       _authorized = 'Authenticating';
+  //     });
+  //     authenticated = await auth.authenticate(
+  //       localizedReason:
+  //           'Scan your fingerprint (or face or whatever) to authenticate',
+  //       options: const AuthenticationOptions(
+  //         stickyAuth: true,
+  //         biometricOnly: true,
+  //       ),
+  //     );
+  //     setState(() {
+  //       _isAuthenticating = false;
+  //       _authorized = 'Authenticating';
+  //     });
+  //   } on PlatformException catch (e) {
+  //     print(e);
+  //     setState(() {
+  //       _isAuthenticating = false;
+  //       _authorized = 'Error - ${e.message}';
+  //     });
+  //     return;
+  //   }
+  //   if (!mounted) {
+  //     return;
+  //   }
 
-    final String message = authenticated ? 'Authorized' : 'Not Authorized';
-    setState(() {
-      _authorized = message;
-    });
+  //   final String message = authenticated ? 'Authorized' : 'Not Authorized';
+  //   setState(() {
+  //     _authorized = message;
+  //   });
 
-    if (_authorized == 'Not Authorized') {
-      failedAuthetication();
-    }
-  }
+  //   if (_authorized == 'Not Authorized') {
+  //     failedAuthetication();
+  //   }
+  // }
 
-  Future<void> _cancelAuthentication() async {
-    await auth.stopAuthentication();
-    setState(() => _isAuthenticating = false);
-  }
+  // Future<void> _cancelAuthentication() async {
+  //   await auth.stopAuthentication();
+  //   setState(() => _isAuthenticating = false);
+  // }
 
   @override
   void didChangeDependencies() {
@@ -1166,7 +1166,7 @@ class _AddNoteBookState extends State<AddNoteBook> {
 
   @override
   Widget build(BuildContext context) {
-    final noteBooks = context.watch<NotesProvider>().noteBooks;
+    // final noteBooks = context.watch<NotesProvider>().noteBooks;
     final searchedNoteBooks = context.watch<NotesProvider>().searchedNoteBooks;
 
     return Padding(

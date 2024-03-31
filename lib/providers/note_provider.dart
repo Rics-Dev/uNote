@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import '../models/entities.dart';
 import '../objectbox.g.dart';
-import 'taskProvider.dart';
+import 'task_provider.dart';
 
 class NotesProvider extends ChangeNotifier {
   Box<Note> noteBox = objectbox.noteBox;

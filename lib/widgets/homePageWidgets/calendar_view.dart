@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../models/entities.dart';
-import '../../providers/taskProvider.dart';
+import '../../providers/task_provider.dart';
 
 
 class CalendarView extends StatefulWidget {

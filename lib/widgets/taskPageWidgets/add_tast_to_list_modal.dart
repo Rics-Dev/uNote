@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/taskProvider.dart';
+import '../../providers/task_provider.dart';
 
 class AddTaskToListView extends StatefulWidget {
   const AddTaskToListView({super.key});
@@ -27,7 +27,7 @@ class _AddTaskToListViewState extends State<AddTaskToListView> {
   Widget build(BuildContext context) {
     final tasksProvider = context.watch<TasksProvider>();
     final taskLists = tasksProvider.taskLists;
-    final temporarilyAddedList = tasksProvider.temporarilyAddedList;
+    // final temporarilyAddedList = tasksProvider.temporarilyAddedList;
 
     return SafeArea(
       child: Padding(
@@ -97,7 +97,10 @@ class _AddTaskToListViewState extends State<AddTaskToListView> {
                       child: ListTile(
                         leading: MSHCheckbox(
                           style: MSHCheckboxStyle.stroke,
-                          checkedColor: const Color.fromARGB(255, 0, 73, 133),
+                          colorConfig:
+                              MSHColorConfig.fromCheckedUncheckedDisabled(
+                            checkedColor: const Color.fromARGB(255, 0, 73, 133),
+                          ),
                           size: 22,
                           value: context
                                   .read<TasksProvider>()

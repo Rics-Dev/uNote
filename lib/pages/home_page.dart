@@ -3,7 +3,7 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:provider/provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
 import '../providers/note_provider.dart';
-import '../providers/taskProvider.dart';
+import '../providers/task_provider.dart';
 import '../widgets/notePageWidgets/add_note_modal.dart';
 import '../widgets/taskPageWidgets/add_task_modal.dart';
 import '../widgets/homePageWidgets/calendar_view.dart';

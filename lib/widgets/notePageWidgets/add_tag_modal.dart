@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/entities.dart';
-import '../../providers/taskProvider.dart';
+import '../../providers/task_provider.dart';
 
 class AddTagView extends StatefulWidget {
   const AddTagView({super.key});
@@ -27,7 +27,7 @@ class _AddTagViewState extends State<AddTagView> {
   Widget build(BuildContext context) {
     List<Tag> tags = context.watch<TasksProvider>().tags;
     final searchedTags = context.watch<TasksProvider>().searchedTags;
-    final selectedTags = context.watch<TasksProvider>().selectedTags;
+    // final selectedTags = context.watch<TasksProvider>().selectedTags;
     final temporarilyAddedTags =
         context.watch<TasksProvider>().temporarilyAddedTags;
 

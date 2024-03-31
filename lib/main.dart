@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:utask/providers/note_provider.dart';
 import 'database/objectbox.dart';
 import 'providers/notebook.dart';
-import 'providers/taskProvider.dart';
+import 'providers/task_provider.dart';
 import 'router/router.dart';
 
 late ObjectBox objectbox;

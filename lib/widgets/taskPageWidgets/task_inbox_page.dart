@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 
 import '../../models/entities.dart';
-import '../../providers/taskProvider.dart';
+import '../../providers/task_provider.dart';
 
 class TaskInboxPage extends StatelessWidget {
   const TaskInboxPage({
