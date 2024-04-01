@@ -5,12 +5,21 @@ import 'package:provider/provider.dart';
 import '../../models/entities.dart';
 import '../../providers/note_provider.dart';
 import 'note_details_page.dart';
+import 'package:badges/badges.dart' as badges;
 
-class NoteListPage extends StatelessWidget {
+class NoteListPage extends StatefulWidget {
   final NoteBook noteBook;
   final Function(int) onNavigateToNoteBook;
   const NoteListPage(this.noteBook,
       {super.key, required this.onNavigateToNoteBook});
+
+  @override
+  State<NoteListPage> createState() => _NoteListPageState();
+}
+
+class _NoteListPageState extends State<NoteListPage> {
+  
+
 
   Future<dynamic> _showAddNoteDetailsDialog(BuildContext context, Note note) {
     return showModalBottomSheet(
@@ -28,33 +37,35 @@ class NoteListPage extends StatelessWidget {
     List<Note> notes = notesProvider.notes;
     List<NoteBook> allNoteBooks = notesProvider.noteBooks;
 
-    if (noteBook.name == 'All Notes Ric') {
+    if (widget.noteBook.name == 'All Notes Ric') {
       notes = notesProvider.notes.where((note) => !note.isSecured).toList();
-    } else if (noteBook.name == 'All Notes Ric are secured') {
+    } else if (widget.noteBook.name == 'All Notes Ric are secured') {
       notes = notesProvider.notes.where((note) => note.isSecured).toList();
     } else {
       notes = notesProvider.notes
-          .where((note) => note.notebook.target?.id == noteBook.id)
+          .where((note) => note.notebook.target?.id == widget.noteBook.id)
           .toList();
     }
 
     if (notesProvider.isSearchingNotes) {
-      notes = noteBook.name == 'All Notes Ric'
+      notes = widget.noteBook.name == 'All Notes Ric'
           ? notesProvider.searchedNotes
               .where((note) => !note.isSecured)
               .toList()
-          : noteBook.name == 'All Notes Ric are secured'
+          : widget.noteBook.name == 'All Notes Ric are secured'
               ? notesProvider.searchedNotes
                   .where((note) => note.isSecured)
                   .toList()
               : notesProvider.searchedNotes
-                  .where((note) => note.notebook.target?.id == noteBook.id)
+                  .where(
+                      (note) => note.notebook.target?.id == widget.noteBook.id)
                   .toList();
     }
 
     if (notesProvider.sortedNotes.isNotEmpty) {
       notes = notesProvider.sortedNotes;
     }
+
 
     const options = LiveOptions(
       delay: Duration(seconds: -5),
@@ -110,180 +121,166 @@ class NoteListPage extends StatelessWidget {
                             _showAddNoteDetailsDialog(context, notes[index]);
                           },
                           onLongPress: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog.adaptive(
-                                  elevation: 5,
-                                  // icon: const Icon(Icons.delete,
-                                  //     color: Colors.red),
-                                  actionsAlignment: MainAxisAlignment.center,
-                                  title: const Text('Delete Note?'),
-                                  content: const Text(
-                                      'Are you sure you want to delete this note?'),
-                                  actions: [
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Cancel'),
-                                    ),
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red,
-                                      ),
-                                      onPressed: () {
-                                        context
-                                            .read<NotesProvider>()
-                                            .deleteNote(notes[index].id);
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text(
-                                        'Delete',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                            // setState(() {
+                            //   _isSelecting = true;
+                            //   _selectedNote[index] = !_selectedNote[index];
+                            // });
                           },
-                          child: ListTile(
-                            trailing: disposition == 'list'
-                                ? Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Visibility(
-                                        visible: notes[index].isSecured,
-                                        child: SizedBox(
-                                          width: 40,
-                                          height: 40,
-                                          child: IconButton(
-                                              onPressed: () {
-                                                context
-                                                    .read<NotesProvider>()
-                                                    .updateSecuredNote(
-                                                        notes[index].id);
-                                              },
-                                              icon: const Icon(
-                                                Icons.shield_rounded,
-                                                color: Color.fromARGB(
-                                                    255, 0, 73, 133),
-                                              )),
+                          child: badges.Badge(
+                            showBadge: false,
+                            ignorePointer: false,
+                            badgeContent: const Icon(
+                              Icons.done,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                            badgeStyle: const badges.BadgeStyle(
+                              badgeColor: Color.fromARGB(255, 0, 73, 133),
+                              elevation: 5,
+                            ),
+                            child: ListTile(
+                              trailing: disposition == 'list'
+                                  ? Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Visibility(
+                                          visible: notes[index].isSecured,
+                                          child: SizedBox(
+                                            width: 40,
+                                            height: 40,
+                                            child: IconButton(
+                                                onPressed: () {
+                                                  context
+                                                      .read<NotesProvider>()
+                                                      .updateSecuredNote(
+                                                          notes[index].id);
+                                                },
+                                                icon: const Icon(
+                                                  Icons.shield_rounded,
+                                                  color: Color.fromARGB(
+                                                      255, 0, 73, 133),
+                                                )),
+                                          ),
                                         ),
-                                      ),
-                                      Visibility(
-                                        visible: !notes[index].isSecured &&
-                                            notes[index].notebook.target !=
-                                                null &&
-                                            selectedNoteBook <= 1,
-                                        child: SizedBox(
-                                          height: 32,
-                                          width: 75,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              elevation: 2,
-                                              textStyle: const TextStyle(
-                                                  overflow:
-                                                      TextOverflow.ellipsis),
-                                              padding: const EdgeInsets.all(4),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
+                                        Visibility(
+                                          visible: !notes[index].isSecured &&
+                                              notes[index].notebook.target !=
+                                                  null &&
+                                              selectedNoteBook <= 1,
+                                          child: SizedBox(
+                                            height: 32,
+                                            width: 75,
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                elevation: 2,
+                                                textStyle: const TextStyle(
+                                                    overflow:
+                                                        TextOverflow.ellipsis),
+                                                padding:
+                                                    const EdgeInsets.all(4),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
                                               ),
-                                            ),
-                                            onPressed: () {
-                                              final noteBook =
-                                                  notes[index].notebook.target;
+                                              onPressed: () {
+                                                final noteBook = notes[index]
+                                                    .notebook
+                                                    .target;
 
-                                              final noteBookPosition =
-                                                  allNoteBooks.indexWhere(
-                                                      (nb) =>
-                                                          nb.id ==
-                                                          noteBook!.id);
-                                              if (noteBookPosition != -1) {
-                                                onNavigateToNoteBook(
-                                                    noteBookPosition);
-                                              }
-                                            },
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                const Icon(Icons.book_rounded),
-                                                const SizedBox(
-                                                  width: 5,
-                                                ),
-                                                Flexible(
-                                                  child: Text(notes[index]
-                                                          .notebook
-                                                          .target
-                                                          ?.name ??
-                                                      ''),
-                                                ),
-                                              ],
+                                                final noteBookPosition =
+                                                    allNoteBooks.indexWhere(
+                                                        (nb) =>
+                                                            nb.id ==
+                                                            noteBook!.id);
+                                                if (noteBookPosition != -1) {
+                                                  widget.onNavigateToNoteBook(
+                                                      noteBookPosition);
+                                                }
+                                              },
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  const Icon(
+                                                      Icons.book_rounded),
+                                                  const SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  Flexible(
+                                                    child: Text(notes[index]
+                                                            .notebook
+                                                            .target
+                                                            ?.name ??
+                                                        ''),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      const Spacer(),
-                                      Text(
-                                        notes[index]
-                                            .createdAt
-                                            .toString()
-                                            .substring(0, 10),
-                                      ),
-                                      // const Icon(Icons.more_horiz_rounded),
-                                    ],
-                                  )
-                                : Text(
-                                    notes[index]
-                                        .createdAt
-                                        .toString()
-                                        .substring(0, 10),
-                                  ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            title: Text(
-                              notes[index].title,
-                              // noteBook.notes[index].title,
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w600),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            subtitle: Visibility(
-                              visible: disposition == 'list',
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 8.0, bottom: 0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      maxLines: 1,
-                                      // noteBook.notes[index].content,
-                                      notes[index].content,
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey[600]),
-                                      overflow: TextOverflow.ellipsis,
-                                      // maxLines: 2,
+                                        const Spacer(),
+                                        Text(
+                                          notes[index]
+                                              .createdAt
+                                              .toString()
+                                              .substring(0, 10),
+                                        ),
+                                        // const Icon(Icons.more_horiz_rounded),
+                                      ],
+                                    )
+                                  : Text(
+                                      notes[index]
+                                          .createdAt
+                                          .toString()
+                                          .substring(0, 10),
                                     ),
-                                    // const SizedBox(
-                                    //   height: 10,
-                                    // ),
-                                    // Text(
-                                    //   // DateFormat.yMMMd().format(notes[index].updatedAt),
-                                    //   notes[index]
-                                    //       .updatedAt
-                                    //       .toString()
-                                    //       .substring(0, 10),
-                                    // ),
-                                  ],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              title: Text(
+                                notes[index].title,
+                                // noteBook.notes[index].title,
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w600),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              subtitle: Visibility(
+                                visible: disposition == 'list',
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 8.0, bottom: 0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        maxLines: 1,
+                                        // noteBook.notes[index].content,
+                                        notes[index].content,
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey[600]),
+                                        overflow: TextOverflow.ellipsis,
+                                        // maxLines: 2,
+                                      ),
+                                      // const SizedBox(
+                                      //   height: 10,
+                                      // ),
+                                      // Text(
+                                      //   // DateFormat.yMMMd().format(notes[index].updatedAt),
+                                      //   notes[index]
+                                      //       .updatedAt
+                                      //       .toString()
+                                      //       .substring(0, 10),
+                                      // ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
