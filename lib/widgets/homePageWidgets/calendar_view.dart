@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:calendar_view/calendar_view.dart';
 
 import '../../models/entities.dart';
 import '../../providers/task_provider.dart';

@@ -53,7 +53,8 @@ dependencies:
   objectbox_flutter_libs: any
   path_provider: ^2.1.2
   path: ^1.9.0
-  calendar_view: ^1.1.0
+  google_mobile_ads: ^5.0.0
+
 
 dev_dependencies:
   flutter_test:

@@ -1,10 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:toastification/toastification.dart';
 import 'package:utask/models/entities.dart';
+import 'package:utask/providers/ad_provider.dart';
 
 import '../providers/note_provider.dart';
 import '../providers/notebook.dart';
@@ -18,7 +19,13 @@ enum _SupportState {
 }
 
 class NotesPage extends StatefulWidget {
-  const NotesPage({super.key});
+  final AdSize adSize;
+  final String adUnitId = 'ca-app-pub-3940256099942544/6300978111'; //test
+
+  const NotesPage({
+    super.key,
+    this.adSize = AdSize.banner,
+  });
 
   @override
   State<NotesPage> createState() => _NotesPageState();
@@ -29,6 +36,8 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
   TabController? _tabController;
   NoteBookProvider? _noteBookProvider;
   int _selectedTabIndex = 1;
+
+  BannerAd? _bannerAd;
 
   final LocalAuthentication auth = LocalAuthentication();
   // ignore: unused_field
@@ -45,8 +54,8 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    // _tabController2 = TabController(length: 1, vsync: this);
     updateTabController();
+    _loadAd();
     auth.isDeviceSupported().then(
           (bool isSupported) => setState(() => _supportState = isSupported
               ? _SupportState.supported
@@ -54,39 +63,33 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
         );
   }
 
-  // Future<void> _checkBiometrics() async {
-  //   late bool canCheckBiometrics;
-  //   try {
-  //     canCheckBiometrics = await auth.canCheckBiometrics;
-  //   } on PlatformException catch (e) {
-  //     canCheckBiometrics = false;
-  //     print(e);
-  //   }
-  //   if (!mounted) {
-  //     return;
-  //   }
+  void _loadAd() {
+    final bannerAd = BannerAd(
+      size: widget.adSize,
+      adUnitId: widget.adUnitId,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        // Called when an ad is successfully received.
+        onAdLoaded: (ad) {
+          if (!mounted) {
+            ad.dispose();
+            return;
+          }
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        // Called when an ad request failed.
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('BannerAd failed to load: $error');
+          ad.dispose();
+        },
+      ),
+    );
 
-  //   setState(() {
-  //     _canCheckBiometrics = canCheckBiometrics;
-  //   });
-  // }
-
-  // Future<void> _getAvailableBiometrics() async {
-  //   late List<BiometricType> availableBiometrics;
-  //   try {
-  //     availableBiometrics = await auth.getAvailableBiometrics();
-  //   } on PlatformException catch (e) {
-  //     availableBiometrics = <BiometricType>[];
-  //     print(e);
-  //   }
-  //   if (!mounted) {
-  //     return;
-  //   }
-
-  //   setState(() {
-  //     _availableBiometrics = availableBiometrics;
-  //   });
-  // }
+    // Start loading.
+    bannerAd.load();
+  }
 
   Future<void> _authenticate() async {
     bool authenticated = false;
@@ -123,61 +126,43 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
     }
   }
 
-  // Future<void> _authenticateWithBiometrics() async {
-  //   bool authenticated = false;
-  //   try {
-  //     setState(() {
-  //       _isAuthenticating = true;
-  //       _authorized = 'Authenticating';
-  //     });
-  //     authenticated = await auth.authenticate(
-  //       localizedReason:
-  //           'Scan your fingerprint (or face or whatever) to authenticate',
-  //       options: const AuthenticationOptions(
-  //         stickyAuth: true,
-  //         biometricOnly: true,
-  //       ),
-  //     );
-  //     setState(() {
-  //       _isAuthenticating = false;
-  //       _authorized = 'Authenticating';
-  //     });
-  //   } on PlatformException catch (e) {
-  //     print(e);
-  //     setState(() {
-  //       _isAuthenticating = false;
-  //       _authorized = 'Error - ${e.message}';
-  //     });
-  //     return;
-  //   }
-  //   if (!mounted) {
-  //     return;
-  //   }
-
-  //   final String message = authenticated ? 'Authorized' : 'Not Authorized';
-  //   setState(() {
-  //     _authorized = message;
-  //   });
-
-  //   if (_authorized == 'Not Authorized') {
-  //     failedAuthetication();
-  //   }
-  // }
-
-  // Future<void> _cancelAuthentication() async {
-  //   await auth.stopAuthentication();
-  //   setState(() => _isAuthenticating = false);
-  // }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _noteBookProvider = Provider.of<NoteBookProvider>(context);
     _noteBookProvider?.addListener(updateTabController);
+    // final adState = Provider.of<AdProvider>(context);
+    // adState.initialization.then((status) {
+    //   setState(() {
+    //     banner = BannerAd(
+    //       adUnitId: adState.bannerAdUnitId,
+    //       size: AdSize.banner,
+    //       request: const AdRequest(),
+    //       listener: BannerAdListener(
+    //         // Called when an ad is successfully received.
+    //         onAdLoaded: (ad) {
+    //           if (!mounted) {
+    //             ad.dispose();
+    //             return;
+    //           }
+    //           setState(() {
+    //             banner = ad as BannerAd;
+    //           });
+    //         },
+    //         // Called when an ad request failed.
+    //         onAdFailedToLoad: (ad, error) {
+    //           debugPrint('BannerAd failed to load: $error');
+    //           ad.dispose();
+    //         },
+    //       ),
+    //     )..load();
+    //   });
+    // });
   }
 
   @override
   void dispose() {
+    _bannerAd?.dispose();
     _tabController?.dispose();
     noteBookController.dispose();
     _noteBookProvider?.removeListener(updateTabController);
@@ -272,21 +257,9 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
 
                     context.read<NotesProvider>().setSelectedNoteBook(index);
 
-                    // if (index > 1 && index < noteBooks.length + 2) {
-                    //   setState(() {
-                    //     showSecondTabBar = true;
-                    //   });
-                    // } else {
-                    //   setState(() {
-                    //     showSecondTabBar = false;
-                    //   });
-                    // }
-
                     if (index == 0) {
-                      // _checkBiometrics();
-                      // _getAvailableBiometrics();
+
                       _authenticate();
-                      // _authenticateWithBiometrics();
                     }
                   },
                   tabs: [
@@ -299,7 +272,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
                     const Tab(text: 'All Notes'),
                     ...noteBooks
                         .map(
-                          (noteBook) => GestureDetector( 
+                          (noteBook) => GestureDetector(
                             onLongPress: () {
                               deleteNoteBook(context, noteBook);
                               _tabController?.animateTo(
@@ -344,37 +317,16 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
               ],
             ),
           ),
-          // AnimatedContainer(
-          //   duration: const Duration(milliseconds: 300),
-          //   height: showSecondTabBar ? 40 : 0,
-          //   child: showSecondTabBar
-          //       ? Container(
-          //           height: 40,
-          //           decoration: BoxDecoration(
-          //             boxShadow: [
-          //               BoxShadow(
-          //                 color: Colors.grey.shade300,
-          //                 spreadRadius: 1,
-          //                 blurRadius: 10,
-          //                 offset: const Offset(0, 10),
-          //               ),
-          //             ],
-          //             color: Colors.white,
-          //           ),
-          //           child: TabBar(
-          //             tabAlignment: TabAlignment.start,
-          //             controller: _tabController2,
-          //             isScrollable: true,
-          //             tabs: const [
-          //               Tab(
-          //                 icon: Icon(Icons.star),
-          //               ),
-          //             ],
-          //           ),
-          //         )
-          //       : const SizedBox.shrink(),
-          // ),
           const SizedBox(height: 10),
+          // SizedBox(
+          //   width: widget.adSize.width.toDouble(),
+          //   height: widget.adSize.height.toDouble(),
+          //   child: _bannerAd == null
+          //       // Nothing to render yet.
+          //       ? const SizedBox()
+          //       // The actual ad.
+          //       : AdWidget(ad: _bannerAd!),
+          // ),
           Expanded(
             child: TabBarView(
               physics: const NeverScrollableScrollPhysics(),
@@ -410,6 +362,15 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
               ],
             ),
           ),
+          //   SizedBox(
+          //   width: widget.adSize.width.toDouble(),
+          //   height: widget.adSize.height.toDouble(),
+          //   child: _bannerAd == null
+          //       // Nothing to render yet.
+          //       ? const SizedBox()
+          //       // The actual ad.
+          //       : AdWidget(ad: _bannerAd!),
+          // ),
         ],
       ),
     );
@@ -501,7 +462,3 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
     );
   }
 }
-
-
-
-

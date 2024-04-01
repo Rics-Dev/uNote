@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import 'package:utask/providers/ad_provider.dart';
 import 'package:utask/providers/note_provider.dart';
 import 'database/objectbox.dart';
 import 'providers/notebook.dart';
@@ -11,13 +15,20 @@ import 'package:google_fonts/google_fonts.dart';
 late ObjectBox objectbox;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // final initFuture = MobileAds.instance.initialize();
+  // final adState = AdProvider(initFuture);
+  unawaited(MobileAds.instance.initialize());
   objectbox = await ObjectBox.create();
   final GoRouter router = buildRouter();
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider<TasksProvider>(create: (context) => TasksProvider()),
-      ChangeNotifierProvider<NotesProvider>(create: (context) => NotesProvider()),
-      ChangeNotifierProvider<NoteBookProvider>(create: (context) => NoteBookProvider()),
+      ChangeNotifierProvider<TasksProvider>(
+          create: (context) => TasksProvider()),
+      ChangeNotifierProvider<NotesProvider>(
+          create: (context) => NotesProvider()),
+      ChangeNotifierProvider<NoteBookProvider>(
+          create: (context) => NoteBookProvider()),
+      // ChangeNotifierProvider<AdProvider>(create: (context) => adState),
     ],
     child: MyApp(router: router),
   ));
