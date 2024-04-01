@@ -197,7 +197,9 @@ class _TaskListPageState extends State<TaskListPage> {
                             child: Text(
                               taskLists[index].name,
                               style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  overflow: TextOverflow.ellipsis),
                             ),
                           ),
                           const SizedBox(width: 10),
