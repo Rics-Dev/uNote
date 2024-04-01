@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import 'package:toastification/toastification.dart';
-
 import '../../models/entities.dart';
 import '../../providers/note_provider.dart';
 import 'add_note_to_book.dart';
@@ -291,6 +290,18 @@ class _AddNoteViewState extends State<AddNoteView> {
       useSafeArea: true,
     );
   }
+
+  // void _insertImage() {
+  //   // Handle image insertion logic here
+  //   // This could involve opening a file picker, camera, etc.
+  //   // After selecting an image, upload it to your storage service
+  //   ImageUrl imageUrl =
+
+  //   // Insert image URL into Quill editor content
+  //   // _contentController.insertEmbed(0, 'image', imageUrl);
+  //   // _contentController.document.insert(0, imageUrl);
+  //   // _noteContentController.text = imageUrl;
+  // }
 }
 
 // class NoteController {

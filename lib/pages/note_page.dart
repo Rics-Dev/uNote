@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:toastification/toastification.dart';
 import 'package:utask/models/entities.dart';
-import 'package:utask/providers/ad_provider.dart';
 
 import '../providers/note_provider.dart';
 import '../providers/notebook.dart';
@@ -19,12 +17,10 @@ import '../widgets/notePageWidgets/search_disposition_view.dart';
 // }
 
 class NotesPage extends StatefulWidget {
-  final AdSize adSize;
   final String adUnitId = 'ca-app-pub-3940256099942544/6300978111'; //test
 
   const NotesPage({
-    super.key,
-    this.adSize = AdSize.banner,
+    super.key
   });
 
   @override
@@ -37,7 +33,6 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
   NoteBookProvider? _noteBookProvider;
   int _selectedTabIndex = 1;
 
-  BannerAd? _bannerAd;
 
   final LocalAuthentication auth = LocalAuthentication();
   // ignore: unused_field
@@ -135,7 +130,6 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _bannerAd?.dispose();
     _tabController?.dispose();
     noteBookController.dispose();
     _noteBookProvider?.removeListener(updateTabController);
