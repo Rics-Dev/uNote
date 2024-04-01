@@ -240,8 +240,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
                             onLongPress: () {
                               deleteNoteBook(context, noteBook);
                               _tabController?.animateTo(
-                                _selectedTabIndex -
-                                    1, // index of the new notebook
+                                1,
                                 duration: const Duration(
                                     milliseconds:
                                         300), // optional animation duration
