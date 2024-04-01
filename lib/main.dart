@@ -1,10 +1,10 @@
-import 'dart:async';
+// import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import 'package:utask/providers/ad_provider.dart';
+// import 'package:utask/providers/ad_provider.dart';
 import 'package:utask/providers/note_provider.dart';
 import 'database/objectbox.dart';
 import 'providers/notebook.dart';
@@ -17,7 +17,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // final initFuture = MobileAds.instance.initialize();
   // final adState = AdProvider(initFuture);
-  unawaited(MobileAds.instance.initialize());
+  // unawaited(MobileAds.instance.initialize());
   objectbox = await ObjectBox.create();
   final GoRouter router = buildRouter();
   runApp(MultiProvider(

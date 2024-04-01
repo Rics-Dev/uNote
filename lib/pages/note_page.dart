@@ -12,11 +12,11 @@ import '../providers/notebook.dart';
 import '../widgets/notePageWidgets/note_list_page.dart';
 import '../widgets/notePageWidgets/search_disposition_view.dart';
 
-enum _SupportState {
-  unknown,
-  supported,
-  unsupported,
-}
+// enum _SupportState {
+//   unknown,
+//   supported,
+//   unsupported,
+// }
 
 class NotesPage extends StatefulWidget {
   final AdSize adSize;
@@ -41,7 +41,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
 
   final LocalAuthentication auth = LocalAuthentication();
   // ignore: unused_field
-  _SupportState _supportState = _SupportState.unknown;
+  // _SupportState _supportState = _SupportState.unknown;
   // bool? _canCheckBiometrics;
   // List<BiometricType>? _availableBiometrics;
   String _authorized = 'Not Authorized';
@@ -55,41 +55,41 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     updateTabController();
-    _loadAd();
-    auth.isDeviceSupported().then(
-          (bool isSupported) => setState(() => _supportState = isSupported
-              ? _SupportState.supported
-              : _SupportState.unsupported),
-        );
+    // _loadAd();
+    // auth.isDeviceSupported().then(
+    //       (bool isSupported) => setState(() => _supportState = isSupported
+    //           ? _SupportState.supported
+    //           : _SupportState.unsupported),
+    //     );
   }
 
-  void _loadAd() {
-    final bannerAd = BannerAd(
-      size: widget.adSize,
-      adUnitId: widget.adUnitId,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        // Called when an ad is successfully received.
-        onAdLoaded: (ad) {
-          if (!mounted) {
-            ad.dispose();
-            return;
-          }
-          setState(() {
-            _bannerAd = ad as BannerAd;
-          });
-        },
-        // Called when an ad request failed.
-        onAdFailedToLoad: (ad, error) {
-          debugPrint('BannerAd failed to load: $error');
-          ad.dispose();
-        },
-      ),
-    );
+  // void _loadAd() {
+  //   final bannerAd = BannerAd(
+  //     size: widget.adSize,
+  //     adUnitId: widget.adUnitId,
+  //     request: const AdRequest(),
+  //     listener: BannerAdListener(
+  //       // Called when an ad is successfully received.
+  //       onAdLoaded: (ad) {
+  //         if (!mounted) {
+  //           ad.dispose();
+  //           return;
+  //         }
+  //         setState(() {
+  //           _bannerAd = ad as BannerAd;
+  //         });
+  //       },
+  //       // Called when an ad request failed.
+  //       onAdFailedToLoad: (ad, error) {
+  //         debugPrint('BannerAd failed to load: $error');
+  //         ad.dispose();
+  //       },
+  //     ),
+  //   );
 
-    // Start loading.
-    bannerAd.load();
-  }
+  //   // Start loading.
+  //   bannerAd.load();
+  // }
 
   Future<void> _authenticate() async {
     bool authenticated = false;
@@ -131,33 +131,6 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
     super.didChangeDependencies();
     _noteBookProvider = Provider.of<NoteBookProvider>(context);
     _noteBookProvider?.addListener(updateTabController);
-    // final adState = Provider.of<AdProvider>(context);
-    // adState.initialization.then((status) {
-    //   setState(() {
-    //     banner = BannerAd(
-    //       adUnitId: adState.bannerAdUnitId,
-    //       size: AdSize.banner,
-    //       request: const AdRequest(),
-    //       listener: BannerAdListener(
-    //         // Called when an ad is successfully received.
-    //         onAdLoaded: (ad) {
-    //           if (!mounted) {
-    //             ad.dispose();
-    //             return;
-    //           }
-    //           setState(() {
-    //             banner = ad as BannerAd;
-    //           });
-    //         },
-    //         // Called when an ad request failed.
-    //         onAdFailedToLoad: (ad, error) {
-    //           debugPrint('BannerAd failed to load: $error');
-    //           ad.dispose();
-    //         },
-    //       ),
-    //     )..load();
-    //   });
-    // });
   }
 
   @override
