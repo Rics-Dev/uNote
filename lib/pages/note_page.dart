@@ -7,6 +7,7 @@ import 'package:utask/models/entities.dart';
 
 import '../providers/note_provider.dart';
 import '../providers/notebook.dart';
+import '../widgets/notePageWidgets/horizontal_tags_view.dart';
 import '../widgets/notePageWidgets/note_list_page.dart';
 import '../widgets/notePageWidgets/search_disposition_view.dart';
 
@@ -19,9 +20,7 @@ import '../widgets/notePageWidgets/search_disposition_view.dart';
 class NotesPage extends StatefulWidget {
   final String adUnitId = 'ca-app-pub-3940256099942544/6300978111'; //test
 
-  const NotesPage({
-    super.key
-  });
+  const NotesPage({super.key});
 
   @override
   State<NotesPage> createState() => _NotesPageState();
@@ -32,7 +31,6 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
   TabController? _tabController;
   NoteBookProvider? _noteBookProvider;
   int _selectedTabIndex = 1;
-
 
   final LocalAuthentication auth = LocalAuthentication();
   // ignore: unused_field
@@ -209,7 +207,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
             child: Column(
               children: [
                 const SortAndFilterView(),
-                // HorizontalTagsView(),
+                // const HorizontalTagsView(),
                 TabBar(
                   tabAlignment: TabAlignment.start,
                   controller: _tabController,
@@ -225,7 +223,6 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
                     context.read<NotesProvider>().setSelectedNoteBook(index);
 
                     if (index == 0) {
-
                       _authenticate();
                     }
                   },

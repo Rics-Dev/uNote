@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/entities.dart';
+import '../../providers/note_provider.dart';
 import '../../providers/task_provider.dart';
 import 'package:badges/badges.dart' as badges;
 
@@ -11,10 +12,10 @@ class HorizontalTagsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tasksProvider = context.watch<TasksProvider>();
+    final notesProvider = context.watch<NotesProvider>();
 
-    final tags = tasksProvider.tags;
-    final selectedTags = tasksProvider.selectedTags;
+    final tags = notesProvider.tags;
+    final selectedTags = notesProvider.selectedTags;
 
 
     return Padding(
@@ -25,7 +26,7 @@ class HorizontalTagsView extends StatelessWidget {
           selectedTags.isNotEmpty
               ? GestureDetector(
                   onTap: () {
-                    tasksProvider.clearSelectedTags();
+                    notesProvider.clearSelectedTags();
                     // tasksProvider.filterTasksByTags(tasksProvider.selectedTags);
                   },
                   child: Container(
@@ -62,11 +63,11 @@ class HorizontalTagsView extends StatelessWidget {
                         deleteTag(context, tag);
                       },
                       onTap: () {
-                        tasksProvider.toggleTagSelection(tag);
+                        notesProvider.toggleTagSelection(tag);
                       },
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          tasksProvider.toggleTagSelection(tag);
+                          notesProvider.toggleTagSelection(tag);
                         },
                         icon: Icon(
                           Icons.label_outline_rounded,
