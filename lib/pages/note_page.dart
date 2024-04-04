@@ -207,6 +207,23 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
             child: Column(
               children: [
                 const SortAndFilterView(),
+                // ElevatedButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //           builder: (context) => Material(
+                //             child: Scaffold(
+                //               appBar: AppBar(
+                //                 title: const Text('hello'),
+                //               ),
+                //               body: const Text('hello'),
+                //             ),
+                //           ),
+                //         ),
+                //       );
+                //     },
+                //     child: const Text('Go to new page')),
                 // const HorizontalTagsView(),
                 TabBar(
                   tabAlignment: TabAlignment.start,

@@ -18,9 +18,6 @@ class NoteListPage extends StatefulWidget {
 }
 
 class _NoteListPageState extends State<NoteListPage> {
-  
-
-
   Future<dynamic> _showAddNoteDetailsDialog(BuildContext context, Note note) {
     return showModalBottomSheet(
       context: context,
@@ -65,7 +62,6 @@ class _NoteListPageState extends State<NoteListPage> {
     if (notesProvider.sortedNotes.isNotEmpty) {
       notes = notesProvider.sortedNotes;
     }
-
 
     const options = LiveOptions(
       delay: Duration(seconds: -5),
