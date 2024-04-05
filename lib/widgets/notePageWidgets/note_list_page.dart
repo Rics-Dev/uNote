@@ -100,16 +100,17 @@ class _NoteListPageState extends State<NoteListPage> {
                         height: disposition == 'compactList' ? 50 : null,
                         decoration: BoxDecoration(
                           // color: const Color.fromARGB(255, 243, 243, 243),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 5,
-                              offset: const Offset(
-                                  0, 5), // changes position of shadow
-                            ),
-                          ],
+                          // color: Colors.white,
+                          color: Theme.of(context).colorScheme.primary,
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //     color: Colors.grey.withOpacity(0.2),
+                          //     spreadRadius: 1,
+                          //     blurRadius: 5,
+                          //     offset: const Offset(
+                          //         0, 5), // changes position of shadow
+                          //   ),
+                          // ],
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: GestureDetector(
@@ -171,6 +172,10 @@ class _NoteListPageState extends State<NoteListPage> {
                                             width: 75,
                                             child: ElevatedButton(
                                               style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .surface,
                                                 elevation: 2,
                                                 textStyle: const TextStyle(
                                                     overflow:
@@ -201,17 +206,28 @@ class _NoteListPageState extends State<NoteListPage> {
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  const Icon(
-                                                      Icons.book_rounded),
+                                                  Icon(
+                                                    Icons.book_rounded,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurface,
+                                                  ),
                                                   const SizedBox(
                                                     width: 5,
                                                   ),
                                                   Flexible(
-                                                    child: Text(notes[index]
-                                                            .notebook
-                                                            .target
-                                                            ?.name ??
-                                                        ''),
+                                                    child: Text(
+                                                      notes[index]
+                                                              .notebook
+                                                              .target
+                                                              ?.name ??
+                                                          '',
+                                                      style: TextStyle(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .onSurface),
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -241,7 +257,7 @@ class _NoteListPageState extends State<NoteListPage> {
                                 notes[index].title,
                                 // noteBook.notes[index].title,
                                 style: const TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w600),
+                                    fontSize: 16, fontWeight: FontWeight.w600),
                                 overflow: TextOverflow.ellipsis,
                               ),
                               subtitle: Visibility(
@@ -259,9 +275,9 @@ class _NoteListPageState extends State<NoteListPage> {
                                         maxLines: 1,
                                         // noteBook.notes[index].content,
                                         notes[index].content,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey[600]),
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
                                         overflow: TextOverflow.ellipsis,
                                         // maxLines: 2,
                                       ),
