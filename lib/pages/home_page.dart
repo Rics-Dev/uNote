@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        // backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(appBarTitles[_bottomNavIndex]),
         actions: <Widget>[
           IconButton(
@@ -129,7 +129,7 @@ class _HomePageState extends State<HomePage> {
       extendBody: true,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: AnimatedBottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        // backgroundColor: Theme.of(context).colorScheme.primary,
         splashRadius: 0,
         height: 65.0,
         icons: iconList,
@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> {
         notchSmoothness: NotchSmoothness.softEdge,
         iconSize: 28,
         activeColor: const Color.fromARGB(255, 0, 73, 133),
-        inactiveColor: Colors.white,
+        // inactiveColor: Colors.white,
         shadow: BoxShadow(
             color: Colors.black.withOpacity(0.2),
             spreadRadius: 1,

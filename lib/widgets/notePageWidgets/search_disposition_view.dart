@@ -35,20 +35,20 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
             isSearchBoxOnRightSide: true,
             buttonBorderColour: Colors.black,
             textEditingController: searchBar,
-            trailingWidget: Icon(
+            trailingWidget: const Icon(
               Icons.search_rounded,
               // color: Color.fromARGB(255, 0, 73, 133),
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              // color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            secondaryButtonWidget: Icon(
+            secondaryButtonWidget: const Icon(
               Icons.close_rounded,
               // color: Color.fromARGB(255, 0, 73, 133),
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              // color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            buttonWidget: Icon(
+            buttonWidget: const Icon(
               Icons.search_rounded,
               // color: Color.fromARGB(255, 0, 73, 133),
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              // color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             onFieldSubmitted: (String value) {
               debugPrint('onFieldSubmitted value $value');
@@ -101,7 +101,7 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
       child: Icon(
         icon,
         // color: const Color.fromARGB(255, 0, 73, 133),
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
+        // color: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
       onPressed: () {
         context.read<NotesProvider>().changeView(nextDisposition);
