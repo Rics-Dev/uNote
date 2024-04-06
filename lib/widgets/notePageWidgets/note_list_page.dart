@@ -177,7 +177,7 @@ class _NoteListPageState extends State<NoteListPage> {
                                                   //     Theme.of(context)
                                                   //         .colorScheme
                                                   //         .surface,
-                                                  elevation: 2,
+                                                  elevation: 6,
                                                   textStyle: const TextStyle(
                                                       overflow: TextOverflow
                                                           .ellipsis),
