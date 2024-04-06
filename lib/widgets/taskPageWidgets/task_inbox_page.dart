@@ -91,7 +91,7 @@ class TaskInboxPage extends StatelessWidget {
                         decoration: tasks[index].isDone
                             ? TextDecoration.lineThrough
                             : TextDecoration.none,
-                        color: tasks[index].isDone ? Colors.grey : Colors.black,
+                        color: tasks[index].isDone ? Colors.grey : null,
                       ),
                     ),
                     trailing: PullDownButton(

@@ -119,7 +119,13 @@ class _AddTaskToListViewState extends State<AddTaskToListView> {
                         title: Row(
                           children: [
                             const Icon(Icons.list),
-                            Text(taskLists[index].name),
+                            Flexible(
+                              child: Text(
+                                taskLists[index].name,
+                                style: const TextStyle(
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ),
                           ],
                         ),
                         // value: taskLists[index].name,

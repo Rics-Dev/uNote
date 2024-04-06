@@ -5,7 +5,6 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../models/entities.dart';
 import '../../providers/task_provider.dart';
 
-
 class CalendarView extends StatefulWidget {
   const CalendarView({super.key});
 
@@ -40,12 +39,13 @@ class _CalendarViewState extends State<CalendarView> {
           .toList();
     }
 
-    return SafeArea(
+    return Container(
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          const SizedBox(height: 16),
+          const SizedBox(height: 40),
           Stack(
             children: [
               const Align(
@@ -104,20 +104,6 @@ class _CalendarViewState extends State<CalendarView> {
             },
           ),
           const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              today.year == DateTime.now().year &&
-                      today.month == DateTime.now().month &&
-                      today.day == DateTime.now().day
-                  ? "Today"
-                  : "${today.day}/${today.month}/${today.year} ",
-              textAlign: TextAlign.start,
-              style: const TextStyle(
-                fontSize: 20.0,
-              ),
-            ),
-          ),
           todayTasks.isEmpty
               ? const Padding(
                   padding: EdgeInsets.all(16.0),
@@ -150,7 +136,7 @@ class _CalendarViewState extends State<CalendarView> {
                   ),
                 ),
           const SizedBox(
-            height: 20,
+            height: 10,
           ),
           Container(
             width: 100,

@@ -256,7 +256,7 @@ class TasksProvider extends ChangeNotifier {
         taskList.updatedAt = DateTime.now();
         taskListBox.put(taskList);
       }
-      taskBox.putAsync(updatedTask);
+      taskBox.put(updatedTask);
     }
   }
 

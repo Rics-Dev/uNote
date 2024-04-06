@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import 'package:toastification/toastification.dart';
-
 import '../../models/entities.dart';
-import '../../pages/note_page.dart';
 import '../../providers/note_provider.dart';
+import 'add_note_to_book.dart';
 
 class AddNoteView extends StatefulWidget {
   const AddNoteView({super.key});
@@ -75,13 +74,13 @@ class _AddNoteViewState extends State<AddNoteView> {
           child: Padding(
         padding: const EdgeInsets.only(top: 30.0),
         child: Scaffold(
-          // resizeToAvoidBottomInset: false,
           appBar: AppBar(
             elevation: 1,
             title: TextField(
               onTapOutside: (event) {
                 titleFocusNode.unfocus();
               },
+              autofocus: true,
               focusNode: titleFocusNode,
               controller: _titleController,
               decoration: const InputDecoration(
@@ -133,7 +132,7 @@ class _AddNoteViewState extends State<AddNoteView> {
             ],
           ),
           body: Container(
-            padding: const EdgeInsets.symmetric(vertical: 5),
+            // padding: const EdgeInsets.symmetric(vertical: 5),
             child: Column(
               children: [
                 Padding(
@@ -186,7 +185,7 @@ class _AddNoteViewState extends State<AddNoteView> {
                             ? const Icon(
                                 Icons.shield_rounded,
                                 size: 28,
-                                color: Color.fromARGB(255, 0, 73, 133),
+                                // color: Color.fromARGB(255, 0, 73, 133),
                               )
                             : const Icon(Icons.shield_outlined, size: 28),
                       ),
@@ -207,8 +206,8 @@ class _AddNoteViewState extends State<AddNoteView> {
                 ),
                 QuillToolbar.simple(
                   configurations: QuillSimpleToolbarConfigurations(
+                    toolbarSize: 50,
                     toolbarSectionSpacing: -10,
-
                     // axis: Axis.horizontal,
                     // toolbarSize: 36.0,
                     multiRowsDisplay: false,
@@ -260,7 +259,7 @@ class _AddNoteViewState extends State<AddNoteView> {
                               });
                             },
                             placeholder: 'Add your note here...',
-                            autoFocus: true,
+                            // autoFocus: true,
                             controller: _contentController,
                             readOnly: false,
                             sharedConfigurations:
@@ -284,20 +283,32 @@ class _AddNoteViewState extends State<AddNoteView> {
   Future<dynamic> showAddNoteBookDialog(BuildContext context, Note note) {
     return showModalBottomSheet(
       context: context,
-      builder: (context) => AddNoteBook(note: note),
+      builder: (context) => AddNoteToBook(note: note),
       isScrollControlled: true,
       showDragHandle: true,
       useSafeArea: true,
     );
   }
+
+  // void _insertImage() {
+  //   // Handle image insertion logic here
+  //   // This could involve opening a file picker, camera, etc.
+  //   // After selecting an image, upload it to your storage service
+  //   ImageUrl imageUrl =
+
+  //   // Insert image URL into Quill editor content
+  //   // _contentController.insertEmbed(0, 'image', imageUrl);
+  //   // _contentController.document.insert(0, imageUrl);
+  //   // _noteContentController.text = imageUrl;
+  // }
 }
 
-class NoteController {
-  final TextEditingController titleController;
-  final QuillController contentController;
+// class NoteController {
+//   final TextEditingController titleController;
+//   final QuillController contentController;
 
-  NoteController({
-    required this.titleController,
-    required this.contentController,
-  });
-}
+//   NoteController({
+//     required this.titleController,
+//     required this.contentController,
+//   });
+// }

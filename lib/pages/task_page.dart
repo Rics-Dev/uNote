@@ -31,11 +31,20 @@ class _TasksPageState extends State<TasksPage>
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 10),
-        const HorizontalPriorityView(),
-        const SizedBox(height: 10),
-        TaskTabBar(tabController: _tabController),
-        const SizedBox(height: 20),
+        Container(
+          color: Theme.of(context).colorScheme.surface,
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              const HorizontalPriorityView(),
+              const SizedBox(height: 10),
+              TaskTabBar(tabController: _tabController),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
         Expanded(
           child: TabBarView(
             controller: _tabController,
@@ -50,4 +59,17 @@ class _TasksPageState extends State<TasksPage>
   }
 }
 
-
+        // SegmentedButton(
+        //   segments: const [
+        //     ButtonSegment(value: 0, label: Text('Inbox')),
+        //     ButtonSegment(value: 1, label: Text('List')),
+        //   ],
+        //   selected: const {0},
+        //   onSelectionChanged: (value) {
+        //     if (value.contains(0)) {
+        //       _tabController.animateTo(0);
+        //     } else {
+        //       _tabController.animateTo(1);
+        //     }
+        //   },
+        // ),

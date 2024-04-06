@@ -25,15 +25,21 @@ class NotesProvider extends ChangeNotifier {
   bool oldToNew = TasksProvider().oldToNew;
 
   String _selectedView = 'list';
-
-  List<Tag> _tags = [];
   List<Note> _notes = [];
   List<NoteBook> _noteBooks = [];
 
   List<Note> _searchedNotes = [];
 
+
+    List<Tag> _tags = [];
+  List<Tag> _temporarilyAddedTags = [];
+  final List<Tag> _searchedTags = [];
+  final List<Tag> _selectedTags = [];
+
+
+
+
   String get selectedView => _selectedView;
-  List<Tag> get tags => _tags;
   List<Note> get notes => _notes;
   List<NoteBook> get noteBooks => _noteBooks;
   List<Note> get searchedNotes => _searchedNotes;
@@ -41,14 +47,21 @@ class NotesProvider extends ChangeNotifier {
   bool get isSearchingNotes => _isSearchingNotes;
   int get selectedNoteBook => _selectedNoteBook;
   List<NoteBook> get searchedNoteBooks => _searchedNoteBooks;
-
   Note get newNote => _newNote;
+
+
+  List<Tag> get tags => _tags;
+  List<Tag> get selectedTags => _selectedTags;
+  List<Tag> get temporarilyAddedTags => _temporarilyAddedTags;
+  List<Tag> get searchedTags => _searchedTags;
+
 
   NotesProvider() {
     _init();
   }
 
   void _init() async {
+    // tagBox.put(Tag(name: 'jsp'));
     // noteBox.removeAll();
     // noteBookBox.removeAll();
     // final noteBooks = noteBookBox.getAll();
@@ -283,6 +296,25 @@ class NotesProvider extends ChangeNotifier {
 
   void setSearchedNoteBooks(List<NoteBook> noteBooks) {
     _searchedNoteBooks = noteBooks;
+    notifyListeners();
+  }
+
+    void toggleTagSelection(Tag tag) {
+    if (_selectedTags.contains(tag)) {
+      _selectedTags.remove(tag);
+    } else {
+      _selectedTags.add(tag);
+    }
+    // if (selectedTags.isEmpty) {
+    //   _filteredTasks.clear();
+    // }
+    // filterTasksByTags(selectedTags);
+    notifyListeners();
+  }
+
+    //Done
+  void clearSelectedTags() {
+    _selectedTags.clear();
     notifyListeners();
   }
 }

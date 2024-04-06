@@ -26,7 +26,7 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
         children: [
           buildDispositionButtons(disposition, context),
           SearchBarAnimation(
-            // buttonColour: AppColours.white,
+            buttonColour: Theme.of(context).colorScheme.surface,
             // enableBoxShadow: false,
             // enableButtonShadow: false,
             durationInMilliSeconds: 500,
@@ -37,15 +37,18 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
             textEditingController: searchBar,
             trailingWidget: const Icon(
               Icons.search_rounded,
-              color: Color.fromARGB(255, 0, 73, 133),
+              // color: Color.fromARGB(255, 0, 73, 133),
+              // color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             secondaryButtonWidget: const Icon(
               Icons.close_rounded,
-              color: Color.fromARGB(255, 0, 73, 133),
+              // color: Color.fromARGB(255, 0, 73, 133),
+              // color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             buttonWidget: const Icon(
               Icons.search_rounded,
-              color: Color.fromARGB(255, 0, 73, 133),
+              // color: Color.fromARGB(255, 0, 73, 133),
+              // color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             onFieldSubmitted: (String value) {
               debugPrint('onFieldSubmitted value $value');
@@ -97,7 +100,8 @@ class _SortAndFilterViewState extends State<SortAndFilterView> {
       ),
       child: Icon(
         icon,
-        color: const Color.fromARGB(255, 0, 73, 133),
+        // color: const Color.fromARGB(255, 0, 73, 133),
+        // color: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
       onPressed: () {
         context.read<NotesProvider>().changeView(nextDisposition);
