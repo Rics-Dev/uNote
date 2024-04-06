@@ -99,13 +99,14 @@ class _TaskListPageState extends State<TaskListPage> {
                 ),
                 filled: true,
                 fillColor: const Color.fromARGB(255, 235, 235, 235),
+
                 // border: const OutlineInputBorder(
                 //   borderSide: BorderSide.none,
                 //   borderRadius: BorderRadius.all(
                 //     Radius.circular(50),
                 //   ),
                 // ),
-                border: InputBorder.none,
+                // border: InputBorder.none,
                 hintText: 'Add a List',
               ),
             ),
