@@ -130,85 +130,88 @@ class _AddTaskViewState extends State<AddTaskView> {
                 },
               ),
               const SizedBox(height: 10.0),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    dueDate == null
-                        ? ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                elevation: 3.0,
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(10.0)),
-                            onPressed: () {
-                              showAddDueDateDialog(context);
-                            },
-                            child: const Icon(
-                              Icons.calendar_today_rounded,
-                              color: Color.fromARGB(255, 0, 73, 133),
-                            ),
-                          )
-                        : OutlinedButton.icon(
-                            onPressed: () {
-                              showAddDueDateDialog(context);
-                            },
-                            icon: const Icon(
-                              Icons.calendar_today_rounded,
-                              color: Color.fromARGB(255, 0, 73, 133),
-                            ),
-                            label: Text(formattedDate!),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  dueDate == null
+                      ? ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              elevation: 3.0,
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(10.0)),
+                          onPressed: () {
+                            showAddDueDateDialog(context);
+                          },
+                          child: const Icon(
+                            Icons.calendar_today_rounded,
+                            // color: Color.fromARGB(255, 0, 73, 133),
                           ),
-                    temporarilyAddedList.name == ''
-                        ? ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                elevation: 3.0,
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(10.0)),
+                        )
+                      : OutlinedButton.icon(
+                          onPressed: () {
+                            showAddDueDateDialog(context);
+                          },
+                          icon: const Icon(
+                            Icons.calendar_today_rounded,
+                            // color: Color.fromARGB(255, 0, 73, 133),
+                          ),
+                          label: Text(formattedDate!),
+                        ),
+                  temporarilyAddedList.name == ''
+                      ? ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              elevation: 3.0,
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(10.0)),
+                          onPressed: () {
+                            showAddListDialog(context);
+                          },
+                          child: const Icon(
+                            Icons.format_list_bulleted_rounded,
+                            // color: Color.fromARGB(255, 0, 73, 133),
+                          ),
+                        )
+                      : Flexible(
+                          child: OutlinedButton.icon(
                             onPressed: () {
                               showAddListDialog(context);
                             },
-                            child: const Icon(
-                              Icons.format_list_bulleted_rounded,
-                              color: Color.fromARGB(255, 0, 73, 133),
-                            ),
-                          )
-                        : OutlinedButton.icon(
-                            onPressed: () {
-                              showAddListDialog(context);
-                            },
                             icon: const Icon(
                               Icons.format_list_bulleted_rounded,
-                              color: Color.fromARGB(255, 0, 73, 133),
+                              // color: Color.fromARGB(255, 0, 73, 133),
                             ),
-                            label: Text(temporarilyAddedList.name),
+                            label: Text(
+                              temporarilyAddedList.name,
+                              style: const TextStyle(
+                                  overflow: TextOverflow.ellipsis),
+                            ),
                           ),
-                    temporarySelectedPriority == null
-                        ? ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                elevation: 3.0,
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(10.0)),
-                            onPressed: () {
-                              showAddPriorityDialog(context);
-                            },
-                            child: const Icon(
-                              Icons.flag_outlined,
-                              color: Color.fromARGB(255, 0, 73, 133),
-                            ),
-                          )
-                        : OutlinedButton.icon(
-                            onPressed: () {
-                              showAddPriorityDialog(context);
-                            },
-                            icon: const Icon(
-                              Icons.flag_outlined,
-                              color: Color.fromARGB(255, 0, 73, 133),
-                            ),
-                            label: Text(temporarySelectedPriority),
+                        ),
+                  temporarySelectedPriority == null
+                      ? ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              elevation: 3.0,
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(10.0)),
+                          onPressed: () {
+                            showAddPriorityDialog(context);
+                          },
+                          child: const Icon(
+                            Icons.flag_outlined,
+                            // color: Color.fromARGB(255, 0, 73, 133),
                           ),
-                  ],
-                ),
+                        )
+                      : OutlinedButton.icon(
+                          onPressed: () {
+                            showAddPriorityDialog(context);
+                          },
+                          icon: const Icon(
+                            Icons.flag_outlined,
+                            // color: Color.fromARGB(255, 0, 73, 133),
+                          ),
+                          label: Text(temporarySelectedPriority),
+                        ),
+                ],
               ),
               const SizedBox(height: 20.0),
               Center(

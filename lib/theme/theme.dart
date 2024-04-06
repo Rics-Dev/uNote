@@ -71,7 +71,7 @@ class ThemeProvider extends ChangeNotifier {
 }
 
 ThemeData lightMode = FlexThemeData.light(
-  scheme: FlexScheme.blueWhale,
+  scheme: FlexScheme.greyLaw,
   surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
   blendLevel: 7,
   subThemesData: const FlexSubThemesData(
@@ -85,6 +85,7 @@ ThemeData lightMode = FlexThemeData.light(
     alignedDropdown: true,
     useInputDecoratorThemeInDialogs: true,
   ),
+  keyColors: const FlexKeyColors(),
   visualDensity: FlexColorScheme.comfortablePlatformDensity,
   useMaterial3: true,
   swapLegacyOnMaterial3: true,
@@ -107,6 +108,7 @@ ThemeData darkMode = FlexThemeData.dark(
   surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
   blendLevel: 13,
   subThemesData: const FlexSubThemesData(
+    // elevatedButtonSchemeColor: SchemeColor.
     blendOnLevel: 20,
     useTextTheme: true,
     useM2StyleDividerInM3: true,
