@@ -31,11 +31,20 @@ class _TasksPageState extends State<TasksPage>
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 10),
-        const HorizontalPriorityView(),
-        const SizedBox(height: 10),
-        TaskTabBar(tabController: _tabController),
-        const SizedBox(height: 20),
+        Container(
+          color: Theme.of(context).colorScheme.surface,
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              const HorizontalPriorityView(),
+              const SizedBox(height: 10),
+              TaskTabBar(tabController: _tabController),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
         Expanded(
           child: TabBarView(
             controller: _tabController,

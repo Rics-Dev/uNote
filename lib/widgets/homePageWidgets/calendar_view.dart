@@ -39,12 +39,13 @@ class _CalendarViewState extends State<CalendarView> {
           .toList();
     }
 
-    return SafeArea(
+    return Container(
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          const SizedBox(height: 16),
+          const SizedBox(height: 40),
           Stack(
             children: [
               const Align(

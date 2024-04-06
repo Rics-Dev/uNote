@@ -42,35 +42,32 @@ class _AddNoteToBookState extends State<AddNoteToBook> {
             ),
             Padding(
               padding: const EdgeInsets.all(12.0),
-              child: SizedBox(
-                height: 40,
-                child: TextField(
-                  controller: noteBookController,
-                  decoration: const InputDecoration(
-                    labelText: 'Add NoteBook or select already existing ones',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.done,
-                  onChanged: (String value) {
-                    searchNoteBook(noteBookController.text);
-                  },
-                  onSubmitted: (_) {
-                    if (_.isNotEmpty) {
-                      final noteBookId = context
-                          .read<NotesProvider>()
-                          .addNotebook(NoteBook(
-                              name: noteBookController.text,
-                              createdAt: DateTime.now(),
-                              updatedAt: DateTime.now()));
-                      context
-                          .read<NotesProvider>()
-                          .addNoteToNoteBook(noteBookId, widget.note.id);
-                      noteBookController.clear();
-                    }
-                    Navigator.pop(context);
-                  },
+              child: TextField(
+                controller: noteBookController,
+                decoration: const InputDecoration(
+                  labelText: 'Add NoteBook or select already existing ones',
+                  // border: OutlineInputBorder(),
                 ),
+                keyboardType: TextInputType.text,
+                // textInputAction: TextInputAction.done,
+                onChanged: (String value) {
+                  searchNoteBook(noteBookController.text);
+                },
+                onSubmitted: (_) {
+                  if (_.isNotEmpty) {
+                    final noteBookId = context
+                        .read<NotesProvider>()
+                        .addNotebook(NoteBook(
+                            name: noteBookController.text,
+                            createdAt: DateTime.now(),
+                            updatedAt: DateTime.now()));
+                    context
+                        .read<NotesProvider>()
+                        .addNoteToNoteBook(noteBookId, widget.note.id);
+                    noteBookController.clear();
+                  }
+                  Navigator.pop(context);
+                },
               ),
             ),
             const SizedBox(height: 10.0),
@@ -83,51 +80,51 @@ class _AddNoteToBookState extends State<AddNoteToBook> {
             Visibility(
               visible: searchedNoteBooks.isNotEmpty,
               child: Expanded(
-                child: GridView.extent(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  childAspectRatio: 2.5,
-                  maxCrossAxisExtent: 150.0,
-                  mainAxisSpacing: 12.0, // spacing between rows
-                  crossAxisSpacing: 8.0, // spacing between columns
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12.0), // spacing between columns
                   children: [
                     ...searchedNoteBooks.map((noteBook) {
                       return Container(
                         padding: const EdgeInsets.all(2),
-                        child: ElevatedButton.icon(
+                        child: FilledButton.tonalIcon(
                           onPressed: () {
                             context
                                 .read<NotesProvider>()
                                 .addNoteToNoteBook(noteBook.id, widget.note.id);
                             Navigator.pop(context);
                           },
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.book_rounded,
                             size: 18,
-                            color:
-                                noteBook.id == widget.note.notebook.target?.id
-                                    ? Colors.white
-                                    : const Color.fromARGB(255, 0, 73, 133),
+                            // color:
+                            //     noteBook.id == widget.note.notebook.target?.id
+                            //         ? Colors.white
+                            //         : const Color.fromARGB(255, 0, 73, 133),
                           ),
                           label: Text(
                             semanticsLabel: noteBook.name,
                             noteBook.name,
-                            style: TextStyle(
-                              color:
-                                  noteBook.id == widget.note.notebook.target?.id
-                                      ? Colors.white
-                                      : const Color.fromARGB(255, 0, 73, 133),
-                            ),
+                            style: const TextStyle(
+                                // color:
+                                //     noteBook.id == widget.note.notebook.target?.id
+                                //         ? Colors.white
+                                //         : const Color.fromARGB(255, 0, 73, 133),
+                                ),
                             overflow: TextOverflow.ellipsis,
                           ),
                           style: ElevatedButton.styleFrom(
+                            // backgroundColor: Theme.of(context)
+                            //     .colorScheme
+                            //     .secondaryContainer,
                             elevation: 3,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            backgroundColor:
-                                noteBook.id == widget.note.notebook.target?.id
-                                    ? const Color.fromARGB(255, 0, 73, 133)
-                                    : null,
+                            // backgroundColor:
+                            //     noteBook.id == widget.note.notebook.target?.id
+                            //         ? const Color.fromARGB(255, 0, 73, 133)
+                            //         : null,
                           ),
                         ),
                       );

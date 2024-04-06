@@ -190,22 +190,23 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
 
     return Container(
       // color: Colors.grey.shade100,
-      // color: Theme.of(context).colorScheme.primaryContainer,
+      // color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           Container(
-            decoration: const BoxDecoration(
-                // color: Colors.white,
-                // color: Theme.of(context).colorScheme.primary,
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: Colors.grey.shade300,
-                //     spreadRadius: 1,
-                //     blurRadius: 10,
-                //     offset: const Offset(0, 10), // changes position of shadow
-                //   ),
-                // ],
-                ),
+            decoration: BoxDecoration(
+              // color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
+              // color: Theme.of(context).colorScheme.primary,
+              // boxShadow: [
+              //   BoxShadow(
+              //     color: Colors.grey.shade300,
+              //     spreadRadius: 1,
+              //     blurRadius: 10,
+              //     offset: const Offset(0, 10), // changes position of shadow
+              //   ),
+              // ],
+            ),
             child: Column(
               children: [
                 const SortAndFilterView(),
@@ -228,6 +229,7 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
                 //     child: const Text('Go to new page')),
                 // const HorizontalTagsView(),
                 TabBar(
+                  enableFeedback: true,
                   // labelColor: Theme.of(context).colorScheme.onPrimary,
                   // unselectedLabelColor: Theme.of(context).colorScheme.secondary,
                   // indicatorColor: Theme.of(context).colorScheme.onPrimary,

@@ -74,7 +74,6 @@ class _AddNoteViewState extends State<AddNoteView> {
           child: Padding(
         padding: const EdgeInsets.only(top: 30.0),
         child: Scaffold(
-          // resizeToAvoidBottomInset: false,
           appBar: AppBar(
             elevation: 1,
             title: TextField(
@@ -133,7 +132,7 @@ class _AddNoteViewState extends State<AddNoteView> {
             ],
           ),
           body: Container(
-            padding: const EdgeInsets.symmetric(vertical: 5),
+            // padding: const EdgeInsets.symmetric(vertical: 5),
             child: Column(
               children: [
                 Padding(
@@ -186,7 +185,7 @@ class _AddNoteViewState extends State<AddNoteView> {
                             ? const Icon(
                                 Icons.shield_rounded,
                                 size: 28,
-                                color: Color.fromARGB(255, 0, 73, 133),
+                                // color: Color.fromARGB(255, 0, 73, 133),
                               )
                             : const Icon(Icons.shield_outlined, size: 28),
                       ),
@@ -203,19 +202,6 @@ class _AddNoteViewState extends State<AddNoteView> {
                       //       : const Icon(Icons.star_border_outlined, size: 28),
                       // ),
                     ],
-                  ),
-                ),
-                QuillToolbar.simple(
-                  configurations: QuillSimpleToolbarConfigurations(
-                    toolbarSectionSpacing: -10,
-
-                    // axis: Axis.horizontal,
-                    // toolbarSize: 36.0,
-                    multiRowsDisplay: false,
-                    controller: _contentController,
-                    sharedConfigurations: const QuillSharedConfigurations(
-                      locale: Locale('en'),
-                    ),
                   ),
                 ),
                 Padding(
@@ -270,6 +256,20 @@ class _AddNoteViewState extends State<AddNoteView> {
                           ),
                         ),
                       ),
+                    ),
+                  ),
+                ),
+                QuillToolbar.simple(
+                  configurations: QuillSimpleToolbarConfigurations(
+
+                    toolbarSize: 50,
+                    toolbarSectionSpacing: -10,
+                    // axis: Axis.horizontal,
+                    // toolbarSize: 36.0,
+                    multiRowsDisplay: false,
+                    controller: _contentController,
+                    sharedConfigurations: const QuillSharedConfigurations(
+                      locale: Locale('en'),
                     ),
                   ),
                 ),

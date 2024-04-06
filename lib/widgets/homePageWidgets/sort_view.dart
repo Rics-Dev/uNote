@@ -17,8 +17,8 @@ class SortView extends StatelessWidget {
 
     SortCriteria sortCriteria = tasksProvider.sortCriteria;
 
-    return SafeArea(
-        child: SizedBox(
+    return Container(
+      color: Theme.of(context).colorScheme.surface,
       height: MediaQuery.of(context).size.height * 0.40,
       width: double.infinity,
       child: Column(
@@ -26,7 +26,7 @@ class SortView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(
-            height: 10,
+            height: 40,
           ),
           const Text('Sort by',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.normal)),
@@ -39,7 +39,7 @@ class SortView extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   tasksProvider.toggleSortByCreationDate();
-                  notesProvider.toggleSortByCreationDate();   
+                  notesProvider.toggleSortByCreationDate();
                 },
                 style: sortCriteria == SortCriteria.creationDate
                     ? ButtonStyle(
@@ -83,7 +83,6 @@ class SortView extends StatelessWidget {
                 onPressed: () {
                   tasksProvider.toggleSortByEditionDate();
                   notesProvider.toggleSortByEditionDate();
-
                 },
                 style: sortCriteria == SortCriteria.editionDate
                     ? ButtonStyle(
@@ -112,7 +111,6 @@ class SortView extends StatelessWidget {
                 onPressed: () {
                   tasksProvider.toggleSortByNameAZ();
                   notesProvider.toggleSortByNameAZ();
-
                 },
                 style: sortCriteria == SortCriteria.nameAZ
                     ? ButtonStyle(
@@ -133,7 +131,6 @@ class SortView extends StatelessWidget {
                 onPressed: () {
                   tasksProvider.toggleSortByNameZA();
                   notesProvider.toggleSortByNameZA();
-
                 },
                 style: sortCriteria == SortCriteria.nameZA
                     ? ButtonStyle(
@@ -172,7 +169,7 @@ class SortView extends StatelessWidget {
           ),
         ],
       ),
-    ));
+    );
   }
 }
 
