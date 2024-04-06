@@ -35,7 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   go_router: ^13.2.0
   provider: ^6.1.1
-  google_fonts: ^6.2.1
+  google_fonts: ^6.1.0
   animated_bottom_navigation_bar: ^1.3.3
   top_modal_sheet: ^2.1.0
   table_calendar: ^3.0.9
@@ -46,7 +46,8 @@ dependencies:
   intl: ^0.18.1
   pull_down_button: ^0.9.3
   auto_animated: any
-  flutter_quill: ^9.3.5
+  # flutter_quill: ^9.3.5
+  flutter_quill: ^9.1.1
   local_auth: ^2.2.0
   # database Part
   objectbox: ^2.5.1

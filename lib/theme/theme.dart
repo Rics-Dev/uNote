@@ -43,5 +43,8 @@ ThemeData darkTheme(BuildContext context) {
       onError: Colors.white,
       brightness: Brightness.dark,
     ),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: Colors.grey.shade900,
+    ),
   );
 }

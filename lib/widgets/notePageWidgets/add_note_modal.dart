@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import 'package:toastification/toastification.dart';
+import 'package:visual_editor/visual-editor.dart';
 import '../../models/entities.dart';
 import '../../providers/note_provider.dart';
 import 'add_note_to_book.dart';
@@ -26,6 +27,16 @@ class _AddNoteViewState extends State<AddNoteView> {
   bool _isSaved = false;
 
   int _wordCount = 0;
+
+
+// Column(
+//   children: [
+
+//     VisualEditor(
+//       controller: _controller,
+//     ),
+//   ],
+// )
 
   @override
   void dispose() {
@@ -70,12 +81,13 @@ class _AddNoteViewState extends State<AddNoteView> {
           }
         }
       },
-      child: SafeArea(
-          child: Padding(
+      child: Padding(
         padding: const EdgeInsets.only(top: 30.0),
         child: Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.background,
           // resizeToAvoidBottomInset: false,
           appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.primary,
             elevation: 1,
             title: TextField(
               onTapOutside: (event) {
@@ -84,6 +96,7 @@ class _AddNoteViewState extends State<AddNoteView> {
               autofocus: true,
               focusNode: titleFocusNode,
               controller: _titleController,
+              cursorColor: Theme.of(context).colorScheme.onSurface,
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Title',
@@ -93,9 +106,10 @@ class _AddNoteViewState extends State<AddNoteView> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             actions: [
@@ -133,102 +147,126 @@ class _AddNoteViewState extends State<AddNoteView> {
             ],
           ),
           body: Container(
-            padding: const EdgeInsets.symmetric(vertical: 5),
+            color: Theme.of(context).colorScheme.primaryContainer,
+            // padding: const EdgeInsets.symmetric(vertical: 5),
             child: Column(
               children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 12),
-                  child: Row(
+                Container(
+                  color: Theme.of(context).colorScheme.primary,
+                  child: Column(
                     children: [
-                      Visibility(
-                        visible: !newNote.isSecured,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 2,
-                            textStyle: const TextStyle(
-                                overflow: TextOverflow.ellipsis),
-                            padding: const EdgeInsets.all(4),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 8.0, right: 8.0, bottom: 12),
+                        child: Row(
+                          children: [
+                            Visibility(
+                              visible: !newNote.isSecured,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 2,
+                                  textStyle: const TextStyle(
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  padding: const EdgeInsets.all(4),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  showAddNoteBookDialog(context, newNote);
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.book_rounded,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      newNote.notebook.target != null
+                                          ? newNote.notebook.target!.name
+                                                  .isNotEmpty
+                                              ? newNote.notebook.target!.name
+                                              : '+ Notebook'
+                                          : '+ Notebook',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                          onPressed: () {
-                            showAddNoteBookDialog(context, newNote);
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.book_rounded),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                newNote.notebook.target != null
-                                    ? newNote.notebook.target!.name.isNotEmpty
-                                        ? newNote.notebook.target!.name
-                                        : '+ Notebook'
-                                    : '+ Notebook',
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
+                            const Spacer(),
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  newNote.isSecured = !newNote.isSecured;
+                                });
+                              },
+                              icon: newNote.isSecured
+                                  ? const Icon(
+                                      Icons.shield_rounded,
+                                      size: 28,
+                                      color: Color.fromARGB(255, 0, 73, 133),
+                                    )
+                                  : const Icon(Icons.shield_outlined, size: 28),
+                            ),
+                            // IconButton(
+                            //   onPressed: () {
+                            //     setState(() {
+                            //       currentNote.isFavorite = !currentNote.isFavorite;
+                            //     });
+                            //   },
+                            //   icon: currentNote.isFavorite
+                            //       ? const Icon(Icons.star,
+                            //           size: 28,
+                            //           color: Color.fromARGB(255, 0, 73, 133))
+                            //       : const Icon(Icons.star_border_outlined, size: 28),
+                            // ),
+                          ],
+                        ),
+                      ),
+                      QuillToolbar.simple(
+                        configurations: QuillSimpleToolbarConfigurations(
+                          color: Theme.of(context).colorScheme.primary,
+                          toolbarSectionSpacing: -10,
+
+                          // axis: Axis.horizontal,
+                          // toolbarSize: 36.0,
+                          multiRowsDisplay: false,
+                          controller: _contentController,
+                          sharedConfigurations: const QuillSharedConfigurations(
+                            locale: Locale('en'),
                           ),
                         ),
                       ),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            newNote.isSecured = !newNote.isSecured;
-                          });
-                        },
-                        icon: newNote.isSecured
-                            ? const Icon(
-                                Icons.shield_rounded,
-                                size: 28,
-                                color: Color.fromARGB(255, 0, 73, 133),
-                              )
-                            : const Icon(Icons.shield_outlined, size: 28),
-                      ),
-                      // IconButton(
-                      //   onPressed: () {
-                      //     setState(() {
-                      //       currentNote.isFavorite = !currentNote.isFavorite;
-                      //     });
-                      //   },
-                      //   icon: currentNote.isFavorite
-                      //       ? const Icon(Icons.star,
-                      //           size: 28,
-                      //           color: Color.fromARGB(255, 0, 73, 133))
-                      //       : const Icon(Icons.star_border_outlined, size: 28),
-                      // ),
-                    ],
-                  ),
-                ),
-                QuillToolbar.simple(
-                  configurations: QuillSimpleToolbarConfigurations(
-                    toolbarSectionSpacing: -10,
-
-                    // axis: Axis.horizontal,
-                    // toolbarSize: 36.0,
-                    multiRowsDisplay: false,
-                    controller: _contentController,
-                    sharedConfigurations: const QuillSharedConfigurations(
-                      locale: Locale('en'),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 8.0, top: 24.0, right: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Words: $_wordCount',
-                      ),
-                      Text(
-                        newNote.createdAt.toString().substring(0, 16),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 8.0, top: 24.0, right: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Words: $_wordCount',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                            Text(
+                              newNote.createdAt.toString().substring(0, 16),
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -259,6 +297,7 @@ class _AddNoteViewState extends State<AddNoteView> {
                                     : 0;
                               });
                             },
+
                             placeholder: 'Add your note here...',
                             // autoFocus: true,
                             controller: _contentController,
@@ -277,7 +316,7 @@ class _AddNoteViewState extends State<AddNoteView> {
             ),
           ),
         ),
-      )),
+      ),
     );
   }
 

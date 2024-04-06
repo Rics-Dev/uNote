@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  file_selector_linux
   irondash_engine_context
   objectbox_flutter_libs
   super_native_extensions
