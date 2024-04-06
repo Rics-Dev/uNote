@@ -204,6 +204,19 @@ class _AddNoteViewState extends State<AddNoteView> {
                     ],
                   ),
                 ),
+                QuillToolbar.simple(
+                  configurations: QuillSimpleToolbarConfigurations(
+                    toolbarSize: 50,
+                    toolbarSectionSpacing: -10,
+                    // axis: Axis.horizontal,
+                    // toolbarSize: 36.0,
+                    multiRowsDisplay: false,
+                    controller: _contentController,
+                    sharedConfigurations: const QuillSharedConfigurations(
+                      locale: Locale('en'),
+                    ),
+                  ),
+                ),
                 Padding(
                   padding:
                       const EdgeInsets.only(left: 8.0, top: 24.0, right: 8.0),
@@ -256,20 +269,6 @@ class _AddNoteViewState extends State<AddNoteView> {
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-                QuillToolbar.simple(
-                  configurations: QuillSimpleToolbarConfigurations(
-
-                    toolbarSize: 50,
-                    toolbarSectionSpacing: -10,
-                    // axis: Axis.horizontal,
-                    // toolbarSize: 36.0,
-                    multiRowsDisplay: false,
-                    controller: _contentController,
-                    sharedConfigurations: const QuillSharedConfigurations(
-                      locale: Locale('en'),
                     ),
                   ),
                 ),

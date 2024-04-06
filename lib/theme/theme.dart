@@ -1,5 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ThemeData lightTheme(BuildContext context) {
@@ -47,15 +48,27 @@ import 'package:google_fonts/google_fonts.dart';
 //   );
 // }
 class ThemeProvider extends ChangeNotifier {
-  ThemeData _themeData = ThemeMode.system == ThemeMode.dark ? darkMode : lightMode;
+  late ThemeData _themeData;
   ThemeData get themeData => _themeData;
 
-  void toggleTheme() {
+  ThemeProvider() {
+    _init();
+  }
+
+  void _init() {
+    var brightness =
+        SchedulerBinding.instance.platformDispatcher.platformBrightness;
+    bool isDarkMode = brightness == Brightness.dark;
+    _themeData = isDarkMode ? darkMode : lightMode;
+  }
+
+  void toggleTheme() async {
     _themeData = _themeData == lightMode ? darkMode : lightMode;
     notifyListeners();
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // prefs.setBool('isDark', _themeData == darkMode);
   }
 }
-
 
 ThemeData lightMode = FlexThemeData.light(
   scheme: FlexScheme.blueWhale,
