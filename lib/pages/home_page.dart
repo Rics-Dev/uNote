@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
+import 'package:utask/theme/theme.dart';
 import '../providers/note_provider.dart';
 import '../providers/task_provider.dart';
 import '../widgets/notePageWidgets/add_note_modal.dart';
@@ -77,6 +78,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = context.watch<ThemeProvider>().themeData;
     final notesProvider = context.watch<NotesProvider>();
     final noteBooks = notesProvider.noteBooks;
     bool keyboardIsOpened = MediaQuery.of(context).viewInsets.bottom != 0.0;
@@ -96,6 +98,14 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         // backgroundColor: Theme.of(context).colorScheme.primary,
+        leading: IconButton(
+          icon: themeMode.brightness == Brightness.dark
+              ? const Icon(Icons.wb_sunny_outlined)
+              : const Icon(Icons.nightlight_outlined),
+          onPressed: () {
+            context.read<ThemeProvider>().toggleTheme();
+          },
+        ),
         title: Text(appBarTitles[_bottomNavIndex]),
         actions: <Widget>[
           IconButton(

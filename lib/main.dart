@@ -30,6 +30,9 @@ void main() async {
           create: (context) => NotesProvider()),
       ChangeNotifierProvider<NoteBookProvider>(
           create: (context) => NoteBookProvider()),
+      ChangeNotifierProvider<ThemeProvider>(
+        create: (context) => ThemeProvider(),
+      ),
       // ChangeNotifierProvider<AdProvider>(create: (context) => adState),
     ],
     child: MyApp(router: router),
@@ -47,6 +50,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    final themeData = context.watch<ThemeProvider>().themeData;
     return MaterialApp.router(
         // title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
@@ -56,51 +60,8 @@ class _MyAppState extends State<MyApp> {
         //   textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
         //   // fontFamily: 'Onest',
         // ),
-        theme: lightMode,
-        darkTheme: darkMode,
-
-        // theme: FlexThemeData.light(
-        //   scheme: FlexScheme.blueWhale,
-        //   surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
-        //   blendLevel: 7,
-        //   subThemesData: const FlexSubThemesData(
-        //     blendOnLevel: 10,
-        //     blendOnColors: false,
-        //     useTextTheme: true,
-        //     useM2StyleDividerInM3: true,
-        //     inputDecoratorIsFilled: false,
-        //     inputDecoratorBorderType: FlexInputBorderType.underline,
-        //     inputDecoratorUnfocusedBorderIsColored: false,
-        //     alignedDropdown: true,
-        //     useInputDecoratorThemeInDialogs: true,
-        //   ),
-        //   visualDensity: FlexColorScheme.comfortablePlatformDensity,
-        //   useMaterial3: true,
-        //   swapLegacyOnMaterial3: true,
-        //   // To use the Playground font, add GoogleFonts package and uncomment
-        //   // fontFamily: GoogleFonts.notoSans().fontFamily,
-        // ),
-        // darkTheme: FlexThemeData.dark(
-        //   scheme: FlexScheme.greyLaw,
-        //   surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
-        //   blendLevel: 13,
-        //   subThemesData: const FlexSubThemesData(
-        //     blendOnLevel: 20,
-        //     useTextTheme: true,
-        //     useM2StyleDividerInM3: true,
-        //     // inputDecoratorRadius: 50,
-        //     inputDecoratorIsFilled: false,
-        //     inputDecoratorBorderType: FlexInputBorderType.underline,
-        //     inputDecoratorUnfocusedBorderIsColored: false,
-        //     alignedDropdown: true,
-        //     useInputDecoratorThemeInDialogs: true,
-        //   ),
-        //   visualDensity: FlexColorScheme.comfortablePlatformDensity,
-        //   useMaterial3: true,
-        //   swapLegacyOnMaterial3: true,
-        //   // To use the Playground font, add GoogleFonts package and uncomment
-        //   // fontFamily: GoogleFonts.notoSans().fontFamily,
-        // ),
+        theme: themeData,
+        // darkTheme: darkMode,
         themeMode: ThemeMode.system,
         routerConfig: widget.router);
   }

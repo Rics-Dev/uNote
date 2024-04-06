@@ -46,6 +46,16 @@ import 'package:google_fonts/google_fonts.dart';
 //     ),
 //   );
 // }
+class ThemeProvider extends ChangeNotifier {
+  ThemeData _themeData = ThemeMode.system == ThemeMode.dark ? darkMode : lightMode;
+  ThemeData get themeData => _themeData;
+
+  void toggleTheme() {
+    _themeData = _themeData == lightMode ? darkMode : lightMode;
+    notifyListeners();
+  }
+}
+
 
 ThemeData lightMode = FlexThemeData.light(
   scheme: FlexScheme.blueWhale,
@@ -66,10 +76,20 @@ ThemeData lightMode = FlexThemeData.light(
   useMaterial3: true,
   swapLegacyOnMaterial3: true,
   // To use the Playground font, add GoogleFonts package and uncomment
-  // fontFamily: GoogleFonts.notoSans().fontFamily,
+  fontFamily: GoogleFonts.poppins().fontFamily,
 );
 
 ThemeData darkMode = FlexThemeData.dark(
+  // colors: const FlexSchemeColor(
+  //   primary: Color(0xffc4d7f8),
+  //   primaryContainer: Color(0xff577cbf),
+  //   secondary: Color(0xfff1bbbb),
+  //   secondaryContainer: Color(0xffcb6060),
+  //   tertiary: Color(0xffdde5f5),
+  //   tertiaryContainer: Color(0xff7297d9),
+  //   appBarColor: Color(0xffdde5f5),
+  //   error: null,
+  // ),
   scheme: FlexScheme.greyLaw,
   surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
   blendLevel: 13,
@@ -87,6 +107,8 @@ ThemeData darkMode = FlexThemeData.dark(
   visualDensity: FlexColorScheme.comfortablePlatformDensity,
   useMaterial3: true,
   swapLegacyOnMaterial3: true,
+  fontFamily: GoogleFonts.poppins().fontFamily,
+
   // To use the Playground font, add GoogleFonts package and uncomment
   // fontFamily: GoogleFonts.notoSans().fontFamily,
 );

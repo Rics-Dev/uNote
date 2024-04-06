@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_down_button/pull_down_button.dart';
@@ -79,6 +80,7 @@ class _TaskListPageState extends State<TaskListPage> {
                   isAddingList = false;
                 });
               },
+              // style: ,
               decoration: InputDecoration(
                 suffix: const Text('Add'),
                 prefixIcon: GestureDetector(
@@ -89,16 +91,16 @@ class _TaskListPageState extends State<TaskListPage> {
                   },
                   child: const Icon(
                     Icons.add_circle_outline_rounded,
-                    color: Color.fromARGB(255, 0, 73, 133),
+                    // color: Color.fromARGB(255, 0, 73, 133),
                   ),
                 ),
                 hintStyle: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
-                  color: Color.fromARGB(255, 0, 73, 133),
+                  // color: Color.fromARGB(255, 0, 73, 133),
                 ),
                 filled: true,
-                fillColor: const Color.fromARGB(255, 235, 235, 235),
+                // fillColor: const Color.fromARGB(255, 235, 235, 235),
 
                 // border: const OutlineInputBorder(
                 //   borderSide: BorderSide.none,
@@ -182,39 +184,44 @@ class _TaskListPageState extends State<TaskListPage> {
                       ),
                       title: Row(
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                taskLists[index].tasks.sort((a, b) {
-                                  if (a.isDone && !b.isDone) {
-                                    return 1;
-                                  } else if (!a.isDone && b.isDone) {
-                                    return -1;
-                                  } else {
-                                    return 0;
-                                  }
+                          Flexible(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  taskLists[index].tasks.sort((a, b) {
+                                    if (a.isDone && !b.isDone) {
+                                      return 1;
+                                    } else if (!a.isDone && b.isDone) {
+                                      return -1;
+                                    } else {
+                                      return 0;
+                                    }
+                                  });
                                 });
-                              });
-                            },
-                            child: Text(
-                              taskLists[index].name,
-                              style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  overflow: TextOverflow.ellipsis),
+                              },
+                              child: Text(
+                                taskLists[index].name,
+                                style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    overflow: TextOverflow.ellipsis),
+                              ),
                             ),
                           ),
                           const SizedBox(width: 10),
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Text(
-                              taskLists[index].tasks.length.toString(),
-                              style: const TextStyle(
-                                  fontSize: 14, color: Colors.black),
+                          Visibility(
+                            visible: taskLists[index].tasks.isNotEmpty,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text(
+                                taskLists[index].tasks.length.toString(),
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.black),
+                              ),
                             ),
                           ),
                           const SizedBox(
