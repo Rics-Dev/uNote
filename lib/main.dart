@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
         // darkTheme: darkTheme(context),
 
         theme: FlexThemeData.light(
-          scheme: FlexScheme.blue,
+          scheme: FlexScheme.blueWhale,
           surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
           blendLevel: 7,
           subThemesData: const FlexSubThemesData(
@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
           // fontFamily: GoogleFonts.notoSans().fontFamily,
         ),
         darkTheme: FlexThemeData.dark(
-          scheme: FlexScheme.blue,
+          scheme: FlexScheme.greyLaw,
           surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
           blendLevel: 13,
           subThemesData: const FlexSubThemesData(

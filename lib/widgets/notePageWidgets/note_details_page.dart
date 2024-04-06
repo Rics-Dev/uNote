@@ -163,18 +163,6 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                   ],
                 ),
               ),
-              Visibility(
-                visible: _isEditing,
-                child: QuillToolbar.simple(
-                  configurations: QuillSimpleToolbarConfigurations(
-                    multiRowsDisplay: false,
-                    controller: _contentController,
-                    sharedConfigurations: const QuillSharedConfigurations(
-                      locale: Locale('en'),
-                    ),
-                  ),
-                ),
-              ),
               Padding(
                 padding:
                     const EdgeInsets.only(left: 8.0, top: 12.0, right: 8.0),
@@ -206,6 +194,19 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                         // autoFocus: true,
                         controller: _contentController,
                       ),
+                    ),
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: _isEditing,
+                child: QuillToolbar.simple(
+                  configurations: QuillSimpleToolbarConfigurations(
+                    toolbarSize: 50,
+                    multiRowsDisplay: false,
+                    controller: _contentController,
+                    sharedConfigurations: const QuillSharedConfigurations(
+                      locale: Locale('en'),
                     ),
                   ),
                 ),
