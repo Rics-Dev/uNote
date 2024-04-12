@@ -182,6 +182,9 @@ class TasksProvider extends ChangeNotifier {
 
   //Done
   void addList(String listName) {
+    if (listName.isEmpty) {
+      return;
+    }
     final taskList = TaskList(
         name: listName, createdAt: DateTime.now(), updatedAt: DateTime.now());
     taskListBox.put(taskList);

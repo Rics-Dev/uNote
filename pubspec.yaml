@@ -81,8 +81,8 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  assets:
-    - assets/
+  # assets:
+  #   - assets/
     # - assets/fonts/
 #   ios: true
 #   image_path: "assets/ic_launcher.png"
