@@ -31,7 +31,11 @@ class _TaskListPageState extends State<TaskListPage> {
     final existingListDocument =
         context.read<TasksProvider>().verifyExistingList(listName);
     if (existingListDocument == null) {
-      context.read<TasksProvider>().addList(listName);
+      var newList = listName.trim();
+      if (newList.isEmpty) {
+        return;
+      }
+      context.read<TasksProvider>().addList(newList);
       listController.clear();
     } else {
       toastification.show(
