@@ -7,7 +7,6 @@ import 'package:utask/models/entities.dart';
 
 import '../providers/note_provider.dart';
 import '../providers/notebook.dart';
-import '../widgets/notePageWidgets/horizontal_tags_view.dart';
 import '../widgets/notePageWidgets/note_list_page.dart';
 import '../widgets/notePageWidgets/search_disposition_view.dart';
 
@@ -428,6 +427,9 @@ class _NotesPageState extends State<NotesPage> with TickerProviderStateMixin {
             ),
             TextButton(
               onPressed: () {
+                if(noteBookController.text.isEmpty){
+                  return;
+                }
                 context.read<NotesProvider>().addNotebook(NoteBook(
                     name: noteBookController.text,
                     createdAt: DateTime.now(),
