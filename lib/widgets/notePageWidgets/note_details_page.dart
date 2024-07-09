@@ -203,7 +203,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
 
                         // },
                         placeholder: 'Note Content...',
-                        readOnly: _isEditing ? false : true,
+                        // readOnly: _isEditing ? false : true,
                         // autoFocus: true,
                         controller: _contentController,
                       ),

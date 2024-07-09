@@ -261,7 +261,7 @@ class _AddNoteViewState extends State<AddNoteView> {
                             placeholder: 'Add your note here...',
                             // autoFocus: true,
                             controller: _contentController,
-                            readOnly: false,
+                            // readOnly: false,
                             sharedConfigurations:
                                 const QuillSharedConfigurations(
                               locale: Locale('en'),
