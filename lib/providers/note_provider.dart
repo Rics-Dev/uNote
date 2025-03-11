@@ -32,7 +32,7 @@ class NotesProvider extends ChangeNotifier {
 
 
     List<Tag> _tags = [];
-  List<Tag> _temporarilyAddedTags = [];
+  final List<Tag> _temporarilyAddedTags = [];
   final List<Tag> _searchedTags = [];
   final List<Tag> _selectedTags = [];
 

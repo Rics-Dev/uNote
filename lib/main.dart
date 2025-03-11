@@ -11,8 +11,6 @@ import 'database/objectbox.dart';
 import 'providers/notebook.dart';
 import 'providers/task_provider.dart';
 import 'router/router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 
 late ObjectBox objectbox;
 void main() async {
